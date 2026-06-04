@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Scopri Riposto con fotolapissable.it — luoghi, trasporti, sapori e fotografia siciliana">
+<meta property="og:title" content="Riposto · fotolapissable.it">
+<meta property="og:description" content="Guida turistica di Riposto CT — fotolapissable.it">
+<title>Riposto · fotolapissable.it</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --amber:#C8813A;--amber-d:#a8620a;--amber-l:#fdf3e8;--amber-m:rgba(200,129,58,0.15);
+  --blue:#1a5278;--blue-l:#eaf2f8;
+  --teal:#0d9e87;--teal-l:#e5f6f3;
+  --green:#3a8a4a;--green-l:#ecf5ee;
+  --violet:#6c5ce7;--violet-l:#f0eeff;
+  --dark:#18120a;
+  --bg:#f5f1ea;--panel:#fff;--panel2:#faf7f2;
+  --text:#1e1a12;--text-m:#5a5040;--text-s:#9a9080;
+  --border:rgba(30,26,18,0.10);--border-m:rgba(30,26,18,0.17);
+  --fs:'Playfair Display',serif;--fb:'Nunito',sans-serif;
+}
+html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-family:var(--fb);overflow:hidden}
+
+/* ── HEADER ─────────────────────────────── */
+#hdr{height:52px;background:var(--dark);display:flex;align-items:center;justify-content:space-between;padding:0 16px;border-bottom:2px solid var(--amber);z-index:300;position:relative}
+#brand{display:flex;align-items:center;gap:11px;text-decoration:none}
+#brand-logo{width:38px;height:38px;flex-shrink:0}
+#brand-name{font-family:var(--fs);font-size:15px;font-weight:600;color:var(--amber);line-height:1.1}
+#brand-url{font-size:8.5px;color:rgba(200,129,58,0.5);letter-spacing:2px;text-transform:uppercase}
+#hdr-sub{font-size:10.5px;color:rgba(255,255,255,.28);font-style:italic;pointer-events:none}
+#hdr-r{display:flex;align-items:center;gap:10px}
+#wx-chip{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:4px 11px}
+#wx-t{font-size:14px;font-weight:700;color:#fff}
+#wx-d{font-size:9.5px;color:rgba(255,255,255,.45);max-width:80px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#lang-btn{background:rgba(200,129,58,.14);border:1px solid rgba(200,129,58,.32);color:var(--amber);font-family:var(--fb);font-size:10px;font-weight:700;letter-spacing:1.5px;padding:5px 11px;border-radius:13px;cursor:pointer;transition:all .2s}
+#lang-btn:hover{background:rgba(200,129,58,.25)}
+
+/* ── MAIN ───────────────────────────────── */
+#main{display:flex;height:calc(100vh - 52px)}
+
+/* ── SIDEBAR ────────────────────────────── */
+#sb{width:270px;min-width:270px;background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+#sb::-webkit-scrollbar{width:0}
+#chips{padding:8px 10px 7px;background:var(--panel2);border-bottom:1px solid var(--border);display:flex;flex-wrap:wrap;gap:4px}
+.chip{padding:3px 9px;border-radius:10px;font-size:9.5px;font-weight:700;cursor:pointer;border:1.5px solid;transition:all .17s;white-space:nowrap}
+.chip.all{border-color:var(--blue);color:var(--blue)}.chip.all.on{background:var(--blue);color:#fff}
+.chip.chiesa{border-color:#8b4513;color:#8b4513}.chip.chiesa.on{background:#8b4513;color:#fff}
+.chip.storico{border-color:var(--violet);color:var(--violet)}.chip.storico.on{background:var(--violet);color:#fff}
+.chip.porto{border-color:var(--teal);color:var(--teal)}.chip.porto.on{background:var(--teal);color:#fff}
+.chip.natura{border-color:var(--green);color:var(--green)}.chip.natura.on{background:var(--green);color:#fff}
+.chip.spiaggia{border-color:#1a7fbf;color:#1a7fbf}.chip.spiaggia.on{background:#1a7fbf;color:#fff}
+#tabs{display:flex;border-bottom:1px solid var(--border)}
+.tab{flex:1;text-align:center;padding:9px 2px 8px;font-size:9.5px;font-weight:700;letter-spacing:.3px;color:var(--text-s);cursor:pointer;border-bottom:2.5px solid transparent;transition:all .2s;text-transform:uppercase}
+.tab.on{color:var(--amber);border-bottom-color:var(--amber)}
+.tab:hover:not(.on){color:var(--text-m)}
+.tp{display:none;flex:1;overflow-y:auto;flex-direction:column}
+.tp.on{display:flex}
+.tp::-webkit-scrollbar{width:3px}
+.tp::-webkit-scrollbar-thumb{background:var(--border-m);border-radius:2px}
+
+/* ── LUOGHI ────────────────────────────── */
+#poi-n{font-size:8.5px;color:var(--text-s);padding:6px 12px 5px;background:var(--panel2);border-bottom:1px solid var(--border);letter-spacing:.5px;text-transform:uppercase}
+.pc{display:flex;gap:9px;padding:9px 11px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .12s;align-items:flex-start}
+.pc:hover,.pc.hi{background:var(--amber-l)}.pc:last-child{border-bottom:none}
+.pm{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;margin-top:1px}
+.pm.chiesa{background:#f5e6d8}.pm.storico{background:var(--violet-l)}.pm.porto{background:var(--teal-l)}
+.pm.natura{background:var(--green-l)}.pm.spiaggia{background:var(--blue-l)}
+.pb{flex:1;min-width:0}
+.pn{font-size:11.5px;font-weight:700;color:var(--text);margin-bottom:1px;line-height:1.2}
+.pd{font-size:10px;color:var(--text-m);line-height:1.35}
+.pt{font-size:9px;color:var(--text-s);margin-top:3px}
+.ptag{font-size:8px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;padding:1.5px 5px;border-radius:5px;display:inline-block;margin-bottom:2px}
+.ptag.chiesa{background:#f5e6d8;color:#8b4513}.ptag.storico{background:var(--violet-l);color:var(--violet)}
+.ptag.porto{background:var(--teal-l);color:var(--teal)}.ptag.natura{background:var(--green-l);color:var(--green)}
+.ptag.spiaggia{background:var(--blue-l);color:#1a7fbf}
+
+/* ── METEO ─────────────────────────────── */
+.wx-block{padding:12px 12px 10px;border-bottom:1px solid var(--border)}
+.wx-h{font-family:var(--fs);font-size:12.5px;font-weight:600;color:var(--blue);margin-bottom:8px}
+.wx-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-bottom:7px}
+.wx-cell{background:var(--panel2);border-radius:7px;padding:6px 8px;border:.5px solid var(--border)}
+.wx-lbl{font-size:7.5px;color:var(--text-s);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px}
+.wx-val{font-size:14px;font-weight:700;color:var(--text)}
+.wx-unit{font-size:8px;color:var(--text-s);margin-left:1px}
+.wx-cond{padding:7px 9px;background:var(--blue-l);border-radius:7px;font-size:11px;color:var(--blue);font-weight:600;margin-bottom:7px}
+.wx-bh{font-size:8px;color:var(--text-s);letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px}
+.wx-bars{display:flex;gap:3px;align-items:flex-end;height:46px}
+.wx-bw{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;height:100%;justify-content:flex-end}
+.wx-bar{width:100%;border-radius:2px 2px 0 0;min-height:2px;background:#b5d6ee}
+.wx-bar.wet{background:#1a7fbf}.wx-bar.storm{background:var(--amber)}
+.wx-bl{font-size:6.5px;color:var(--text-s)}
+.wx-upd{font-size:8px;color:var(--text-s);margin-top:5px;text-align:right}
+
+/* ── TRASPORTI ─────────────────────────── */
+.tr-s{border-bottom:1px solid var(--border)}
+.tr-h{padding:9px 11px 8px;display:flex;align-items:center;gap:8px;background:var(--panel2);border-bottom:1px solid var(--border);cursor:pointer}
+.tr-ico{font-size:15px}.tr-tx{flex:1}
+.tr-ti{font-size:11px;font-weight:700;color:var(--text)}.tr-su{font-size:9px;color:var(--text-s)}
+.tr-cv{font-size:10px;color:var(--text-s)}
+.tr-bd{padding:7px 9px 9px;display:none}.tr-bd.op{display:block}
+table.tt{width:100%;border-collapse:collapse;font-size:9.5px}
+table.tt th{font-size:8px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text-s);padding:3px 5px;border-bottom:1px solid var(--border);text-align:left}
+table.tt td{padding:4px 5px;border-bottom:1px solid var(--border);color:var(--text-m);vertical-align:top;line-height:1.4}
+table.tt tr:last-child td{border-bottom:none}
+table.tt td.dr{font-weight:700;color:var(--text);font-size:10px}
+table.tt td.du{color:var(--amber-d);font-weight:700;white-space:nowrap}
+.tr-note{font-size:7.5px;color:var(--text-s);padding:5px 5px 2px;font-style:italic;line-height:1.4}
+.tr-link{display:inline-block;margin-top:4px;font-size:8px;font-weight:700;color:var(--blue);text-decoration:none;background:var(--blue-l);padding:2px 8px;border-radius:6px}
+.tr-link:hover{background:#d0e8f5}
+
+/* ── SAPORI ────────────────────────────── */
+.sa-intro{padding:10px 12px 8px;background:#fdf6e3;border-bottom:1px solid rgba(181,134,13,.15);font-size:10.5px;color:var(--text-m);line-height:1.5}
+.sa-item{display:flex;align-items:flex-start;gap:10px;padding:9px 11px;border-bottom:1px solid var(--border)}
+.sa-item:last-child{border-bottom:none}
+.sa-ico{font-size:20px;flex-shrink:0;margin-top:1px}
+.sa-name{font-size:12px;font-weight:700;color:var(--text);margin-bottom:2px}
+.sa-desc{font-size:10px;color:var(--text-m);line-height:1.4}
+.sa-where{font-size:9px;color:var(--text-s);margin-top:2px}
+
+/* ── FOTO ──────────────────────────────── */
+.fo-intro{padding:10px 12px 8px;background:var(--amber-l);border-bottom:1px solid rgba(200,129,58,.18);font-size:10.5px;color:var(--text-m);line-height:1.5}
+.fo-intro a{color:var(--amber-d);font-weight:700;text-decoration:none}
+.fo-card{display:flex;align-items:flex-start;gap:10px;padding:9px 11px;border-bottom:1px solid var(--border)}
+.fo-card:last-of-type{border-bottom:none}
+.fo-thumb{width:46px;height:46px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.fo-name{font-size:11.5px;font-weight:700;color:var(--text);margin-bottom:2px}
+.fo-desc{font-size:10px;color:var(--text-m);line-height:1.35;margin-bottom:5px}
+.fo-links{display:flex;flex-wrap:wrap;gap:3px}
+.fl{font-size:8.5px;font-weight:700;padding:3px 8px;border-radius:7px;text-decoration:none;transition:opacity .15s}
+.fl:hover{opacity:.75}
+.fl.p{background:var(--amber);color:var(--dark)}.fl.s{background:var(--panel2);border:1px solid var(--border-m);color:var(--text-m)}
+.fo-copy{font-size:8.5px;color:var(--text-s);padding:10px 12px;text-align:center;border-top:1px solid var(--border)}
+
+/* ── MAP AREA ───────────────────────────── */
+#mapc{flex:1;position:relative;overflow:hidden}
+#map{width:100%;height:100%}
+
+/* ── MAP SIGNATURE ──────────────────────── */
+#map-sig{position:absolute;bottom:30px;left:10px;z-index:1000;background:rgba(24,18,10,.87);backdrop-filter:blur(5px);border:1px solid rgba(200,129,58,.3);border-radius:18px;padding:4px 12px 4px 8px;display:flex;align-items:center;gap:7px}
+#map-sig svg{flex-shrink:0}
+#map-sig-text{}
+#map-sig-name{font-family:var(--fs);font-size:11px;font-weight:600;color:var(--amber);line-height:1.1}
+#map-sig-url{font-size:8px;color:rgba(200,129,58,.5);letter-spacing:1.5px}
+
+/* ── MAP TILE SWITCHER ──────────────────── */
+#tile-sw{position:absolute;top:10px;right:10px;z-index:1000;display:flex;flex-direction:column;gap:3px}
+.tsw-btn{width:36px;height:36px;background:rgba(255,255,255,.93);backdrop-filter:blur(4px);border:1.5px solid rgba(0,0,0,.15);border-radius:8px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .18s;box-shadow:0 1px 4px rgba(0,0,0,.12);position:relative}
+.tsw-btn:hover{border-color:var(--amber);transform:scale(1.05)}
+.tsw-btn.on{border-color:var(--amber);background:var(--amber-l);box-shadow:0 0 0 2px rgba(200,129,58,.25)}
+.tsw-btn title{display:none}
+
+/* ── GEOLOCATE BUTTON ───────────────────── */
+#geo-btn{position:absolute;bottom:76px;right:10px;z-index:1000;width:36px;height:36px;background:rgba(255,255,255,.93);backdrop-filter:blur(4px);border:1.5px solid rgba(0,0,0,.15);border-radius:8px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .18s;box-shadow:0 1px 4px rgba(0,0,0,.12)}
+#geo-btn:hover{border-color:#4285F4;transform:scale(1.05)}
+#geo-btn.active{border-color:#4285F4;background:#eaf2ff}
+#geo-btn.loading{animation:geo-spin 1s linear infinite}
+@keyframes geo-spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+
+/* ── ZOOM CUSTOM ────────────────────────── */
+#mzoom{position:absolute;bottom:110px;right:10px;z-index:1000;display:flex;flex-direction:column;gap:3px}
+.zbtn{width:36px;height:36px;background:rgba(255,255,255,.93);border:1.5px solid rgba(0,0,0,.15);color:var(--dark);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;border-radius:8px;backdrop-filter:blur(4px);transition:all .15s;box-shadow:0 1px 4px rgba(0,0,0,.12)}
+.zbtn:hover{border-color:var(--amber);background:var(--amber-l)}
+
+/* ── MAP TILE LABEL ─────────────────────── */
+#tile-label{position:absolute;bottom:30px;right:10px;z-index:1000;background:rgba(255,255,255,.82);backdrop-filter:blur(4px);border-radius:6px;padding:2px 8px;font-size:8.5px;font-weight:700;color:var(--text-m);letter-spacing:.5px;pointer-events:none}
+
+/* ── LEAFLET ────────────────────────────── */
+.leaflet-control-attribution{background:rgba(255,255,255,.7)!important;font-size:7.5px!important}
+.leaflet-control-zoom{display:none!important}
+.leaflet-popup-content-wrapper{border-radius:10px!important;box-shadow:0 4px 18px rgba(0,0,0,.12)!important;border:.5px solid rgba(0,0,0,.1)!important}
+.leaflet-popup-content{font-family:var(--fb);font-size:11.5px;margin:10px 13px!important}
+
+/* ── MARKERS ────────────────────────────── */
+.mk{display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;border:2.5px solid #fff;font-size:13px;box-shadow:0 2px 7px rgba(0,0,0,.2);cursor:pointer;transition:transform .15s}
+.mk:hover{transform:scale(1.13)}
+.mk.chiesa{background:#8b4513}.mk.storico{background:var(--violet)}.mk.porto{background:var(--teal)}
+.mk.natura{background:var(--green)}.mk.spiaggia{background:#1a7fbf}
+
+.home-mk{width:12px;height:12px;border-radius:50%;background:var(--amber);border:2.5px solid #fff;animation:rp 2.2s infinite}
+@keyframes rp{0%,100%{box-shadow:0 0 0 0 rgba(200,129,58,.5)}70%{box-shadow:0 0 0 11px rgba(200,129,58,0)}}
+
+.user-mk{width:14px;height:14px;border-radius:50%;background:#4285F4;border:2.5px solid #fff;box-shadow:0 0 0 0 rgba(66,133,244,.5);animation:up 2s infinite}
+@keyframes up{0%,100%{box-shadow:0 0 0 0 rgba(66,133,244,.5)}70%{box-shadow:0 0 0 10px rgba(66,133,244,0)}}
+
+/* ── POPUP ──────────────────────────────── */
+.pu-name{font-family:var(--fs);font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px}
+.pu-tag{font-size:8.5px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;padding:2px 7px;border-radius:6px;display:inline-block;margin-bottom:5px}
+.pu-tag.chiesa{background:#f5e6d8;color:#8b4513}.pu-tag.storico{background:var(--violet-l);color:var(--violet)}
+.pu-tag.porto{background:var(--teal-l);color:var(--teal)}.pu-tag.natura{background:var(--green-l);color:var(--green)}
+.pu-tag.spiaggia{background:var(--blue-l);color:#1a7fbf}
+.pu-desc{font-size:10px;color:var(--text-m);line-height:1.5;margin-bottom:4px}
+.pu-tip{font-size:9px;color:var(--text-s);border-top:.5px solid var(--border);padding-top:4px;margin-top:4px}
+.pu-actions{display:flex;gap:5px;margin-top:7px;flex-wrap:wrap}
+.pu-gmaps{font-size:8.5px;font-weight:700;background:#4285F4;color:#fff;padding:4px 9px;border-radius:6px;text-decoration:none}
+.pu-gmaps:hover{background:#3367d6}
+.pu-print{font-size:8.5px;font-weight:700;background:var(--amber);color:var(--dark);padding:4px 9px;border-radius:6px;text-decoration:none}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div id="hdr">
+  <a id="brand" href="https://fotolapissable.it" target="_blank">
+    <!-- Logo SVG orbitale / atomico fotolapissable -->
+    <svg id="brand-logo" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="20" cy="20" rx="17.5" ry="6.5" stroke="#C8813A" stroke-width="1.8" transform="rotate(-38 20 20)"/>
+      <ellipse cx="20" cy="20" rx="17.5" ry="6.5" stroke="#C8813A" stroke-width="1.8" transform="rotate(38 20 20)"/>
+      <circle cx="20" cy="20" r="3.5" fill="#C8813A"/>
+      <circle cx="20" cy="6.5" r="2" fill="#C8813A" opacity=".5" transform="rotate(-38 20 20)"/>
+    </svg>
+    <div><div id="brand-name">fotolapissable</div><div id="brand-url">fotolapissable.it</div></div>
+  </a>
+  <div id="hdr-sub">Riposto · Etna · Ionio — Fine Art &amp; Stock Photography</div>
+  <div id="hdr-r">
+    <div id="wx-chip"><span id="wx-t">--°</span><span id="wx-d">…</span></div>
+    <button id="lang-btn" onclick="toggleLang()">IT / EN</button>
+  </div>
+</div>
+
+<div id="main">
+<!-- SIDEBAR -->
+<div id="sb">
+  <div id="chips">
+    <button class="chip all on"   onclick="fc('all')"      data-cat="all"      id="ch-all">Tutti</button>
+    <button class="chip chiesa"   onclick="fc('chiesa')"   data-cat="chiesa"   id="ch-chiesa">⛪ Chiese</button>
+    <button class="chip storico"  onclick="fc('storico')"  data-cat="storico"  id="ch-storico">🏛 Storico</button>
+    <button class="chip porto"    onclick="fc('porto')"    data-cat="porto"    id="ch-porto">⚓ Porto</button>
+    <button class="chip natura"   onclick="fc('natura')"   data-cat="natura"   id="ch-natura">🌿 Natura</button>
+    <button class="chip spiaggia" onclick="fc('spiaggia')" data-cat="spiaggia" id="ch-spiaggia">🏖 Spiagge</button>
+  </div>
+  <div id="tabs">
+    <div class="tab on" id="tab-l" onclick="st('l')">🗺 Luoghi</div>
+    <div class="tab"    id="tab-m" onclick="st('m')">🌤 Meteo</div>
+    <div class="tab"    id="tab-t" onclick="st('t')">🚌 Trasporti</div>
+    <div class="tab"    id="tab-s" onclick="st('s')">🍋 Sapori</div>
+    <div class="tab"    id="tab-f" onclick="st('f')">📷 Foto</div>
+  </div>
+
+  <!-- LUOGHI -->
+  <div class="tp on" id="p-l"><div id="poi-n"></div><div id="poi-list"></div></div>
+
+  <!-- METEO -->
+  <div class="tp" id="p-m">
+    <div class="wx-block">
+      <div class="wx-h" id="wx-h">Condizioni attuali · Riposto</div>
+      <div class="wx-cond" id="wx-cond">Caricamento…</div>
+      <div class="wx-grid">
+        <div class="wx-cell"><div class="wx-lbl" id="wl-t">Temp.</div><div class="wx-val" id="wv-t">--</div></div>
+        <div class="wx-cell"><div class="wx-lbl" id="wl-w">Vento</div><div class="wx-val" id="wv-w">--</div></div>
+        <div class="wx-cell"><div class="wx-lbl" id="wl-c">Nuvole</div><div class="wx-val" id="wv-c">--</div></div>
+      </div>
+      <div class="wx-bh" id="wx-bh">Precipitazioni prossime 6 ore</div>
+      <div class="wx-bars" id="wx-bars"></div>
+      <div class="wx-upd" id="wx-upd"></div>
+    </div>
+  </div>
+
+  <!-- TRASPORTI -->
+  <div class="tp" id="p-t">
+    <div class="tr-s">
+      <div class="tr-h" onclick="tgl('t1')"><span class="tr-ico">🚂</span>
+        <div class="tr-tx"><div class="tr-ti">Trenitalia — Giarre-Riposto</div><div class="tr-su">Linea Messina–Catania · 1.5 km dal centro</div></div>
+        <span class="tr-cv" id="cv1">▶</span></div>
+      <div class="tr-bd" id="bd1">
+        <table class="tt"><tr><th>Direzione</th><th>Orari indicativi</th><th>Durata</th></tr>
+          <tr><td class="dr">Catania C.le</td><td>05:42·06:55·08:12·09:30·11:15·13:40·15:20·17:05·18:50·20:30</td><td class="du">~50 min</td></tr>
+          <tr><td class="dr">Messina C.le</td><td>06:15·07:40·09:05·10:55·12:20·14:10·16:30·18:15·20:00·21:45</td><td class="du">~40 min</td></tr>
+        </table>
+        <div class="tr-note">⚠ Orari indicativi. Partenze in tempo reale:</div>
+        <a class="tr-link" href="https://iechub.rfi.it/ArriviPartenze/arrivalsdepartures/Monitor?placeId=1432&arrivals=True" target="_blank">🔴 Partenze live — RFI</a>
+      </div>
+    </div>
+    <div class="tr-s">
+      <div class="tr-h" onclick="tgl('t2')"><span class="tr-ico">🌋</span>
+        <div class="tr-tx"><div class="tr-ti">Circumetnea (FCE) — Stazione Riposto</div><div class="tr-su">Giro panoramico intorno all'Etna</div></div>
+        <span class="tr-cv" id="cv2">▶</span></div>
+      <div class="tr-bd" id="bd2">
+        <table class="tt"><tr><th>Direzione</th><th>Orari indicativi</th><th>Durata</th></tr>
+          <tr><td class="dr">Catania Borgo</td><td>06:30·09:00·12:30·15:30·17:00</td><td class="du">~3h 30min</td></tr>
+        </table>
+        <div class="tr-note">⚠ Orari indicativi.</div>
+        <a class="tr-link" href="https://www.circumetnea.it/le-nostre-linee/" target="_blank">🌋 circumetnea.it</a>
+      </div>
+    </div>
+    <div class="tr-s">
+      <div class="tr-h" onclick="tgl('t3')"><span class="tr-ico">🚌</span>
+        <div class="tr-tx"><div class="tr-ti">Zappalà e Torrisi</div><div class="tr-su">Giarre · Acireale · Catania · Fermata: Piazza del Commercio</div></div>
+        <span class="tr-cv" id="cv3">▶</span></div>
+      <div class="tr-bd" id="bd3">
+        <table class="tt"><tr><th>Destinazione</th><th>Frequenza</th><th>Durata</th></tr>
+          <tr><td class="dr">Giarre · Acireale · Catania</td><td>Ogni ~60 min · 06:00–21:00</td><td class="du">~1h 15</td></tr>
+        </table>
+        <div class="tr-note">⚠ Fermata: Piazza del Commercio (di fronte Pescheria)</div>
+        <a class="tr-link" href="https://www.zappala-torrisi.it/orari-extraurbani/" target="_blank">🚌 zappala-torrisi.it</a>
+      </div>
+    </div>
+    <div class="tr-s">
+      <div class="tr-h" onclick="tgl('t4')"><span class="tr-ico">🚌</span>
+        <div class="tr-tx"><div class="tr-ti">Interbus</div><div class="tr-su">Giarre · Catania · Taormina</div></div>
+        <span class="tr-cv" id="cv4">▶</span></div>
+      <div class="tr-bd" id="bd4">
+        <table class="tt"><tr><th>Destinazione</th><th>Orari indicativi</th><th>Durata</th></tr>
+          <tr><td class="dr">Giarre · Catania · Taormina</td><td>08:30·11:00·14:30·17:00</td><td class="du">~35–75 min</td></tr>
+        </table>
+        <div class="tr-note">⚠ Orari indicativi.</div>
+        <a class="tr-link" href="https://www.interbus.it/travel-plan/fermata.php?stopid=699" target="_blank">🚌 interbus.it</a>
+      </div>
+    </div>
+    <div class="tr-s">
+      <div class="tr-h" onclick="tgl('t5')"><span class="tr-ico">🚐</span>
+        <div class="tr-tx"><div class="tr-ti">AST — Linee locali</div><div class="tr-su">Fermata: Piazza del Popolo</div></div>
+        <span class="tr-cv" id="cv5">▶</span></div>
+      <div class="tr-bd" id="bd5">
+        <table class="tt"><tr><th>Linea</th><th>Frequenza</th><th>Durata</th></tr>
+          <tr><td class="dr">Giarre centro</td><td>Frequente · linea urbana</td><td class="du">~5 min</td></tr>
+          <tr><td class="dr">Torre Archirafi</td><td>Linea locale</td><td class="du">~8 min</td></tr>
+          <tr><td class="dr">Fondachello</td><td>Stagionale estivo</td><td class="du">~10 min</td></tr>
+        </table>
+        <div class="tr-note">⚠ aziendasicilianatrasporti.it</div>
+        <a class="tr-link" href="https://www.google.com/maps/place/AST+bus+stop/@37.7301899,15.206879,17z" target="_blank">📍 Fermata su Maps</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- SAPORI -->
+  <div class="tp" id="p-s">
+    <div class="sa-intro">I sapori autentici di Riposto: mare, vulcano e tradizione siciliana in ogni piatto.</div>
+    <div class="sa-item"><span class="sa-ico">🍋</span><div><div class="sa-name">Granita con brioche col tuppo</div><div class="sa-desc">La colazione ripostese per eccellenza. Granita di limone, mandorla o fragola con la tipica brioche siciliana.</div><div class="sa-where">📍 Bar del centro · Dalle 07:30</div></div></div>
+    <div class="sa-item"><span class="sa-ico">🐟</span><div><div class="sa-name">Pesce fresco al porto</div><div class="sa-desc">Spada, gamberoni, suri, polpi. Sul muretto di fronte alla piazza Franco Battiato, pesce freschissimo ogni mattina.</div><div class="sa-where">📍 Muretto Piazza Franco Battiato · 06:00–09:00 · Solo contanti</div></div></div>
+    <div class="sa-item"><span class="sa-ico">🍅</span><div><div class="sa-name">Pasta alla Norma</div><div class="sa-desc">Il piatto simbolo della cucina etnea: melanzane fritte, pomodoro, basilico e ricotta salata stagionata.</div><div class="sa-where">📍 Trattorie locali · Tutto l'anno</div></div></div>
+    <div class="sa-item"><span class="sa-ico">🍆</span><div><div class="sa-name">Caponata siciliana</div><div class="sa-desc">Antipasto agrodolce di melanzane, olive, capperi, pomodoro e sedano. Ogni famiglia ha la propria ricetta.</div><div class="sa-where">📍 Rosticcerie e gastronomie · Anche da asporto</div></div></div>
+    <div class="sa-item"><span class="sa-ico">🍷</span><div><div class="sa-name">Vino Etna DOC</div><div class="sa-desc">Nerello Mascalese e Carricante prodotti sulle pendici vulcaniche. Tra le etichette più pregiate della Sicilia.</div><div class="sa-where">📍 Enoteche locali · Cantine dell'Etna a 20 min</div></div></div>
+    <div class="sa-item"><span class="sa-ico">🍊</span><div><div class="sa-name">Agrumi dell'Etna</div><div class="sa-desc">Arance, limoni e mandarini coltivati su terreno lavico. Aromi e sapori impossibili da trovare altrove.</div><div class="sa-where">📍 Mercato al centro · Negozi di frutta e verdura</div></div></div>
+    <div class="sa-item"><span class="sa-ico">🍰</span><div><div class="sa-name">Dolci tradizionali</div><div class="sa-desc">Cannoli con ricotta fresca, cassata siciliana, paste di mandorla, iris fritto.</div><div class="sa-where">📍 Pasticcerie del centro · Tutto l'anno</div></div></div>
+    <div class="sa-item"><span class="sa-ico">🧅</span><div><div class="sa-name">Arancine, Sfingi e street food</div><div class="sa-desc">Arancine al ragù o al burro, sfincioni, panelle. Le Sfingi nel pomeriggio alla piazzetta di Viale Immacolata.</div><div class="sa-where">📍 Rosticcerie · Bar · Sfingi: Viale Immacolata (pomeriggio)</div></div></div>
+  </div>
+
+  <!-- FOTO -->
+  <div class="tp" id="p-f">
+    <div class="fo-intro">Fotografia di paesaggio, macro e natura a Riposto e sull'Etna. Stampe d'arte e licenze su <a href="https://fotolapissable.it" target="_blank">fotolapissable.it</a></div>
+    <div class="fo-card">
+      <div class="fo-thumb" style="background:linear-gradient(135deg,#1a0e06,#6b2d0a)">🌋</div>
+      <div><div class="fo-name">Etna &amp; Paesaggi</div><div class="fo-desc">Crateri, colate laviche, alba sull'Ionio. Canon R5 · RF 14-35mm f/4L IS USM.</div>
+      <div class="fo-links"><a class="fl p" href="https://www.saal-digital.it" target="_blank">🖼 Stampa</a><a class="fl s" href="https://www.alamy.com" target="_blank">Alamy</a><a class="fl s" href="https://www.behance.net/fotolapis5c33" target="_blank">Behance</a></div></div>
+    </div>
+    <div class="fo-card">
+      <div class="fo-thumb" style="background:linear-gradient(135deg,#0a1f0a,#1a5a1a)">🦋</div>
+      <div><div class="fo-name">Macro &amp; Insetti</div><div class="fo-desc">Fauna endemica alle falde dell'Etna. RF 35mm Macro + tubo 13mm. Specie rare.</div>
+      <div class="fo-links"><a class="fl p" href="https://www.saal-digital.it" target="_blank">🖼 Stampa</a><a class="fl s" href="https://stock.adobe.com" target="_blank">Adobe</a><a class="fl s" href="https://www.shutterstock.com" target="_blank">Shutterstock</a></div></div>
+    </div>
+    <div class="fo-card">
+      <div class="fo-thumb" style="background:linear-gradient(135deg,#061a2a,#0d6e87)">🌊</div>
+      <div><div class="fo-name">Mare &amp; Ionio</div><div class="fo-desc">Costa ionica da Riposto a Taormina. Alba, barche, luci d'oro. RF 16-35mm.</div>
+      <div class="fo-links"><a class="fl p" href="https://www.saal-digital.it" target="_blank">🖼 Stampa</a><a class="fl s" href="https://www.alamy.com" target="_blank">Alamy</a><a class="fl s" href="https://www.behance.net/fotolapis5c33" target="_blank">Behance</a></div></div>
+    </div>
+    <div class="fo-card">
+      <div class="fo-thumb" style="background:linear-gradient(135deg,#2a1a08,#a06810)">✈️</div>
+      <div><div class="fo-name">Sicilia &amp; Travel</div><div class="fo-desc">Sicilia, Marocco, Malaysia, Bulgaria, New York. Fotografia di viaggio per editoriale e stock.</div>
+      <div class="fo-links"><a class="fl p" href="https://www.saal-digital.it" target="_blank">🖼 Stampa</a><a class="fl s" href="https://stock.adobe.com" target="_blank">Adobe</a><a class="fl s" href="https://www.shutterstock.com" target="_blank">Shutterstock</a></div></div>
+    </div>
+    <div class="fo-copy">© Michele Cipriano · fotolapissable.it · tutti i diritti riservati</div>
+  </div>
+</div>
+
+<!-- MAP -->
+<div id="mapc">
+  <div id="map"></div>
+
+  <!-- Tile switcher -->
+  <div id="tile-sw">
+    <button class="tsw-btn on"  onclick="setTile('voyager')"   id="tsw-voyager"   title="Mappa">🗺</button>
+    <button class="tsw-btn"     onclick="setTile('satellite')" id="tsw-satellite"  title="Satellite">🛰</button>
+    <button class="tsw-btn"     onclick="setTile('topo')"      id="tsw-topo"       title="Terreno">🌿</button>
+    <button class="tsw-btn"     onclick="setTile('dark')"      id="tsw-dark"       title="Scuro">🌙</button>
+  </div>
+
+  <!-- Zoom -->
+  <div id="mzoom">
+    <button class="zbtn" onclick="map.zoomIn()">+</button>
+    <button class="zbtn" onclick="map.zoomOut()">−</button>
+  </div>
+
+  <!-- Geolocate -->
+  <button id="geo-btn" onclick="locateMe()" title="Dove sono">📍</button>
+
+  <!-- Tile label -->
+  <div id="tile-label">Mappa</div>
+
+  <!-- Brand signature -->
+  <div id="map-sig">
+    <svg width="22" height="22" viewBox="0 0 40 40" fill="none">
+      <ellipse cx="20" cy="20" rx="17.5" ry="6.5" stroke="#C8813A" stroke-width="2" transform="rotate(-38 20 20)"/>
+      <ellipse cx="20" cy="20" rx="17.5" ry="6.5" stroke="#C8813A" stroke-width="2" transform="rotate(38 20 20)"/>
+      <circle cx="20" cy="20" r="3.5" fill="#C8813A"/>
+    </svg>
+    <div id="map-sig-text">
+      <div id="map-sig-name">fotolapissable</div>
+      <div id="map-sig-url">fotolapissable.it</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+const POS={lat:37.7298,lng:15.2011};
+let lang='it', activeCat='all', userMarker=null, userCircle=null;
+
+const T={
+  it:{
+    tabL:'🗺 Luoghi',tabM:'🌤 Meteo',tabT:'🚌 Trasporti',tabS:'🍋 Sapori',tabF:'📷 Foto',
+    chAll:'Tutti',chCh:'⛪ Chiese',chSt:'🏛 Storico',chPo:'⚓ Porto',chNa:'🌿 Natura',chSp:'🏖 Spiagge',
+    poiN:'{n} luoghi',
+    wxH:'Condizioni attuali · Riposto',wlT:'Temp.',wlW:'Vento',wlC:'Nuvole',wxBH:'Precipitazioni prossime 6 ore',wxUpd:'Aggiornamento: ',
+    catLabel:{chiesa:'Chiesa',storico:'Storico / Civile',porto:'Porto & Mare',natura:'Natura & Parco',spiaggia:'Spiaggia'},
+    gmaps:'📍 Apri in Maps',print:'🖼 Acquista stampa',
+    geoTitle:'La tua posizione',geoAccuracy:'Precisione: ~{m} m',
+    tileLabels:{voyager:'Mappa',satellite:'Satellite',topo:'Terreno',dark:'Scuro'},
+    wxDesc:{0:'☀️ Cielo sereno',1:'🌤 Quasi sereno',2:'⛅ Parziale',3:'☁️ Coperto',45:'🌫 Nebbia',51:'🌦 Pioggerella',61:'🌧 Pioggia',80:'⛈ Rovesci',95:'⚡ Temporale'},
+  },
+  en:{
+    tabL:'🗺 Places',tabM:'🌤 Weather',tabT:'🚌 Transport',tabS:'🍋 Food',tabF:'📷 Photos',
+    chAll:'All',chCh:'⛪ Churches',chSt:'🏛 Historic',chPo:'⚓ Harbour',chNa:'🌿 Nature',chSp:'🏖 Beaches',
+    poiN:'{n} places',
+    wxH:'Current conditions · Riposto',wlT:'Temp.',wlW:'Wind',wlC:'Cloud',wxBH:'Precipitation next 6 hours',wxUpd:'Updated: ',
+    catLabel:{chiesa:'Church',storico:'Historic / Civil',porto:'Harbour & Sea',natura:'Nature & Park',spiaggia:'Beach'},
+    gmaps:'📍 Open in Maps',print:'🖼 Buy print',
+    geoTitle:'Your position',geoAccuracy:'Accuracy: ~{m} m',
+    tileLabels:{voyager:'Map',satellite:'Satellite',topo:'Terrain',dark:'Dark'},
+    wxDesc:{0:'☀️ Clear',1:'🌤 Mostly clear',2:'⛅ Partly cloudy',3:'☁️ Overcast',45:'🌫 Fog',51:'🌦 Drizzle',61:'🌧 Rain',80:'⛈ Showers',95:'⚡ Thunderstorm'},
+  }
+};
+
+// ── MAP ──
+const map=L.map('map',{center:[POS.lat,POS.lng],zoom:15,zoomControl:false});
+
+const TILES={
+  voyager: L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{attribution:'©<a href="https://openstreetmap.org">OSM</a> ©<a href="https://carto.com">CartoDB</a>',subdomains:'abcd',maxZoom:19}),
+  satellite: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{attribution:'©<a href="https://www.esri.com">Esri</a>',maxZoom:19}),
+  topo: L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',{attribution:'©<a href="https://opentopomap.org">OpenTopoMap</a>',subdomains:'abc',maxZoom:17}),
+  dark: L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{attribution:'©<a href="https://openstreetmap.org">OSM</a> ©<a href="https://carto.com">CartoDB</a>',subdomains:'abcd',maxZoom:19}),
+};
+let currentTile='voyager';
+TILES.voyager.addTo(map);
+
+function setTile(name){
+  if(name===currentTile)return;
+  map.removeLayer(TILES[currentTile]);
+  TILES[name].addTo(map);
+  TILES[name].bringToBack();
+  document.querySelectorAll('.tsw-btn').forEach(b=>b.classList.remove('on'));
+  document.getElementById('tsw-'+name).classList.add('on');
+  document.getElementById('tile-label').textContent=T[lang].tileLabels[name];
+  currentTile=name;
+}
+
+// Home marker
+L.marker([POS.lat,POS.lng],{icon:L.divIcon({className:'',html:'<div class="home-mk"></div>',iconSize:[12,12],iconAnchor:[6,6]})})
+  .addTo(map).bindPopup('<b style="font-family:var(--fs);color:var(--amber)">Riposto, CT</b><br><span style="font-size:10px">fotolapissable.it</span>');
+
+// ── GEOLOCATION ──
+function locateMe(){
+  if(!navigator.geolocation){alert('Geolocalizzazione non disponibile su questo browser.');return;}
+  const btn=document.getElementById('geo-btn');
+  btn.classList.add('loading');
+  navigator.geolocation.getCurrentPosition(
+    pos=>{
+      btn.classList.remove('loading');
+      btn.classList.add('active');
+      const {latitude:lat,longitude:lng,accuracy:acc}=pos.coords;
+      if(userMarker)map.removeLayer(userMarker);
+      if(userCircle)map.removeLayer(userCircle);
+      userCircle=L.circle([lat,lng],{radius:acc,color:'#4285F4',fillColor:'#4285F4',fillOpacity:.08,weight:1.5,dashArray:'4,4'}).addTo(map);
+      userMarker=L.marker([lat,lng],{icon:L.divIcon({className:'',html:'<div class="user-mk"></div>',iconSize:[14,14],iconAnchor:[7,7]})}).addTo(map);
+      const t=T[lang];
+      userMarker.bindPopup(`<div class="pu-name">${t.geoTitle}</div><div class="pu-tip">${t.geoAccuracy.replace('{m}',Math.round(acc))}</div>`).openPopup();
+      map.flyTo([lat,lng],16,{duration:1});
+    },
+    err=>{
+      btn.classList.remove('loading');
+      const msgs={1:'Permesso negato.',2:'Posizione non disponibile.',3:'Timeout.'};
+      alert('Geolocalizzazione: '+(msgs[err.code]||err.message));
+    },
+    {enableHighAccuracy:true,timeout:10000,maximumAge:0}
+  );
+}
+
+// ── POI DATA ──
+const POIS=[
+  {id:1,cat:'chiesa',ico:'⛪',
+    it:{name:'Duomo di San Pietro',desc:"La chiesa matrice di Riposto, dedicata al patrono San Pietro. Facciata neoclassica ispirata alla Basilica di San Giovanni in Laterano. Pregevole organo a canne e opere d'arte sacra.",tip:'📍 Centro storico · Visita libera'},
+    en:{name:'Cathedral of San Pietro',desc:"Riposto's main church. Neoclassical façade inspired by the Basilica of San Giovanni in Laterano. Notable pipe organ and sacred art.",tip:'📍 Historic centre · Free entry'},
+    lat:37.7322,lng:15.2041},
+  {id:2,cat:'chiesa',ico:'⛪',
+    it:{name:'Chiesa della Madonna della Lettera',desc:"Il luogo di culto più antico del comune, origini nel XIV secolo. Storicamente legata alla devozione dei marinai ripostesi.",tip:'📍 Piazza del Commercio · Architettura storica · Visite guidate'},
+    en:{name:'Church of Madonna della Lettera',desc:"The oldest place of worship in the municipality, 14th century. Linked to the devotion of Riposto's sailors.",tip:'📍 Piazza del Commercio · Historic architecture · Guided tours'},
+    lat:37.7331,lng:15.2052},
+  {id:3,cat:'chiesa',ico:'⛪',
+    it:{name:'Chiesa di Maria SS. del Carmelo',desc:'Edificata nel XIX secolo, punto di riferimento spirituale e architettonico. Linee neoclassiche sobrie, legata alla storica festa del Carmine.',tip:'📍 Centro storico · Festa del Carmine a luglio'},
+    en:{name:'Church of Maria SS. del Carmelo',desc:'Built in the 19th century. Sober neoclassical lines, linked to the Feast of Carmine.',tip:'📍 Historic centre · Feast of Carmine in July'},
+    lat:37.7292,lng:15.2067},
+  {id:4,cat:'storico',ico:'🏛',
+    it:{name:'Palazzo Municipale',desc:"Costruito nel XIX secolo, simbolo dell'autonomia comunale. Elegante architettura affacciata sulla piazza principale.",tip:'📍 Piazza principale'},
+    en:{name:'Town Hall',desc:"Built in the 19th century, symbol of Riposto's municipal autonomy. Elegant architecture overlooking the main square.",tip:'📍 Main square'},
+    lat:37.7318,lng:15.2039},
+  {id:5,cat:'storico',ico:'🏺',
+    it:{name:'Museo delle Tradizioni Marinare',desc:"Spazio espositivo dedicato alla memoria storica e alle tradizioni della marineria ripostese e delle attività agricole legate al territorio.",tip:'📍 Centro · Ingresso su richiesta'},
+    en:{name:'Museum of Maritime Traditions',desc:"Exhibition space dedicated to Riposto's fishing heritage, tools and agricultural traditions.",tip:'📍 Town centre · Entry on request'},
+    lat:37.7315,lng:15.2035},
+  {id:6,cat:'storico',ico:'🏰',
+    it:{name:'Borgo di Torre Archirafi',desc:"Frazione marinara a sud, con borgo di pescatori e costa di ciottoli lavici. Il nome deriva da un'antica torre di avvistamento spagnola contro i pirati saraceni.",tip:'📍 3 km a sud · Bus AST'},
+    en:{name:'Torre Archirafi Village',desc:"Fishing hamlet to the south with lava-cobbled coast. Named after a Spanish watchtower against Saracen pirate raids.",tip:'📍 3 km south · Bus AST'},
+    lat:37.7125,lng:15.2132},
+  {id:7,cat:'natura',ico:'🌿',
+    it:{name:'Villa Comunale "Edoardo Pantano"',desc:"Storico giardino pubblico intitolato al patriota Edoardo Pantano. Vegetazione esotica e mediterranea, viali tranquilli vicino al mare.",tip:'📍 Centro · Ingresso libero'},
+    en:{name:'Villa Comunale "Edoardo Pantano"',desc:"Historic public garden named after the patriot Edoardo Pantano. Exotic and Mediterranean vegetation, peaceful paths near the sea.",tip:'📍 Town centre · Free entry'},
+    lat:37.7300,lng:15.1988},
+  {id:8,cat:'porto',ico:'⚓',
+    it:{name:"Porto dell'Etna — Marina di Riposto",desc:"Moderno porto turistico inaugurato nei primi anni 2000. Storicamente fulcro dell'esportazione del vino etneo verso l'Europa nel XIX secolo.",tip:'📍 Darsena turistica · Pesca sportiva'},
+    en:{name:"Porto dell'Etna — Marina di Riposto",desc:'Modern tourist marina opened in the early 2000s. Historically the hub for exporting Etna wine across 19th-century Europe.',tip:'📍 Tourist marina · Sport fishing'},
+    lat:37.7313,lng:15.2079},
+  {id:9,cat:'porto',ico:'🐟',
+    it:{name:'Porto Peschereccio',desc:"Pescherecci che rientrano all'alba. Sul muretto di fronte alla piazza Franco Battiato: spada, suri, gamberoni e polpi freschissimi ogni mattina.",tip:'🕕 06:00–09:00 · Solo contanti'},
+    en:{name:'Fishing Harbour',desc:"Fishing boats at dawn. On the seawall in front of Piazza Franco Battiato: swordfish, horse mackerel, prawns and octopus every morning.",tip:'🕕 06:00–09:00 · Cash only'},
+    lat:37.7291,lng:15.2079},
+  {id:10,cat:'spiaggia',ico:'🏖',
+    it:{name:'Lungomare e Spiaggia di Riposto',desc:"Litorale ciottoloso con vista sull'Etna. Spiaggia libera, facilmente raggiungibile a piedi dal centro.",tip:'🌊 Stagione balneare: maggio–settembre'},
+    en:{name:'Riposto Seafront & Beach',desc:"Pebbly shoreline with Etna views. Free beach, easy walk from the town centre.",tip:'🌊 Swimming season: May–September'},
+    lat:37.7272,lng:15.2108},
+  {id:11,cat:'spiaggia',ico:'🏖',
+    it:{name:'Fondachello',desc:'Frazione balneare a nord con spiaggia di sabbia fine, locali estivi e atmosfera rilassata. Ottimo punto verso la Riserva del Fiumefreddo.',tip:'📍 5 km a nord · Bus stagionale'},
+    en:{name:'Fondachello',desc:"Riposto's northern seaside hamlet with fine sandy beach and summer clubs. Good base for the Fiumefreddo Reserve.",tip:'📍 5 km north · Seasonal bus'},
+    lat:37.7485,lng:15.1952},
+  {id:12,cat:'spiaggia',ico:'🪨',
+    it:{name:'Spiaggetta dei Tre Massi',desc:"Spiaggetta libera tra le barche dei pescatori. Entrata di fronte al Santuario della Lettera. Angolo autentico e poco frequentato.",tip:'🌊 Accesso libero · Stagione: maggio–settembre'},
+    en:{name:'Spiaggetta dei Tre Massi',desc:"A small free beach among fishing boats. Entrance opposite the Santuario della Lettera. Authentic and quiet.",tip:'🌊 Free access · Season: May–September'},
+    lat:37.7337,lng:15.2055},
+];
+
+// ── MARKERS ──
+const mrks={};
+function mkIco(p){return L.divIcon({className:'',html:`<div class="mk ${p.cat}">${p.ico}</div>`,iconSize:[32,32],iconAnchor:[16,16],popupAnchor:[0,-18]})}
+function gmUrl(p){return `https://www.google.com/maps?q=${encodeURIComponent(p[lang].name)}&ll=${p.lat},${p.lng}`;}
+function mkPop(p){
+  const d=p[lang],t=T[lang],lbl=t.catLabel[p.cat]||p.cat;
+  const printBtn=(p.cat==='porto'||p.cat==='spiaggia')?`<a class="pu-print" href="https://www.saal-digital.it" target="_blank">${t.print}</a>`:'';
+  return `<div class="pu-name">${d.name}</div><span class="pu-tag ${p.cat}">${lbl}</span><div class="pu-desc">${d.desc}</div><div class="pu-tip">${d.tip}</div><div class="pu-actions"><a class="pu-gmaps" href="${gmUrl(p)}" target="_blank">${t.gmaps}</a>${printBtn}</div>`;
+}
+
+POIS.forEach(p=>{
+  const m=L.marker([p.lat,p.lng],{icon:mkIco(p)}).addTo(map);
+  m.bindPopup(mkPop(p),{maxWidth:260});
+  m.on('click',()=>flyTo(p.id));
+  mrks[p.id]=m;
+});
+
+function flyTo(id){
+  const p=POIS.find(x=>x.id===id);if(!p)return;
+  map.flyTo([p.lat,p.lng],17,{duration:.8});
+  setTimeout(()=>mrks[id].openPopup(),850);
+  document.querySelectorAll('.pc').forEach(c=>c.classList.remove('hi'));
+  const c=document.querySelector(`.pc[data-id="${id}"]`);
+  if(c){c.classList.add('hi');c.scrollIntoView({behavior:'smooth',block:'nearest'});}
+}
+
+function fc(cat){
+  activeCat=cat;
+  document.querySelectorAll('.chip').forEach(b=>b.classList.toggle('on',b.dataset.cat===cat));
+  POIS.forEach(p=>{
+    const show=cat==='all'||p.cat===cat;
+    show?(map.hasLayer(mrks[p.id])||mrks[p.id].addTo(map)):(map.hasLayer(mrks[p.id])&&map.removeLayer(mrks[p.id]));
+  });
+  if(cat!=='all'){
+    const vis=POIS.filter(p=>p.cat===cat);
+    if(vis.length){
+      const lts=vis.map(p=>p.lat),lgs=vis.map(p=>p.lng);
+      map.fitBounds([[Math.min(...lts)-.012,Math.min(...lgs)-.015],[Math.max(...lts)+.012,Math.max(...lgs)+.015]],{padding:[40,40]});
+    }
+  } else map.flyTo([POS.lat,POS.lng],15,{duration:.8});
+  renderPois(cat);st('l');
+}
+
+function renderPois(cat){
+  const fl=cat==='all'?POIS:POIS.filter(p=>p.cat===cat);
+  document.getElementById('poi-n').textContent=T[lang].poiN.replace('{n}',fl.length);
+  document.getElementById('poi-list').innerHTML=fl.map(p=>{
+    const d=p[lang],lbl=T[lang].catLabel[p.cat]||p.cat;
+    return `<div class="pc" onclick="flyTo(${p.id})" data-id="${p.id}">
+      <div class="pm ${p.cat}">${p.ico}</div>
+      <div class="pb"><span class="ptag ${p.cat}">${lbl}</span>
+        <div class="pn">${d.name}</div>
+        <div class="pd">${d.desc.substring(0,88)}…</div>
+        <div class="pt">${d.tip}</div>
+      </div></div>`;
+  }).join('');
+}
+
+function st(n){
+  ['l','m','t','s','f'].forEach(x=>{
+    document.getElementById(`tab-${x}`).classList.toggle('on',x===n);
+    document.getElementById(`p-${x}`).classList.toggle('on',x===n);
+  });
+}
+
+function tgl(id){
+  const b=document.getElementById(`bd${id}`),c=document.getElementById(`cv${id}`);
+  const o=b.classList.contains('op');b.classList.toggle('op',!o);c.textContent=o?'▶':'▼';
+}
+
+// ── WEATHER ──
+async function fetchWx(){
+  try{
+    const d=await(await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${POS.lat}&longitude=${POS.lng}&current=temperature_2m,windspeed_10m,cloudcover,weathercode&hourly=precipitation,weathercode&forecast_days=1&timezone=Europe%2FRome`)).json();
+    const c=d.current,desc=T[lang].wxDesc[c.weathercode]||`WMO ${c.weathercode}`;
+    document.getElementById('wx-t').textContent=`${Math.round(c.temperature_2m)}°`;
+    document.getElementById('wx-d').textContent=desc;
+    document.getElementById('wx-cond').textContent=desc;
+    document.getElementById('wv-t').innerHTML=`${Math.round(c.temperature_2m)}<span class="wx-unit">°C</span>`;
+    document.getElementById('wv-w').innerHTML=`${Math.round(c.windspeed_10m)}<span class="wx-unit">km/h</span>`;
+    document.getElementById('wv-c').innerHTML=`${c.cloudcover}<span class="wx-unit">%</span>`;
+    const now=new Date(),times=d.hourly.time,prs=d.hourly.precipitation,codes=d.hourly.weathercode;
+    const cont=document.getElementById('wx-bars');cont.innerHTML='';
+    let cnt=0;
+    for(let i=0;i<times.length&&cnt<6;i++){
+      const t=new Date(times[i]);if(t<=now)continue;
+      const pct=Math.min(100,(prs[i]/3)*100),st=codes[i]>=95?'storm':prs[i]>0.1?'wet':'';
+      const lbl=t.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit',timeZone:'Europe/Rome'});
+      const w=document.createElement('div');w.className='wx-bw';
+      w.innerHTML=`<div class="wx-bar ${st}" style="height:${Math.max(4,pct)}%"></div><div class="wx-bl">${lbl.slice(0,5)}</div>`;
+      cont.appendChild(w);cnt++;
+    }
+    document.getElementById('wx-upd').textContent=T[lang].wxUpd+new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit',timeZone:'Europe/Rome'});
+  }catch(_){}
+}
+
+// ── LANG ──
+function toggleLang(){
+  lang=lang==='it'?'en':'it';
+  document.documentElement.lang=lang;
+  const t=T[lang];
+  ['l','m','t','s','f'].forEach((n,i)=>document.getElementById(`tab-${n}`).textContent=[t.tabL,t.tabM,t.tabT,t.tabS,t.tabF][i]);
+  document.getElementById('ch-all').textContent=t.chAll;
+  document.getElementById('ch-chiesa').textContent=t.chCh;
+  document.getElementById('ch-storico').textContent=t.chSt;
+  document.getElementById('ch-porto').textContent=t.chPo;
+  document.getElementById('ch-natura').textContent=t.chNa;
+  document.getElementById('ch-spiaggia').textContent=t.chSp;
+  document.getElementById('wx-h').textContent=t.wxH;
+  document.getElementById('wl-t').textContent=t.wlT;
+  document.getElementById('wl-w').textContent=t.wlW;
+  document.getElementById('wl-c').textContent=t.wlC;
+  document.getElementById('wx-bh').textContent=t.wxBH;
+  document.getElementById('tile-label').textContent=t.tileLabels[currentTile];
+  renderPois(activeCat);
+  POIS.forEach(p=>mrks[p.id].setPopupContent(mkPop(p)));
+  fetchWx();
+}
+
+renderPois('all');
+fetchWx();
+setInterval(fetchWx,10*60*1000);
+</script>
+</body>
+</html>
