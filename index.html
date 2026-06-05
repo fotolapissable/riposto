@@ -270,7 +270,7 @@ table.tt td.du{color:var(--amber-d);font-weight:700;white-space:nowrap}
 @media (max-width:680px){
   #hdr-sub{display:none}
   #main{height:calc(100vh - 52px);overflow:hidden}
-  #sb{width:100%;min-width:100%;max-width:100%;height:100%;padding-bottom:52px}
+  #sb{width:100%;min-width:100%;max-width:100%;height:calc(100vh - 52px);padding-bottom:52px}
   #mapc{display:none}
   #mapc.mob-open{display:block;position:fixed;inset:0;z-index:500;top:52px}
   #mob-map-btn{display:block}
@@ -466,533 +466,185 @@ table.tt td.du{color:var(--amber-d);font-weight:700;white-space:nowrap}
       <button class="lchip bar"        onclick="flc('bar')">☕ Bar &amp; Dolci</button>
       <button class="lchip bottega"    onclick="flc('bottega')">🛒 Botteghe</button>
     </div>
-    <div id="lc-n"></div>
-    <div id="lc-list"></div>
-  </div>
-
-<!-- MOBILE MAP TOGGLE -->
-<button id="mob-map-btn" onclick="openMobMap()">🗺 Vedi sulla Mappa</button>
-
-<!-- MAP -->
-<div id="mapc">
-  <div id="map"></div>
-  <button id="mob-back-btn" onclick="closeMobMap()">◀ Lista</button>
-
-  <!-- Tile switcher -->
-  <div id="tile-sw">
-    <button class="tsw-btn on"  onclick="setTile('voyager')"   id="tsw-voyager"   title="Mappa">🗺</button>
-    <button class="tsw-btn"     onclick="setTile('satellite')" id="tsw-satellite"  title="Satellite">🛰</button>
-    <button class="tsw-btn"     onclick="setTile('topo')"      id="tsw-topo"       title="Terreno">🌿</button>
-    <button class="tsw-btn"     onclick="setTile('dark')"      id="tsw-dark"       title="Scuro">🌙</button>
-  </div>
-
-  <!-- Zoom -->
-  <div id="mzoom">
-    <button class="zbtn" onclick="map.zoomIn()">+</button>
-    <button class="zbtn" onclick="map.zoomOut()">−</button>
-  </div>
-
-  <!-- Geolocate -->
-  <button id="geo-btn" onclick="locateMe()" title="Dove sono">📍</button>
-
-  <!-- Tile label -->
-  <div id="tile-label">Mappa</div>
-
-  <!-- Brand signature -->
-  <div id="map-sig">
-    <svg width="22" height="22" viewBox="0 0 40 40" fill="none">
-      <ellipse cx="20" cy="20" rx="17.5" ry="6.5" stroke="#C8813A" stroke-width="2" transform="rotate(-38 20 20)"/>
-      <ellipse cx="20" cy="20" rx="17.5" ry="6.5" stroke="#C8813A" stroke-width="2" transform="rotate(38 20 20)"/>
-      <circle cx="20" cy="20" r="3.5" fill="#C8813A"/>
-    </svg>
-    <div id="map-sig-text">
-      <div id="map-sig-name">fotolapissable</div>
-      <div id="map-sig-url">fotolapissable.it</div>
+    <div id="lc-n">10 locali</div>
+    <div id="lc-list">
+    <div class="lc-card" data-tipo="bar" onclick="flyToLocale('l01')" data-id="l01">
+      <div class="lc-top">
+        <div class="lc-ico">☕</div>
+        <div class="lc-body">
+          <div class="lc-tag">Bar & Pasticceria</div>
+          <div class="lc-name">A'Matticana</div>
+          <div class="lc-desc">Granite fantastiche, servizio cortese. Arancini esclusivi alla carne e al pesce. Ottimo caffè.</div>
+          <div class="lc-addr">📍 Via La Marmora, 12</div>
+          <div class="lc-actions">
+            <a class="lc-btn maps" href="https://www.google.com/maps?q=A'Matticana&ll=37.7316,15.20504" target="_blank">📍 Maps</a>
+            <a class="lc-btn tel" href="tel:+393384689397" onclick="event.stopPropagation()">📞 338 468 9397</a><a class="lc-btn web" href="https://www.tripadvisor.it/Restaurant_Review-g1483693-d11737049-Reviews-A_Matticana-Riposto_Province_of_Catania_Sicily.html" target="_blank" onclick="event.stopPropagation()">🔗 Online</a>
+          </div>
+          <div class="lc-disc">★ Segnalazione personale — nessun rapporto commerciale</div>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-</div>
-
-<script>
-const POS={lat:37.7298,lng:15.2011};
-let lang='it', activeCat='all', userMarker=null, userCircle=null;
-
-const T={
-  it:{
-    tabL:'🗺 Luoghi',tabM:'🌤 Meteo',tabT:'🚌 Trasporti',tabS:'🍋 Sapori',tabF:'📷 Foto',
-    chAll:'Tutti',chCh:'⛪ Chiese',chSt:'🏛 Storico',chPo:'⚓ Porto',chNa:'🌿 Natura',chSp:'🏖 Spiagge',
-    poiN:'{n} luoghi',
-    wxH:'Condizioni attuali · Riposto',wlT:'Temp.',wlW:'Vento',wlC:'Nuvole',wxBH:'Precipitazioni prossime 6 ore',wxUpd:'Aggiornamento: ',
-    catLabel:{chiesa:'Chiesa',storico:'Storico / Civile',porto:'Porto & Mare',natura:'Natura & Parco',spiaggia:'Spiaggia'},
-    gmaps:'📍 Apri in Maps',print:'🖼 Acquista stampa',
-    geoTitle:'La tua posizione',geoAccuracy:'Precisione: ~{m} m',
-    tileLabels:{voyager:'Mappa',satellite:'Satellite',topo:'Terreno',dark:'Scuro'},
-    wxDesc:{0:'☀️ Cielo sereno',1:'🌤 Quasi sereno',2:'⛅ Parziale',3:'☁️ Coperto',45:'🌫 Nebbia',51:'🌦 Pioggerella',61:'🌧 Pioggia',80:'⛈ Rovesci',95:'⚡ Temporale'},
-  },
-  en:{
-    tabL:'🗺 Places',tabM:'🌤 Weather',tabT:'🚌 Transport',tabS:'🍋 Food',tabF:'📷 Photos',
-    chAll:'All',chCh:'⛪ Churches',chSt:'🏛 Historic',chPo:'⚓ Harbour',chNa:'🌿 Nature',chSp:'🏖 Beaches',
-    poiN:'{n} places',
-    wxH:'Current conditions · Riposto',wlT:'Temp.',wlW:'Wind',wlC:'Cloud',wxBH:'Precipitation next 6 hours',wxUpd:'Updated: ',
-    catLabel:{chiesa:'Church',storico:'Historic / Civil',porto:'Harbour & Sea',natura:'Nature & Park',spiaggia:'Beach'},
-    gmaps:'📍 Open in Maps',print:'🖼 Buy print',
-    geoTitle:'Your position',geoAccuracy:'Accuracy: ~{m} m',
-    tileLabels:{voyager:'Map',satellite:'Satellite',topo:'Terrain',dark:'Dark'},
-    wxDesc:{0:'☀️ Clear',1:'🌤 Mostly clear',2:'⛅ Partly cloudy',3:'☁️ Overcast',45:'🌫 Fog',51:'🌦 Drizzle',61:'🌧 Rain',80:'⛈ Showers',95:'⚡ Thunderstorm'},
-  }
-};
-
-// ── MAP ──
-const map=L.map('map',{center:[POS.lat,POS.lng],zoom:15,zoomControl:false});
-
-const TILES={
-  voyager: L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{attribution:'©<a href="https://openstreetmap.org">OSM</a> ©<a href="https://carto.com">CartoDB</a>',subdomains:'abcd',maxZoom:19}),
-  satellite: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{attribution:'©<a href="https://www.esri.com">Esri</a>',maxZoom:19}),
-  topo: L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',{attribution:'©<a href="https://opentopomap.org">OpenTopoMap</a>',subdomains:'abc',maxZoom:17}),
-  dark: L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{attribution:'©<a href="https://openstreetmap.org">OSM</a> ©<a href="https://carto.com">CartoDB</a>',subdomains:'abcd',maxZoom:19}),
-};
-let currentTile='voyager';
-TILES.voyager.addTo(map);
-
-function setTile(name){
-  if(name===currentTile)return;
-  map.removeLayer(TILES[currentTile]);
-  TILES[name].addTo(map);
-  TILES[name].bringToBack();
-  document.querySelectorAll('.tsw-btn').forEach(b=>b.classList.remove('on'));
-  document.getElementById('tsw-'+name).classList.add('on');
-  document.getElementById('tile-label').textContent=T[lang].tileLabels[name];
-  currentTile=name;
-}
-
-// Home marker
-L.marker([POS.lat,POS.lng],{icon:L.divIcon({className:'',html:'<div class="home-mk"></div>',iconSize:[12,12],iconAnchor:[6,6]})})
-  .addTo(map).bindPopup('<b style="font-family:var(--fs);color:var(--amber)">Riposto, CT</b><br><span style="font-size:10px">fotolapissable.it</span>');
-
-// ── GEOLOCATION ──
-function locateMe(){
-  if(!navigator.geolocation){alert('Geolocalizzazione non disponibile su questo browser.');return;}
-  const btn=document.getElementById('geo-btn');
-  btn.classList.add('loading');
-  navigator.geolocation.getCurrentPosition(
-    pos=>{
-      btn.classList.remove('loading');
-      btn.classList.add('active');
-      const {latitude:lat,longitude:lng,accuracy:acc}=pos.coords;
-      if(userMarker)map.removeLayer(userMarker);
-      if(userCircle)map.removeLayer(userCircle);
-      userCircle=L.circle([lat,lng],{radius:acc,color:'#4285F4',fillColor:'#4285F4',fillOpacity:.08,weight:1.5,dashArray:'4,4'}).addTo(map);
-      userMarker=L.marker([lat,lng],{icon:L.divIcon({className:'',html:'<div class="user-mk"></div>',iconSize:[14,14],iconAnchor:[7,7]})}).addTo(map);
-      const t=T[lang];
-      userMarker.bindPopup(`<div class="pu-name">${t.geoTitle}</div><div class="pu-tip">${t.geoAccuracy.replace('{m}',Math.round(acc))}</div>`).openPopup();
-      map.flyTo([lat,lng],16,{duration:1});
-    },
-    err=>{
-      btn.classList.remove('loading');
-      const msgs={1:'Permesso negato.',2:'Posizione non disponibile.',3:'Timeout.'};
-      alert('Geolocalizzazione: '+(msgs[err.code]||err.message));
-    },
-    {enableHighAccuracy:true,timeout:10000,maximumAge:0}
-  );
-}
-
-// ── POI DATA ──
-const POIS=[
-  {id:1,cat:'chiesa',ico:'⛪',
-    it:{name:'Duomo di San Pietro',desc:"La chiesa matrice di Riposto, dedicata al patrono San Pietro. Facciata neoclassica ispirata alla Basilica di San Giovanni in Laterano. Pregevole organo a canne e opere d'arte sacra.",tip:'📍 Centro storico · Visita libera'},
-    en:{name:'Cathedral of San Pietro',desc:"Riposto's main church. Neoclassical façade inspired by the Basilica of San Giovanni in Laterano. Notable pipe organ and sacred art.",tip:'📍 Historic centre · Free entry'},
-    lat:37.7322,lng:15.2041},
-  {id:2,cat:'chiesa',ico:'⛪',
-    it:{name:'Chiesa della Madonna della Lettera',desc:"Il luogo di culto più antico del comune, origini nel XIV secolo. Storicamente legata alla devozione dei marinai ripostesi.",tip:'📍 Piazza del Commercio · Architettura storica · Visite guidate'},
-    en:{name:'Church of Madonna della Lettera',desc:"The oldest place of worship in the municipality, 14th century. Linked to the devotion of Riposto's sailors.",tip:'📍 Piazza del Commercio · Historic architecture · Guided tours'},
-    lat:37.7331,lng:15.2052},
-  {id:3,cat:'chiesa',ico:'⛪',
-    it:{name:'Chiesa di Maria SS. del Carmelo',desc:'Edificata nel XIX secolo, punto di riferimento spirituale e architettonico. Linee neoclassiche sobrie, legata alla storica festa del Carmine.',tip:'📍 Centro storico · Festa del Carmine a luglio'},
-    en:{name:'Church of Maria SS. del Carmelo',desc:'Built in the 19th century. Sober neoclassical lines, linked to the Feast of Carmine.',tip:'📍 Historic centre · Feast of Carmine in July'},
-    lat:37.7292,lng:15.2067},
-  {id:4,cat:'storico',ico:'🏛',
-    it:{name:'Palazzo Municipale',desc:"Costruito nel XIX secolo, simbolo dell'autonomia comunale. Elegante architettura affacciata sulla piazza principale.",tip:'📍 Piazza principale'},
-    en:{name:'Town Hall',desc:"Built in the 19th century, symbol of Riposto's municipal autonomy. Elegant architecture overlooking the main square.",tip:'📍 Main square'},
-    lat:37.7318,lng:15.2039},
-  {id:5,cat:'storico',ico:'🏺',
-    it:{name:'Museo delle Tradizioni Marinare',desc:"Spazio espositivo dedicato alla memoria storica e alle tradizioni della marineria ripostese e delle attività agricole legate al territorio.",tip:'📍 Centro · Ingresso su richiesta'},
-    en:{name:'Museum of Maritime Traditions',desc:"Exhibition space dedicated to Riposto's fishing heritage, tools and agricultural traditions.",tip:'📍 Town centre · Entry on request'},
-    lat:37.7315,lng:15.2035},
-  {id:6,cat:'storico',ico:'🏰',
-    it:{name:'Borgo di Torre Archirafi',desc:"Frazione marinara a sud, con borgo di pescatori e costa di ciottoli lavici. Il nome deriva da un'antica torre di avvistamento spagnola contro i pirati saraceni.",tip:'📍 3 km a sud · Bus AST'},
-    en:{name:'Torre Archirafi Village',desc:"Fishing hamlet to the south with lava-cobbled coast. Named after a Spanish watchtower against Saracen pirate raids.",tip:'📍 3 km south · Bus AST'},
-    lat:37.7125,lng:15.2132},
-  {id:7,cat:'natura',ico:'🌿',
-    it:{name:'Villa Comunale "Edoardo Pantano"',desc:"Storico giardino pubblico intitolato al patriota Edoardo Pantano. Vegetazione esotica e mediterranea, viali tranquilli vicino al mare.",tip:'📍 Centro · Ingresso libero'},
-    en:{name:'Villa Comunale "Edoardo Pantano"',desc:"Historic public garden named after the patriot Edoardo Pantano. Exotic and Mediterranean vegetation, peaceful paths near the sea.",tip:'📍 Town centre · Free entry'},
-    lat:37.7300,lng:15.1988},
-  {id:8,cat:'porto',ico:'⚓',
-    it:{name:"Porto dell'Etna — Marina di Riposto",desc:"Moderno porto turistico inaugurato nei primi anni 2000. Storicamente fulcro dell'esportazione del vino etneo verso l'Europa nel XIX secolo.",tip:'📍 Darsena turistica · Pesca sportiva'},
-    en:{name:"Porto dell'Etna — Marina di Riposto",desc:'Modern tourist marina opened in the early 2000s. Historically the hub for exporting Etna wine across 19th-century Europe.',tip:'📍 Tourist marina · Sport fishing'},
-    lat:37.7313,lng:15.2079},
-  {id:9,cat:'porto',ico:'🐟',
-    it:{name:'Porto Peschereccio',desc:"Pescherecci che rientrano all'alba. Sul muretto di fronte alla piazza Franco Battiato: spada, suri, gamberoni e polpi freschissimi ogni mattina.",tip:'🕕 06:00–09:00 · Solo contanti'},
-    en:{name:'Fishing Harbour',desc:"Fishing boats at dawn. On the seawall in front of Piazza Franco Battiato: swordfish, horse mackerel, prawns and octopus every morning.",tip:'🕕 06:00–09:00 · Cash only'},
-    lat:37.7291,lng:15.2079},
-  {id:10,cat:'spiaggia',ico:'🏖',
-    it:{name:'Lungomare e Spiaggia di Riposto',desc:"Litorale ciottoloso con vista sull'Etna. Spiaggia libera, facilmente raggiungibile a piedi dal centro.",tip:'🌊 Stagione balneare: maggio–settembre'},
-    en:{name:'Riposto Seafront & Beach',desc:"Pebbly shoreline with Etna views. Free beach, easy walk from the town centre.",tip:'🌊 Swimming season: May–September'},
-    lat:37.7272,lng:15.2108},
-  {id:11,cat:'spiaggia',ico:'🏖',
-    it:{name:'Fondachello',desc:'Frazione balneare a nord con spiaggia di sabbia fine, locali estivi e atmosfera rilassata. Ottimo punto verso la Riserva del Fiumefreddo.',tip:'📍 5 km a nord · Bus stagionale'},
-    en:{name:'Fondachello',desc:"Riposto's northern seaside hamlet with fine sandy beach and summer clubs. Good base for the Fiumefreddo Reserve.",tip:'📍 5 km north · Seasonal bus'},
-    lat:37.7485,lng:15.1952},
-  {id:12,cat:'spiaggia',ico:'🪨',
-    it:{name:'Spiaggetta dei Tre Massi',desc:"Spiaggetta libera tra le barche dei pescatori. Entrata di fronte al Santuario della Lettera. Angolo autentico e poco frequentato.",tip:'🌊 Accesso libero · Stagione: maggio–settembre'},
-    en:{name:'Spiaggetta dei Tre Massi',desc:"A small free beach among fishing boats. Entrance opposite the Santuario della Lettera. Authentic and quiet.",tip:'🌊 Free access · Season: May–September'},
-    lat:37.7337,lng:15.2055},
-  {id:13,cat:'natura',ico:'🌴',
-    it:{name:'Parco delle Kentie',desc:"Giardino botanico sorto su un antico vivaio di palme. Collezione rara di kentie e piante tropicali in un contesto suggestivo.",tip:'📍 Escluso festivi e sabato · Orario: 09:00–13:00'},
-    en:{name:'Parco delle Kentie',desc:"Botanical garden on an ancient palm nursery. Rare collection of kentia palms and tropical plants.",tip:'📍 Closed holidays & Saturday afternoons · Hours: 09:00–13:00'},
-    lat:37.725178640614516,lng:15.204583163143253},
-  {id:14,cat:'storico',ico:'🏛',
-    it:{name:'Palazzo Vigo',desc:'Museo, mostre temporanee e convegni culturali. Edificio storico che ospita eventi e iniziative della comunità ripostese.',tip:'📍 Visita libera · Torre Archirafi'},
-    en:{name:'Palazzo Vigo',desc:'Museum, temporary exhibitions and cultural events. Historic building hosting community events and initiatives.',tip:'📍 Free entry · Torre Archirafi'},
-    lat:37.7105,lng:15.21849},
-];
-
-// ── MARKERS ──
-const mrks={};
-function mkIco(p){return L.divIcon({className:'',html:`<div class="mk ${p.cat}">${p.ico}</div>`,iconSize:[32,32],iconAnchor:[16,16],popupAnchor:[0,-18]})}
-function gmUrl(p){return `https://www.google.com/maps?q=${encodeURIComponent(p[lang].name)}&ll=${p.lat},${p.lng}`;}
-function mkPop(p){
-  const d=p[lang],t=T[lang],lbl=t.catLabel[p.cat]||p.cat;
-  const printBtn=(p.cat==='porto'||p.cat==='spiaggia')?`<a class="pu-print" href="https://www.saal-digital.it" target="_blank">${t.print}</a>`:'';
-  return `<div class="pu-name">${d.name}</div><span class="pu-tag ${p.cat}">${lbl}</span><div class="pu-desc">${d.desc}</div><div class="pu-tip">${d.tip}</div><div class="pu-actions"><a class="pu-gmaps" href="${gmUrl(p)}" target="_blank">${t.gmaps}</a>${printBtn}</div>`;
-}
-
-POIS.forEach(p=>{
-  const m=L.marker([p.lat,p.lng],{icon:mkIco(p)}).addTo(map);
-  m.bindPopup(mkPop(p),{maxWidth:260});
-  m.on('click',()=>flyTo(p.id));
-  mrks[p.id]=m;
-});
-
-function flyTo(id){
-  const p=POIS.find(x=>x.id===id);if(!p)return;
-  map.flyTo([p.lat,p.lng],17,{duration:.8});
-  setTimeout(()=>mrks[id].openPopup(),850);
-  document.querySelectorAll('.pc').forEach(c=>c.classList.remove('hi'));
-  const c=document.querySelector(`.pc[data-id="${id}"]`);
-  if(c){c.classList.add('hi');c.scrollIntoView({behavior:'smooth',block:'nearest'});}
-}
-
-function fc(cat){
-  activeCat=cat;
-  document.querySelectorAll('.chip').forEach(b=>b.classList.toggle('on',b.dataset.cat===cat));
-  POIS.forEach(p=>{
-    const show=cat==='all'||p.cat===cat;
-    show?(map.hasLayer(mrks[p.id])||mrks[p.id].addTo(map)):(map.hasLayer(mrks[p.id])&&map.removeLayer(mrks[p.id]));
-  });
-  if(cat!=='all'){
-    const vis=POIS.filter(p=>p.cat===cat);
-    if(vis.length){
-      const lts=vis.map(p=>p.lat),lgs=vis.map(p=>p.lng);
-      map.fitBounds([[Math.min(...lts)-.012,Math.min(...lgs)-.015],[Math.max(...lts)+.012,Math.max(...lgs)+.015]],{padding:[40,40]});
-    }
-  } else map.flyTo([POS.lat,POS.lng],15,{duration:.8});
-  renderPois(cat);st('l');
-}
-
-function renderPois(cat){
-  const fl=cat==='all'?POIS:POIS.filter(p=>p.cat===cat);
-  document.getElementById('poi-n').textContent=T[lang].poiN.replace('{n}',fl.length);
-  document.getElementById('poi-list').innerHTML=fl.map(p=>{
-    const d=p[lang],lbl=T[lang].catLabel[p.cat]||p.cat;
-    return `<div class="pc" onclick="flyTo(${p.id})" data-id="${p.id}">
-      <div class="pm ${p.cat}">${p.ico}</div>
-      <div class="pb"><span class="ptag ${p.cat}">${lbl}</span>
-        <div class="pn">${d.name}</div>
-        <div class="pd">${d.desc.substring(0,88)}…</div>
-        <div class="pt">${d.tip}</div>
-      </div></div>`;
-  }).join('');
-}
-
-function st(n){
-  ['l','m','t','s','f','r'].forEach(x=>{
-    document.getElementById(`tab-${x}`).classList.toggle('on',x===n);
-    document.getElementById(`p-${x}`).classList.toggle('on',x===n);
-  });
-  // Show luoghi chips only in Luoghi tab
-  document.getElementById('chips').style.display = (n==='l') ? '' : 'none';
-  // Show/hide locali markers + re-render locali list on tab open
-  LOCALI.forEach(l=>{
-    if(n==='r'){if(!map.hasLayer(lcMrks[l.id]))lcMrks[l.id].addTo(map);}
-    else{if(map.hasLayer(lcMrks[l.id]))map.removeLayer(lcMrks[l.id]);}
-  });
-  if(n==='r') flc(activeLcTipo||'all');
-  // Scroll active tab into view on mobile
-  const activeTab=document.getElementById('tab-'+n);
-  if(activeTab) activeTab.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
-}
-
-function tgl(id){
-  const b=document.getElementById(`bd${id}`),c=document.getElementById(`cv${id}`);
-  const o=b.classList.contains('op');b.classList.toggle('op',!o);c.textContent=o?'▶':'▼';
-}
-
-// ── WEATHER ──
-async function fetchWx(){
-  try{
-    const d=await(await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${POS.lat}&longitude=${POS.lng}&current=temperature_2m,windspeed_10m,cloudcover,weathercode&hourly=precipitation,weathercode&forecast_days=1&timezone=Europe%2FRome`)).json();
-    const c=d.current,desc=T[lang].wxDesc[c.weathercode]||`WMO ${c.weathercode}`;
-    document.getElementById('wx-t').textContent=`${Math.round(c.temperature_2m)}°`;
-    document.getElementById('wx-d').textContent=desc;
-    document.getElementById('wx-cond').textContent=desc;
-    document.getElementById('wv-t').innerHTML=`${Math.round(c.temperature_2m)}<span class="wx-unit">°C</span>`;
-    document.getElementById('wv-w').innerHTML=`${Math.round(c.windspeed_10m)}<span class="wx-unit">km/h</span>`;
-    document.getElementById('wv-c').innerHTML=`${c.cloudcover}<span class="wx-unit">%</span>`;
-    const now=new Date(),times=d.hourly.time,prs=d.hourly.precipitation,codes=d.hourly.weathercode;
-    const cont=document.getElementById('wx-bars');cont.innerHTML='';
-    let cnt=0;
-    for(let i=0;i<times.length&&cnt<6;i++){
-      const t=new Date(times[i]);if(t<=now)continue;
-      const pct=Math.min(100,(prs[i]/3)*100),st=codes[i]>=95?'storm':prs[i]>0.1?'wet':'';
-      const lbl=t.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit',timeZone:'Europe/Rome'});
-      const w=document.createElement('div');w.className='wx-bw';
-      w.innerHTML=`<div class="wx-bar ${st}" style="height:${Math.max(4,pct)}%"></div><div class="wx-bl">${lbl.slice(0,5)}</div>`;
-      cont.appendChild(w);cnt++;
-    }
-    document.getElementById('wx-upd').textContent=T[lang].wxUpd+new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit',timeZone:'Europe/Rome'});
-  }catch(_){}
-}
-
-// ── LANG ──
-function toggleLang(){
-  lang=lang==='it'?'en':'it';
-  document.documentElement.lang=lang;
-  const t=T[lang];
-  ['l','m','t','s','f'].forEach((n,i)=>document.getElementById(`tab-${n}`).textContent=[t.tabL,t.tabM,t.tabT,t.tabS,t.tabF][i]);
-  document.getElementById('ch-all').textContent=t.chAll;
-  document.getElementById('ch-chiesa').textContent=t.chCh;
-  document.getElementById('ch-storico').textContent=t.chSt;
-  document.getElementById('ch-porto').textContent=t.chPo;
-  document.getElementById('ch-natura').textContent=t.chNa;
-  document.getElementById('ch-spiaggia').textContent=t.chSp;
-  document.getElementById('wx-h').textContent=t.wxH;
-  document.getElementById('wl-t').textContent=t.wlT;
-  document.getElementById('wl-w').textContent=t.wlW;
-  document.getElementById('wl-c').textContent=t.wlC;
-  document.getElementById('wx-bh').textContent=t.wxBH;
-  document.getElementById('tile-label').textContent=t.tileLabels[currentTile];
-  renderPois(activeCat);
-  POIS.forEach(p=>mrks[p.id].setPopupContent(mkPop(p)));
-  fetchWx();
-}
-
-
-// ── LOCALI DATA ──
-const LOCALI=[
-  {id:'l01',tipo:'bar',ico:'☕',
-    name:"A'Matticana",
-    desc:"Granite fantastiche, servizio cortese. Arancini esclusivi alla carne e al pesce. Ottimo caffè.",
-    addr:"Via La Marmora, 12",tel:'338 468 9397',
-    link:'https://www.tripadvisor.it/Restaurant_Review-g1483693-d11737049-Reviews-A_Matticana-Riposto_Province_of_Catania_Sicily.html',
-    lat:37.73160,lng:15.20504},
-  {id:'l02',tipo:'bottega',ico:'🧺',
-    name:"F.lli Virgitto",
-    desc:"Verdure, frutta, ortaggi, agrumi e legumi freschi. Prodotti locali di stagione.",
-    addr:"Pescheria di Riposto",tel:null,link:null,
-    lat:37.73172,lng:15.20503},
-  {id:'l03',tipo:'bottega',ico:'🐟',
-    name:"Gaetano Ricca",
-    desc:"Pesce fresco ogni mattina direttamente dai pescherecci di Riposto.",
-    addr:"Pescheria di Riposto",tel:null,
-    link:'https://www.facebook.com/gaetano.ricca.395?locale=it_IT',
-    lat:37.73173,lng:15.20523},
-  {id:'l04',tipo:'pizzeria',ico:'🍕',
-    name:"L'Angolo Di Don Pippo",
-    desc:"Pizzeria d'asporto con possibilità di consumare sul posto. Servizio a domicilio.",
-    addr:"Via Antonio Gramsci, 70",tel:'329 749 6581',
-    link:'https://www.facebook.com/p/LAngolo-Di-Don-Pippo-100086377073889/?locale=it_IT',
-    lat:37.73294,lng:15.20413},
-  {id:'l05',tipo:'bottega',ico:'🍷',
-    name:"D'Urso Vini",
-    desc:"Nerello Mascalese e Carricante, Nero d'Avola sfuso e imbottigliato. Vini dell'Etna di qualità.",
-    addr:"Via Galileo Galilei, 16",tel:null,link:null,
-    lat:37.73386,lng:15.19945},
-  {id:'l06',tipo:'bottega',ico:'🥖',
-    name:"Panificio Salvanni",
-    desc:"Pane artigianale e prodotti da forno della tradizione ripostese.",
-    addr:"Via Luigi Capuana, 2",tel:'095 930261',
-    link:'https://www.facebook.com/profile.php?id=100057098213896&locale=it_IT',
-    lat:37.73380,lng:15.20035},
-  {id:'l07',tipo:'ristorante',ico:'🍴',
-    name:"Da Nonna Rosa",
-    desc:"Ristorante e trattoria con cucina tipica siciliana. Ambiente familiare e autentico.",
-    addr:"Via Cristoforo Colombo, 88/92",tel:'095 8033362',
-    link:'https://www.tripadvisor.it/Restaurant_Review-g1483693-d25098252-Reviews-Da_Nonna_Rosa_Il_Pranzo_E_Servito-Riposto_Province_of_Catania_Sicily.html',
-    lat:37.73398,lng:15.20496},
-  {id:'l08',tipo:'pizzeria',ico:'🍕',
-    name:"Risto Pizzeria Grano",
-    desc:"Pizzeria con sala interna e servizio a domicilio. Pizze artigianali e cucina siciliana.",
-    addr:"Corso Italia, 215",tel:'095 779 5369',
-    link:'https://www.facebook.com/ristopizzeriaGrano/',
-    lat:37.73052,lng:15.19909},
-  {id:'l09',tipo:'bar',ico:'🍰',
-    name:"Pasticceria Gangemi",
-    desc:"Pasticceria artigianale e gelateria. Dolci della tradizione siciliana.",
-    addr:"Via Antonio Gramsci, 199",tel:'095 439117',
-    link:'https://www.facebook.com/PasticceriaGangemi',
-    lat:37.72998,lng:15.20508},
-  {id:'l10',tipo:'ristorante',ico:'🍴',
-    name:"Ai Confini del Mare — Da Giacomo e Tiziana",
-    desc:"Ristorante, pizzeria e serata karaoke a Torre Archirafi. Vista sul mare.",
-    addr:"Via Marco Polo, 49 — Torre Archirafi",tel:'327 639 9112',
-    link:'https://www.tripadvisor.it/Restaurant_Review-g2266825-d23783767-Reviews-Ai_Confini_del_Mare_Da_Giacomo-Torre_Archirafi_Riposto_Province_of_Catania_Sici.html',
-    lat:37.70963,lng:15.21660},
-];
-
-const tipoLabel={ristorante:'Ristorante',pizzeria:'Pizzeria',bar:'Bar & Pasticceria',bottega:'Bottega'};
-const lcMrks={};
-let activeLcTipo='all';
-
-// Locali markers
-LOCALI.forEach(l=>{
-  const ico=L.divIcon({className:'',html:`<div class="mk locale">${l.ico}</div>`,iconSize:[32,32],iconAnchor:[16,16],popupAnchor:[0,-18]});
-  const m=L.marker([l.lat,l.lng],{icon:ico}); // not added to map by default
-  const tel=l.tel?`<a class="lc-btn tel" href="tel:+39${l.tel.replace(/\s/g,'')}">📞 ${l.tel}</a>`:'';
-  const web=l.link?`<a class="lc-btn web" href="${l.link}" target="_blank">🔗 Vedi online</a>`:'';
-  const gm=`<a class="lc-btn maps" href="https://www.google.com/maps?q=${encodeURIComponent(l.name)}&ll=${l.lat},${l.lng}" target="_blank">📍 Maps</a>`;
-  m.bindPopup(`<div class="pu-name">${l.name}</div>
-    <span class="pu-tag porto">${tipoLabel[l.tipo]||l.tipo}</span>
-    <div class="pu-desc">${l.desc}</div>
-    <div class="pu-tip">📍 ${l.addr}</div>
-    <div class="pu-actions">${gm}${tel}${web}</div>
-    <div style="font-size:8px;color:var(--text-s);margin-top:5px;font-style:italic">★ Segnalazione personale — nessun rapporto commerciale</div>`,{maxWidth:260});
-  m.on('click',()=>{
-    st('r');
-    document.querySelectorAll('.lc-card').forEach(c=>c.classList.remove('hi'));
-    const c=document.querySelector(`.lc-card[data-id="${l.id}"]`);
-    if(c){c.classList.add('hi');c.scrollIntoView({behavior:'smooth',block:'nearest'});}
-  });
-  lcMrks[l.id]=m;
-});
-
-function flc(tipo){
+    <div class="lc-card" data-tipo="bottega" onclick="flyToLocale('l02')" data-id="l02">
+      <div class="lc-top">
+        <div class="lc-ico">🧺</div>
+        <div class="lc-body">
+          <div class="lc-tag">Bottega</div>
+          <div class="lc-name">F.lli Virgitto</div>
+          <div class="lc-desc">Verdure, frutta, ortaggi, agrumi e legumi freschi. Prodotti locali di stagione.</div>
+          <div class="lc-addr">📍 Pescheria di Riposto</div>
+          <div class="lc-actions">
+            <a class="lc-btn maps" href="https://www.google.com/maps?q=F.lli+Virgitto&ll=37.73172,15.20503" target="_blank">📍 Maps</a>
+            
+          </div>
+          <div class="lc-disc">★ Segnalazione personale — nessun rapporto commerciale</div>
+        </div>
+      </div>
+    </div>
+    <div class="lc-card" data-tipo="bottega" onclick="flyToLocale('l03')" data-id="l03">
+      <div class="lc-top">
+        <div class="lc-ico">🐟</div>
+        <div class="lc-body">
+          <div class="lc-tag">Bottega</div>
+          <div class="lc-name">Gaetano Ricca</div>
+          <div class="lc-desc">Pesce fresco ogni mattina direttamente dai pescherecci di Riposto.</div>
+          <div class="lc-addr">📍 Pescheria di Riposto</div>
+          <div class="lc-actions">
+            <a class="lc-btn maps" href="https://www.google.com/maps?q=Gaetano+Ricca&ll=37.73173,15.20523" target="_blank">📍 Maps</a>
+            <a class="lc-btn web" href="https://www.facebook.com/gaetano.ricca.395?locale=it_IT" target="_blank" onclick="event.stopPropagation()">🔗 Online</a>
+          </div>
+          <div class="lc-disc">★ Segnalazione personale — nessun rapporto commerciale</div>
+        </div>
+      </div>
+    </div>
+    <div class="lc-card" data-tipo="pizzeria" onclick="flyToLocale('l04')" data-id="l04">
+      <div class="lc-top">
+        <div class="lc-ico">🍕</div>
+        <div class="lc-body">
+          <div class="lc-tag">Pizzeria</div>
+          <div class="lc-name">L'Angolo Di Don Pippo</div>
+          <div class="lc-desc">Pizzeria d'asporto con possibilità di consumare sul posto. Servizio a domicilio.</div>
+          <div class="lc-addr">📍 Via Antonio Gramsci, 70</div>
+          <div class="lc-actions">
+            <a class="lc-btn maps" href="https://www.google.com/maps?q=L'Angolo+Di+Don+Pippo&ll=37.73294,15.20413" target="_blank">📍 Maps</a>
+            <a class="lc-btn tel" href="tel:+393297496581" onclick="event.stopPropagation()">📞 329 749 6581</a><a class="lc-btn web" href="https://www.facebook.com/p/LAngolo-Di-Don-Pippo-100086377073889/?locale=it_IT" target="_blank" onclick="event.stopPropagation()">🔗 Online</a>
+          </div>
+          <div class="lc-disc">★ Segnalazione personale — nessun rapporto commerciale</div>
+        </div>
+      </div>
+    </div>
+    <div class="lc-card" data-tipo="bottega" onclick="flyToLocale('l05')" data-id="l05">
+      <div class="lc-top">
+        <div class="lc-ico">🍷</div>
+        <div class="lc-body">
+          <div class="lc-tag">Bottega</div>
+          <div class="lc-name">D'Urso Vini</div>
+          <div class="lc-desc">Nerello Mascalese e Carricante, Nero d'Avola sfuso e imbottigliato. Vini dell'Etna.</div>
+          <div class="lc-addr">📍 Via Galileo Galilei, 16</div>
+          <div class="lc-actions">
+            <a class="lc-btn maps" href="https://www.google.com/maps?q=D'Urso+Vini&ll=37.73386,15.19945" target="_blank">📍 Maps</a>
+            
+          </div>
+          <div class="lc-disc">★ Segnalazione personale — nessun rapporto commerciale</div>
+        </div>
+      </div>
+    </div>
+    <div class="lc-card" data-tipo="bottega" onclick="flyToLocale('l06')" data-id="l06">
+      <div class="lc-top">
+        <div class="lc-ico">🥖</div>
+        <div class="lc-body">
+          <div class="lc-tag">Bottega</div>
+          <div class="lc-name">Panificio Salvanni</div>
+          <div class="lc-desc">Pane artigianale e prodotti da forno della tradizione ripostese.</div>
+          <div class="lc-addr">📍 Via Luigi Capuana, 2</div>
+          <div class="lc-actions">
+            <a class="lc-btn maps" href="https://www.google.com/maps?q=Panificio+Salvanni&ll=37.7338,15.20035" target="_blank">📍 Maps</a>
+            <a class="lc-btn tel" href="tel:+39095930261" onclick="event.stopPropagation()">📞 095 930261</a><a class="lc-btn web" href="https://www.facebook.com/profile.php?id=100057098213896&locale=it_IT" target="_blank" onclick="event.stopPropagation()">🔗 Online</a>
+          </div>
+          <div class="lc-disc">★ Segnalazione personale — nessun rapporto commerciale</div>
+        </div>
+      </div>
+    </div>
+    <div class="lc-card" data-tipo="ristorante" onclick="flyToLocale('l07')" data-id="l07">
+      <div class="lc-top">
+        <div class="lc-ico">🍴</div>
+        <div class="lc-body">
+          <div class="lc-tag">Ristorante</div>
+          <div class="lc-name">Da Nonna Rosa</div>
+          <div class="lc-desc">Ristorante e trattoria con cucina tipica siciliana. Ambiente familiare e autentico.</div>
+          <div class="lc-addr">📍 Via Cristoforo Colombo, 88/92</div>
+          <div class="lc-actions">
+            <a class="lc-btn maps" href="https://www.google.com/maps?q=Da+Nonna+Rosa&ll=37.73398,15.20496" target="_blank">📍 Maps</a>
+            <a class="lc-btn tel" href="tel:+390958033362" onclick="event.stopPropagation()">📞 095 8033362</a><a class="lc-btn web" href="https://www.tripadvisor.it/Restaurant_Review-g1483693-d25098252-Reviews-Da_Nonna_Rosa_Il_Pranzo_E_Servito-Riposto_Province_of_Catania_Sicily.html" target="_blank" onclick="event.stopPropagation()">🔗 Online</a>
+          </div>
+          <div class="lc-disc">★ Segnalazione personale — nessun rapporto commerciale</div>
+        </div>
+      </div>
+    </div>
+    <div class="lc-card" data-tipo="pizzeria" onclick="flyToLocale('l08')" data-id="l08">
+      <div class="lc-top">
+        <div class="lc-ico">🍕</div>
+        <div class="lc-body">
+          <div class="lc-tag">Pizzeria</div>
+          <div class="lc-name">Risto Pizzeria Grano</div>
+          <div class="lc-desc">Pizzeria con sala interna e servizio a domicilio. Pizze artigianali e cucina siciliana.</div>
+          <div class="lc-addr">📍 Corso Italia, 215</div>
+          <div class="lc-actions">
+            <a class="lc-btn maps" href="https://www.google.com/maps?q=Risto+Pizzeria+Grano&ll=37.73052,15.19909" target="_blank">📍 Maps</a>
+            <a class="lc-btn tel" href="tel:+390957795369" onclick="event.stopPropagation()">📞 095 779 5369</a><a class="lc-btn web" href="https://www.facebook.com/ristopizzeriaGrano/" target="_blank" onclick="event.stopPropagation()">🔗 Online</a>
+          </div>
+          <div class="lc-disc">★ Segnalazione personale — nessun rapporto commerciale</div>
+        </div>
+      </div>
+    </div>
+    <div class="lc-card" data-tipo="bar" onclick="flyToLocale('l09')" data-id="l09">
+      <div class="lc-top">
+        <div class="lc-ico">🍰</div>
+        <div class="lc-body">
+          <div class="lc-tag">Bar & Pasticceria</div>
+          <div class="lc-name">Pasticceria Gangemi</div>
+          <div class="lc-desc">Pasticceria artigianale e gelateria. Dolci della tradizione siciliana.</div>
+          <div class="lc-addr">📍 Via Antonio Gramsci, 199</div>
+          <div class="lc-actions">
+            <a class="lc-btn maps" href="https://www.google.com/maps?q=Pasticceria+Gangemi&ll=37.72998,15.20508" target="_blank">📍 Maps</a>
+            <a class="lc-btn tel" href="tel:+39095439117" onclick="event.stopPropagation()">📞 095 439117</a><a class="lc-btn web" href="https://www.facebook.com/PasticceriaGangemi" target="_blank" onclick="event.stopPropagation()">🔗 Online</a>
+          </div>
+          <div class="lc-disc">★ Segnalazione personale — nessun rapporto commerciale</div>
+        </div>
+      </div>
+    </div>
+    <div class="lc-card" data-tipo="ristorante" onclick="flyToLocale('l10')" data-id="l10">
+      <div class="lc-top">
+        <div class="lc-ico">🍴</div>
+        <div class="lc-body">
+          <div class="lc-tag">Ristorante</div>
+          <div class="lc-name">Ai Confini del Mare — Da Giacomo e Tiziana</div>
+          <div class="lc-desc">Ristorante, pizzeria e serata karaoke a Torre Archirafi. Vista sul mare.</div>
+          <div class="lc-addr">📍 Via Marco Polo, 49 — Torre Archirafi</div>
+          <div class="lc-actions">
+            <a class="lc-btn maps" href="https://www.google.com/maps?q=Ai+Confini+del+Mare+—+Da+Giacomo+e+Tiziana&ll=37.70963,15.2166" target="_blank">📍 Maps</a>
+            <a class="lc-btn tel" href="tel:+393276399112" onclick="event.stopPropagation()">📞 327 639 9112</a><a class="lc-btn web" href="https://www.tripadvisor.it/Restaurant_Review-g2266825-d23783767-Reviews-Ai_Confini_del_Mare_Da_Giacomo-Torre_Archirafi_Riposto_Province_of_Catania_Sici.html" target="_blank" onclick="event.stopPropagation()">🔗 Online</a>
+          </div>
+          <div class="lc-disc">★ Segnalazione personale — nessun rapporto commerciale</div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>function flc(tipo){
   activeLcTipo = tipo || 'all';
-  // Activate correct chip
+  // Activate chip
   document.querySelectorAll('.lchip').forEach(function(b){
     var oc = b.getAttribute('onclick') || '';
-    b.classList.toggle('on', oc.indexOf("'" + tipo + "'") >= 0);
+    b.classList.toggle('on', oc.indexOf("'"+tipo+"'") >= 0);
   });
-  // Filter locali
-  var fl = (tipo === 'all') ? LOCALI : LOCALI.filter(function(l){ return l.tipo === tipo; });
-  document.getElementById('lc-n').textContent = fl.length + ' locali';
-  // Build card HTML (no nested templates — compatible with all mobile browsers)
-  var out = '';
-  for(var i = 0; i < fl.length; i++){
-    var l = fl[i];
-    var gm = 'https://www.google.com/maps?q=' + encodeURIComponent(l.name) + '&ll=' + l.lat + ',' + l.lng;
-    var tel_h = l.tel ? '<a class="lc-btn tel" href="tel:+39' + l.tel.replace(/\s/g,'') + '" onclick="event.stopPropagation()">📞 ' + l.tel + '</a>' : '';
-    var web_h = l.link ? '<a class="lc-btn web" href="' + l.link + '" target="_blank" onclick="event.stopPropagation()">🔗 Online</a>' : '';
-    out += '<div class="lc-card" onclick="flyToLocale(\'' + l.id + '\')" data-id="' + l.id + '">'
-         + '<div class="lc-top">'
-           + '<div class="lc-ico">' + l.ico + '</div>'
-           + '<div class="lc-body">'
-             + '<div class="lc-tag">' + (tipoLabel[l.tipo] || l.tipo) + '</div>'
-             + '<div class="lc-name">' + l.name + '</div>'
-             + '<div class="lc-desc">' + l.desc + '</div>'
-             + '<div class="lc-addr">📍 ' + l.addr + '</div>'
-             + '<div class="lc-actions">'
-               + '<a class="lc-btn maps" href="' + gm + '" target="_blank">📍 Maps</a>'
-               + tel_h + web_h
-             + '</div>'
-             + '<div class="lc-disc">★ Segnalazione personale — nessun rapporto commerciale</div>'
-           + '</div>'
-         + '</div>'
-         + '</div>';
-  }
-  document.getElementById('lc-list').innerHTML = out;
+  // Show/hide cards by data-tipo
+  var cards = document.querySelectorAll('#lc-list .lc-card');
+  var count = 0;
+  cards.forEach(function(c){
+    var show = tipo==='all' || c.getAttribute('data-tipo')===tipo;
+    c.style.display = show ? '' : 'none';
+    if(show) count++;
+  });
+  document.getElementById('lc-n').textContent = count + ' locali';
 }
 
-
-function flyToLocale(id){
-  const l=LOCALI.find(x=>x.id===id);if(!l)return;
-  map.flyTo([l.lat,l.lng],17,{duration:.8});
-  setTimeout(()=>lcMrks[id].openPopup(),850);
-}
-
-// Init locali tab
-flc('all');
-
-
-// ── MOBILE MAP TOGGLE ──
-function openMobMap(){
-  document.getElementById('mapc').classList.add('mob-open');
-  setTimeout(()=>map.invalidateSize(),100);
-}
-function closeMobMap(){
-  document.getElementById('mapc').classList.remove('mob-open');
-}
-
-renderPois('all');
-fetchWx();
-setInterval(fetchWx,10*60*1000);
-
-// ── DISCLAIMER ──
-function openDisc(){document.getElementById('disc-overlay').style.display='flex';}
-function closeDisc(){
-  document.getElementById('disc-overlay').style.display='none';
-  try{localStorage.setItem('rip_disc_v1','1');}catch(_){}
-}
-window.addEventListener('DOMContentLoaded',()=>{
-  let seen=false;
-  try{seen=localStorage.getItem('rip_disc_v1')==='1';}catch(_){}
-  if(!seen) openDisc();
-});
-</script>
-<!-- DISCLAIMER MODAL -->
-<div id="disc-overlay" style="display:none">
-  <div id="disc-box">
-    <div id="disc-head">
-      <svg width="28" height="28" viewBox="0 0 40 40" fill="none">
-        <ellipse cx="20" cy="20" rx="17.5" ry="6.5" stroke="#C8813A" stroke-width="2" transform="rotate(-38 20 20)"/>
-        <ellipse cx="20" cy="20" rx="17.5" ry="6.5" stroke="#C8813A" stroke-width="2" transform="rotate(38 20 20)"/>
-        <circle cx="20" cy="20" r="3.5" fill="#C8813A"/>
-      </svg>
-      <div><div id="disc-htxt">fotolapissable · Riposto</div><div id="disc-hsub">Informativa sull'utilizzo</div></div>
-    </div>
-    <div id="disc-body">
-
-      <div class="ds">
-        <div class="ds-t">🌐 Servizio gratuito senza fini di lucro</div>
-        <div class="ds-p">Questa applicazione è realizzata da <b>Michele Cipriano — fotolapissable.it</b> come servizio informativo gratuito per i visitatori di Riposto. Non ha finalità commerciali dirette e non genera ricavi dalla sua fruizione.</div>
-      </div>
-
-      <div class="ds">
-        <div class="ds-t">🚌 Orari e informazioni pratiche</div>
-        <div class="ds-p">Gli orari di trasporti, fermate e luoghi indicati sono <b>indicativi e potrebbero non essere aggiornati</b>. Verificare sempre le informazioni sui siti ufficiali degli operatori prima di spostarsi. fotolapissable.it non si assume alcuna responsabilità per disservizi derivanti da informazioni non aggiornate o modificate.</div>
-      </div>
-
-      <div class="ds">
-        <div class="ds-t">📍 Luoghi e attività</div>
-        <div class="ds-p">Orari di apertura, prezzi e disponibilità dei luoghi indicati possono variare. Si consiglia di verificare direttamente con le strutture. Le coordinate GPS sono indicative.</div>
-      </div>
-
-      <div class="ds">
-        <div class="ds-t">🍽 Suggerimenti di locali (futuri)</div>
-        <div class="ds-p">Eventuali suggerimenti futuri di ristoranti, bar o attività locali rappresentano <b>opinioni personali dell'autore</b> condivise a titolo informativo, come servizio editoriale indipendente. Non costituiscono sponsorizzazioni a pagamento né pubblicità. Nessun rapporto commerciale con le attività eventualmente citate, salvo diversa indicazione esplicita.</div>
-      </div>
-
-      <div class="ds">
-        <div class="ds-t">📷 Fotografie e contenuti</div>
-        <div class="ds-p">Tutti i contenuti fotografici sono <b>© Michele Cipriano — fotolapissable.it</b>. Tutti i diritti riservati. La riproduzione è vietata senza autorizzazione scritta.</div>
-      </div>
-
-    </div>
-    <div id="disc-foot">
-      <div id="disc-fn">Continuando a usare l'app accetti questa informativa. Richiamabile in ogni momento da <b>Note legali</b> in fondo alla barra laterale.</div>
-      <button id="disc-ok" onclick="closeDisc()">Ho capito →</button>
-    </div>
-  </div>
-</div>
-
-</body>
-</html>
+>
