@@ -269,13 +269,12 @@ table.tt td.du{color:var(--amber-d);font-weight:700;white-space:nowrap}
 }
 @media (max-width:680px){
   #hdr-sub{display:none}
-  #sb{width:100%;min-width:100%;max-width:100%}
+  #main{height:calc(100vh - 52px);overflow:hidden}
+  #sb{width:100%;min-width:100%;max-width:100%;height:100%;padding-bottom:52px}
   #mapc{display:none}
   #mapc.mob-open{display:block;position:fixed;inset:0;z-index:500;top:52px}
   #mob-map-btn{display:block}
   #mob-back-btn{display:block}
-  #main{overflow:visible}
-  #sb{padding-bottom:52px}
 }
 </style>
 </head>
