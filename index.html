@@ -53,9 +53,9 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-fam
 .chip.storico{border-color:var(--violet);color:var(--violet)}.chip.storico.on{background:var(--violet);color:#fff}
 .chip.porto{border-color:var(--teal);color:var(--teal)}.chip.porto.on{background:var(--teal);color:#fff}
 .chip.natura{border-color:var(--green);color:var(--green)}.chip.natura.on{background:var(--green);color:#fff}
-.chip.spiaggia{border-color:#1a7fbf;color:#1a7fbf}.chip.spiaggia.on{background:#1a7fbf;color:#fff}.chip[data-cat='locale'].on{background:#e67e22;color:#fff}
-#tabs{display:flex;border-bottom:1px solid var(--border);overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;flex-shrink:0}
-.tab{flex:0 0 auto;min-width:52px;text-align:center;padding:9px 7px 8px;font-size:9px;font-weight:700;letter-spacing:.2px;color:var(--text-s);cursor:pointer;border-bottom:2.5px solid transparent;transition:all .2s;text-transform:uppercase;white-space:nowrap}
+.chip.spiaggia{border-color:#1a7fbf;color:#1a7fbf}.chip.spiaggia.on{background:#1a7fbf;color:#fff}
+#tabs{display:flex;border-bottom:1px solid var(--border);overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none;flex-shrink:0}
+.tab{flex:1 1 0;min-width:0;text-align:center;padding:9px 3px 8px;font-size:8.5px;font-weight:700;letter-spacing:0px;color:var(--text-s);cursor:pointer;border-bottom:2.5px solid transparent;transition:all .2s;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tab.on{color:var(--amber);border-bottom-color:var(--amber)}
 .tab:hover:not(.on){color:var(--text-m)}
 .tp{display:none;flex:1;overflow-y:auto;flex-direction:column}
@@ -284,12 +284,11 @@ table.tt td.du{color:var(--amber-d);font-weight:700;white-space:nowrap}
     <button class="chip porto"    onclick="fc('porto')"    data-cat="porto"    id="ch-porto">⚓ Porto</button>
     <button class="chip natura"   onclick="fc('natura')"   data-cat="natura"   id="ch-natura">🌿 Natura</button>
     <button class="chip spiaggia" onclick="fc('spiaggia')" data-cat="spiaggia" id="ch-spiaggia">🏖 Spiagge</button>
-    <button class="chip" style="border-color:#e67e22;color:#e67e22" onclick="fc('locale')" data-cat="locale" id="ch-locale">🍽 Locali</button>
   </div>
   <div id="tabs">
     <div class="tab on" id="tab-l" onclick="st('l')">🗺 Luoghi</div>
     <div class="tab"    id="tab-m" onclick="st('m')">🌤 Meteo</div>
-    <div class="tab"    id="tab-t" onclick="st('t')">🚌 Trasporti</div>
+    <div class="tab"    id="tab-t" onclick="st('t')">🚌 Trsp.</div>
     <div class="tab"    id="tab-s" onclick="st('s')">🍋 Sapori</div>
     <div class="tab"    id="tab-f" onclick="st('f')">📷 Foto</div>
     <div class="tab"    id="tab-r" onclick="st('r')">🍽 Locali</div>
@@ -691,6 +690,11 @@ function st(n){
     document.getElementById(`tab-${x}`).classList.toggle('on',x===n);
     document.getElementById(`p-${x}`).classList.toggle('on',x===n);
   });
+  // Show/hide locali markers
+  LOCALI.forEach(l=>{
+    if(n==='r'){if(!map.hasLayer(lcMrks[l.id]))lcMrks[l.id].addTo(map);}
+    else{if(map.hasLayer(lcMrks[l.id]))map.removeLayer(lcMrks[l.id]);}
+  });
   // Scroll active tab into view on mobile
   const activeTab=document.getElementById('tab-'+n);
   if(activeTab) activeTab.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
@@ -820,7 +824,7 @@ let activeLcTipo='all';
 // Locali markers
 LOCALI.forEach(l=>{
   const ico=L.divIcon({className:'',html:`<div class="mk locale">${l.ico}</div>`,iconSize:[32,32],iconAnchor:[16,16],popupAnchor:[0,-18]});
-  const m=L.marker([l.lat,l.lng],{icon:ico}).addTo(map);
+  const m=L.marker([l.lat,l.lng],{icon:ico}); // not added to map by default
   const tel=l.tel?`<a class="lc-btn tel" href="tel:+39${l.tel.replace(/\s/g,'')}">📞 ${l.tel}</a>`:'';
   const web=l.link?`<a class="lc-btn web" href="${l.link}" target="_blank">🔗 Vedi online</a>`:'';
   const gm=`<a class="lc-btn maps" href="https://www.google.com/maps?q=${encodeURIComponent(l.name)}&ll=${l.lat},${l.lng}" target="_blank">📍 Maps</a>`;
