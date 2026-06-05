@@ -722,11 +722,12 @@ function st(n){
   });
   // Show luoghi chips only in Luoghi tab
   document.getElementById('chips').style.display = (n==='l') ? '' : 'none';
-  // Show/hide locali markers
+  // Show/hide locali markers + re-render locali list on tab open
   LOCALI.forEach(l=>{
     if(n==='r'){if(!map.hasLayer(lcMrks[l.id]))lcMrks[l.id].addTo(map);}
     else{if(map.hasLayer(lcMrks[l.id]))map.removeLayer(lcMrks[l.id]);}
   });
+  if(n==='r') flc(activeLcTipo||'all');
   // Scroll active tab into view on mobile
   const activeTab=document.getElementById('tab-'+n);
   if(activeTab) activeTab.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
@@ -876,32 +877,42 @@ LOCALI.forEach(l=>{
 });
 
 function flc(tipo){
-  activeLcTipo=tipo;
-  document.querySelectorAll('.lchip').forEach(b=>{
-    const bTipo=b.getAttribute('onclick').match(/flc\('(.*?)'\)/)?.[1]||'';
-    b.classList.toggle('on', bTipo===tipo);
+  activeLcTipo = tipo || 'all';
+  // Activate correct chip
+  document.querySelectorAll('.lchip').forEach(function(b){
+    var oc = b.getAttribute('onclick') || '';
+    b.classList.toggle('on', oc.indexOf("'" + tipo + "'") >= 0);
   });
-  const fl=tipo==='all'?LOCALI:LOCALI.filter(l=>l.tipo===tipo);
-  document.getElementById('lc-n').textContent=fl.length+' locali';
-  document.getElementById('lc-list').innerHTML=fl.map(l=>`
-    <div class="lc-card" onclick="flyToLocale('${l.id}')" data-id="${l.id}">
-      <div class="lc-top">
-        <div class="lc-ico">${l.ico}</div>
-        <div class="lc-body">
-          <div class="lc-tag">${tipoLabel[l.tipo]||l.tipo}</div>
-          <div class="lc-name">${l.name}</div>
-          <div class="lc-desc">${l.desc}</div>
-          <div class="lc-addr">📍 ${l.addr}</div>
-          <div class="lc-actions">
-            <a class="lc-btn maps" href="https://www.google.com/maps?q=${encodeURIComponent(l.name)}&ll=${l.lat},${l.lng}" target="_blank">📍 Maps</a>
-            ${l.tel?`<a class="lc-btn tel" href="tel:+39${l.tel.replace(/\s/g,'')}" onclick="event.stopPropagation()">📞 ${l.tel}</a>`:''}
-            ${l.link?`<a class="lc-btn web" href="${l.link}" target="_blank" onclick="event.stopPropagation()">🔗 Online</a>`:''}
-          </div>
-          <div class="lc-disc">★ Segnalazione personale — nessun rapporto commerciale</div>
-        </div>
-      </div>
-    </div>`).join('');
+  // Filter locali
+  var fl = (tipo === 'all') ? LOCALI : LOCALI.filter(function(l){ return l.tipo === tipo; });
+  document.getElementById('lc-n').textContent = fl.length + ' locali';
+  // Build card HTML (no nested templates — compatible with all mobile browsers)
+  var out = '';
+  for(var i = 0; i < fl.length; i++){
+    var l = fl[i];
+    var gm = 'https://www.google.com/maps?q=' + encodeURIComponent(l.name) + '&ll=' + l.lat + ',' + l.lng;
+    var tel_h = l.tel ? '<a class="lc-btn tel" href="tel:+39' + l.tel.replace(/\s/g,'') + '" onclick="event.stopPropagation()">📞 ' + l.tel + '</a>' : '';
+    var web_h = l.link ? '<a class="lc-btn web" href="' + l.link + '" target="_blank" onclick="event.stopPropagation()">🔗 Online</a>' : '';
+    out += '<div class="lc-card" onclick="flyToLocale(\'' + l.id + '\')" data-id="' + l.id + '">'
+         + '<div class="lc-top">'
+           + '<div class="lc-ico">' + l.ico + '</div>'
+           + '<div class="lc-body">'
+             + '<div class="lc-tag">' + (tipoLabel[l.tipo] || l.tipo) + '</div>'
+             + '<div class="lc-name">' + l.name + '</div>'
+             + '<div class="lc-desc">' + l.desc + '</div>'
+             + '<div class="lc-addr">📍 ' + l.addr + '</div>'
+             + '<div class="lc-actions">'
+               + '<a class="lc-btn maps" href="' + gm + '" target="_blank">📍 Maps</a>'
+               + tel_h + web_h
+             + '</div>'
+             + '<div class="lc-disc">★ Segnalazione personale — nessun rapporto commerciale</div>'
+           + '</div>'
+         + '</div>'
+         + '</div>';
+  }
+  document.getElementById('lc-list').innerHTML = out;
 }
+
 
 function flyToLocale(id){
   const l=LOCALI.find(x=>x.id===id);if(!l)return;
