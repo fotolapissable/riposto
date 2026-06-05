@@ -53,7 +53,7 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-fam
 .chip.storico{border-color:var(--violet);color:var(--violet)}.chip.storico.on{background:var(--violet);color:#fff}
 .chip.porto{border-color:var(--teal);color:var(--teal)}.chip.porto.on{background:var(--teal);color:#fff}
 .chip.natura{border-color:var(--green);color:var(--green)}.chip.natura.on{background:var(--green);color:#fff}
-.chip.spiaggia{border-color:#1a7fbf;color:#1a7fbf}.chip.spiaggia.on{background:#1a7fbf;color:#fff}
+.chip.spiaggia{border-color:#1a7fbf;color:#1a7fbf}.chip.spiaggia.on{background:#1a7fbf;color:#fff}.chip[data-cat='locale'].on{background:#e67e22;color:#fff}
 #tabs{display:flex;border-bottom:1px solid var(--border)}
 .tab{flex:1;text-align:center;padding:9px 2px 8px;font-size:9.5px;font-weight:700;letter-spacing:.3px;color:var(--text-s);cursor:pointer;border-bottom:2.5px solid transparent;transition:all .2s;text-transform:uppercase}
 .tab.on{color:var(--amber);border-bottom-color:var(--amber)}
@@ -223,6 +223,34 @@ table.tt td.du{color:var(--amber-d);font-weight:700;white-space:nowrap}
 #sb-copy{font-size:7.5px;color:var(--text-s)}
 #disc-reopen{font-size:8px;color:var(--blue);background:none;border:none;cursor:pointer;font-family:var(--fb);font-weight:700;padding:0;letter-spacing:.3px}
 #disc-reopen:hover{text-decoration:underline}
+
+/* ── LOCALI ─────────────────────────────── */
+#lc-chips{padding:7px 10px 6px;background:var(--panel2);border-bottom:1px solid var(--border);display:flex;flex-wrap:wrap;gap:4px}
+.lchip{padding:3px 9px;border-radius:10px;font-size:9.5px;font-weight:700;cursor:pointer;border:1.5px solid;transition:all .17s;white-space:nowrap}
+.lchip.all{border-color:#e67e22;color:#e67e22}.lchip.all.on{background:#e67e22;color:#fff}
+.lchip.ristorante{border-color:#c0392b;color:#c0392b}.lchip.ristorante.on{background:#c0392b;color:#fff}
+.lchip.pizzeria{border-color:#e67e22;color:#e67e22}.lchip.pizzeria.on{background:#e67e22;color:#fff}
+.lchip.bar{border-color:#8e44ad;color:#8e44ad}.lchip.bar.on{background:#8e44ad;color:#fff}
+.lchip.bottega{border-color:var(--green);color:var(--green)}.lchip.bottega.on{background:var(--green);color:#fff}
+#lc-n{font-size:8.5px;color:var(--text-s);padding:6px 12px 5px;background:var(--panel2);border-bottom:1px solid var(--border);letter-spacing:.5px;text-transform:uppercase}
+.lc-card{padding:10px 11px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .12s}
+.lc-card:hover,.lc-card.hi{background:#fff8f2}
+.lc-card:last-child{border-bottom:none}
+.lc-top{display:flex;align-items:flex-start;gap:9px}
+.lc-ico{width:30px;height:30px;border-radius:50%;background:#fdf0e0;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;margin-top:1px}
+.lc-body{flex:1;min-width:0}
+.lc-tag{font-size:8px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;padding:1.5px 5px;border-radius:5px;background:#fdf0e0;color:#e67e22;display:inline-block;margin-bottom:2px}
+.lc-name{font-size:11.5px;font-weight:700;color:var(--text);margin-bottom:2px;line-height:1.2}
+.lc-desc{font-size:10px;color:var(--text-m);line-height:1.35;margin-bottom:4px}
+.lc-addr{font-size:9px;color:var(--text-s);margin-bottom:5px}
+.lc-actions{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:5px}
+.lc-btn{font-size:8.5px;font-weight:700;padding:3px 8px;border-radius:6px;text-decoration:none;transition:opacity .15s;display:inline-flex;align-items:center;gap:3px}
+.lc-btn:hover{opacity:.75}
+.lc-btn.tel{background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7}
+.lc-btn.web{background:var(--blue-l);color:var(--blue);border:1px solid #90caf9}
+.lc-btn.maps{background:#e8eaf6;color:#3949ab;border:1px solid #9fa8da}
+.lc-disc{font-size:8px;color:var(--text-s);font-style:italic;border-top:.5px solid var(--border);padding-top:4px;margin-top:2px}
+.mk.locale{background:#e67e22}
 </style>
 </head>
 <body>
@@ -256,6 +284,7 @@ table.tt td.du{color:var(--amber-d);font-weight:700;white-space:nowrap}
     <button class="chip porto"    onclick="fc('porto')"    data-cat="porto"    id="ch-porto">⚓ Porto</button>
     <button class="chip natura"   onclick="fc('natura')"   data-cat="natura"   id="ch-natura">🌿 Natura</button>
     <button class="chip spiaggia" onclick="fc('spiaggia')" data-cat="spiaggia" id="ch-spiaggia">🏖 Spiagge</button>
+    <button class="chip" style="border-color:#e67e22;color:#e67e22" onclick="fc('locale')" data-cat="locale" id="ch-locale">🍽 Locali</button>
   </div>
   <div id="tabs">
     <div class="tab on" id="tab-l" onclick="st('l')">🗺 Luoghi</div>
@@ -263,6 +292,7 @@ table.tt td.du{color:var(--amber-d);font-weight:700;white-space:nowrap}
     <div class="tab"    id="tab-t" onclick="st('t')">🚌 Trasporti</div>
     <div class="tab"    id="tab-s" onclick="st('s')">🍋 Sapori</div>
     <div class="tab"    id="tab-f" onclick="st('f')">📷 Foto</div>
+    <div class="tab"    id="tab-r" onclick="st('r')">🍽 Locali</div>
   </div>
 
   <!-- LUOGHI -->
@@ -370,22 +400,27 @@ table.tt td.du{color:var(--amber-d);font-weight:700;white-space:nowrap}
     <div class="fo-card">
       <div class="fo-thumb" style="background:linear-gradient(135deg,#1a0e06,#6b2d0a)">🌋</div>
       <div><div class="fo-name">Etna &amp; Paesaggi</div><div class="fo-desc">Crateri, colate laviche, alba sull'Ionio. Canon R5 · RF 14-35mm f/4L IS USM.</div>
-      <div class="fo-links"><a class="fl p" href="https://www.saal-digital.it" target="_blank">🖼 Stampa</a><a class="fl s" href="https://www.alamy.com" target="_blank">Alamy</a><a class="fl s" href="https://www.behance.net/fotolapis5c33" target="_blank">Behance</a></div></div>
+      <div class="fo-links"><a class="fl p" href="https://www.saal-digital.net/share/xdCCuGu/" target="_blank">🖼 Stampa</a><a class="fl s" href="https://www.alamy.com/stock-photo/?cid=T8MHNTJ2XSQBAW6PQAXDXRL3YN6A978GMN6Q5N6R4LD69CFYMW3SK374QD7MCXPQ&sortBy=relevant" target="_blank">Alamy</a><a class="fl s" href="https://www.behance.net/michelecipriano" target="_blank">Behance</a></div></div>
     </div>
     <div class="fo-card">
       <div class="fo-thumb" style="background:linear-gradient(135deg,#0a1f0a,#1a5a1a)">🦋</div>
       <div><div class="fo-name">Macro &amp; Insetti</div><div class="fo-desc">Fauna endemica alle falde dell'Etna. RF 35mm Macro + tubo 13mm. Specie rare.</div>
-      <div class="fo-links"><a class="fl p" href="https://www.saal-digital.it" target="_blank">🖼 Stampa</a><a class="fl s" href="https://stock.adobe.com" target="_blank">Adobe</a><a class="fl s" href="https://www.shutterstock.com" target="_blank">Shutterstock</a></div></div>
+      <div class="fo-links"><a class="fl p" href="https://www.saal-digital.net/share/NpMVf5v/" target="_blank">🖼 Stampa</a><a class="fl s" href="https://stock.adobe.com/it/contributor/208486609/fotolapissable" target="_blank">Adobe</a><a class="fl s" href="https://www.behance.net/michelecipriano" target="_blank">Behance</a></div></div>
     </div>
     <div class="fo-card">
       <div class="fo-thumb" style="background:linear-gradient(135deg,#061a2a,#0d6e87)">🌊</div>
       <div><div class="fo-name">Mare &amp; Ionio</div><div class="fo-desc">Costa ionica da Riposto a Taormina. Alba, barche, luci d'oro. RF 16-35mm.</div>
-      <div class="fo-links"><a class="fl p" href="https://www.saal-digital.it" target="_blank">🖼 Stampa</a><a class="fl s" href="https://www.alamy.com" target="_blank">Alamy</a><a class="fl s" href="https://www.behance.net/fotolapis5c33" target="_blank">Behance</a></div></div>
+      <div class="fo-links"><a class="fl p" href="https://www.saal-digital.net/share/peLN7fq/" target="_blank">🖼 Stampa</a><a class="fl s" href="https://www.alamy.com/stock-photo/?cid=T8MHNTJ2XSQBAW6PQAXDXRL3YN6A978GMN6Q5N6R4LD69CFYMW3SK374QD7MCXPQ&sortBy=relevant" target="_blank">Alamy</a><a class="fl s" href="https://www.behance.net/michelecipriano" target="_blank">Behance</a></div></div>
     </div>
     <div class="fo-card">
       <div class="fo-thumb" style="background:linear-gradient(135deg,#2a1a08,#a06810)">✈️</div>
       <div><div class="fo-name">Sicilia &amp; Travel</div><div class="fo-desc">Sicilia, Marocco, Malaysia, Bulgaria, New York. Fotografia di viaggio per editoriale e stock.</div>
-      <div class="fo-links"><a class="fl p" href="https://www.saal-digital.it" target="_blank">🖼 Stampa</a><a class="fl s" href="https://stock.adobe.com" target="_blank">Adobe</a><a class="fl s" href="https://www.shutterstock.com" target="_blank">Shutterstock</a></div></div>
+      <div class="fo-links"><a class="fl p" href="https://www.saal-digital.net/share/4AcHMrv/" target="_blank">🖼 Stampa</a><a class="fl s" href="https://www.shutterstock.com/it/g/lapissable?rid=224997161" target="_blank">Shutterstock</a><a class="fl s" href="https://www.behance.net/michelecipriano" target="_blank">Behance</a></div></div>
+    </div>
+    <div class="fo-card">
+      <div class="fo-thumb" style="background:linear-gradient(135deg,#0a0a1a,#1a1a5a)">🌙</div>
+      <div><div class="fo-name">Albe e Tramonti di Luna</div><div class="fo-desc">Albe di luna sullo Jonio · tramonti di luna sull'Etna. Luci notturne e paesaggi lunari.</div>
+      <div class="fo-links"><a class="fl p" href="https://www.saal-digital.net/share/XSgAVLx/" target="_blank">🖼 Stampa</a><a class="fl s" href="https://www.shutterstock.com/it/g/lapissable?rid=224997161" target="_blank">Shutterstock</a><a class="fl s" href="https://www.behance.net/michelecipriano" target="_blank">Behance</a></div></div>
     </div>
     <div class="fo-copy">© Michele Cipriano · fotolapissable.it · tutti i diritti riservati</div>
   </div>
@@ -396,6 +431,20 @@ table.tt td.du{color:var(--amber-d);font-weight:700;white-space:nowrap}
     <button id="disc-reopen" onclick="openDisc()">📋 Note legali</button>
   </div>
 </div>
+
+
+  <!-- LOCALI -->
+  <div class="tp" id="p-r">
+    <div id="lc-chips">
+      <button class="lchip all on" onclick="flc('all')">Tutti</button>
+      <button class="lchip ristorante" onclick="flc('ristorante')">🍴 Ristoranti</button>
+      <button class="lchip pizzeria"   onclick="flc('pizzeria')">🍕 Pizzerie</button>
+      <button class="lchip bar"        onclick="flc('bar')">☕ Bar &amp; Dolci</button>
+      <button class="lchip bottega"    onclick="flc('bottega')">🛒 Botteghe</button>
+    </div>
+    <div id="lc-n"></div>
+    <div id="lc-list"></div>
+  </div>
 
 <!-- MAP -->
 <div id="mapc">
@@ -569,6 +618,14 @@ const POIS=[
     it:{name:'Spiaggetta dei Tre Massi',desc:"Spiaggetta libera tra le barche dei pescatori. Entrata di fronte al Santuario della Lettera. Angolo autentico e poco frequentato.",tip:'🌊 Accesso libero · Stagione: maggio–settembre'},
     en:{name:'Spiaggetta dei Tre Massi',desc:"A small free beach among fishing boats. Entrance opposite the Santuario della Lettera. Authentic and quiet.",tip:'🌊 Free access · Season: May–September'},
     lat:37.7337,lng:15.2055},
+  {id:13,cat:'natura',ico:'🌴',
+    it:{name:'Parco delle Kentie',desc:"Giardino botanico sorto su un antico vivaio di palme. Collezione rara di kentie e piante tropicali in un contesto suggestivo.",tip:'📍 Escluso festivi e sabato · Orario: 09:00–13:00'},
+    en:{name:'Parco delle Kentie',desc:"Botanical garden on an ancient palm nursery. Rare collection of kentia palms and tropical plants.",tip:'📍 Closed holidays & Saturday afternoons · Hours: 09:00–13:00'},
+    lat:37.725178640614516,lng:15.204583163143253},
+  {id:14,cat:'storico',ico:'🏛',
+    it:{name:'Palazzo Vigo',desc:'Museo, mostre temporanee e convegni culturali. Edificio storico che ospita eventi e iniziative della comunità ripostese.',tip:'📍 Visita libera · Torre Archirafi'},
+    en:{name:'Palazzo Vigo',desc:'Museum, temporary exhibitions and cultural events. Historic building hosting community events and initiatives.',tip:'📍 Free entry · Torre Archirafi'},
+    lat:37.7105,lng:15.21849},
 ];
 
 // ── MARKERS ──
@@ -630,7 +687,7 @@ function renderPois(cat){
 }
 
 function st(n){
-  ['l','m','t','s','f'].forEach(x=>{
+  ['l','m','t','s','f','r'].forEach(x=>{
     document.getElementById(`tab-${x}`).classList.toggle('on',x===n);
     document.getElementById(`p-${x}`).classList.toggle('on',x===n);
   });
@@ -689,6 +746,129 @@ function toggleLang(){
   POIS.forEach(p=>mrks[p.id].setPopupContent(mkPop(p)));
   fetchWx();
 }
+
+
+// ── LOCALI DATA ──
+const LOCALI=[
+  {id:'l01',tipo:'bar',ico:'☕',
+    name:"A'Matticana",
+    desc:"Granite fantastiche, servizio cortese. Arancini esclusivi alla carne e al pesce. Ottimo caffè.",
+    addr:"Via La Marmora, 12",tel:'338 468 9397',
+    link:'https://www.tripadvisor.it/Restaurant_Review-g1483693-d11737049-Reviews-A_Matticana-Riposto_Province_of_Catania_Sicily.html',
+    lat:37.73160,lng:15.20504},
+  {id:'l02',tipo:'bottega',ico:'🧺',
+    name:"F.lli Virgitto",
+    desc:"Verdure, frutta, ortaggi, agrumi e legumi freschi. Prodotti locali di stagione.",
+    addr:"Pescheria di Riposto",tel:null,link:null,
+    lat:37.73172,lng:15.20503},
+  {id:'l03',tipo:'bottega',ico:'🐟',
+    name:"Gaetano Ricca",
+    desc:"Pesce fresco ogni mattina direttamente dai pescherecci di Riposto.",
+    addr:"Pescheria di Riposto",tel:null,
+    link:'https://www.facebook.com/gaetano.ricca.395?locale=it_IT',
+    lat:37.73173,lng:15.20523},
+  {id:'l04',tipo:'pizzeria',ico:'🍕',
+    name:"L'Angolo Di Don Pippo",
+    desc:"Pizzeria d'asporto con possibilità di consumare sul posto. Servizio a domicilio.",
+    addr:"Via Antonio Gramsci, 70",tel:'329 749 6581',
+    link:'https://www.facebook.com/p/LAngolo-Di-Don-Pippo-100086377073889/?locale=it_IT',
+    lat:37.73294,lng:15.20413},
+  {id:'l05',tipo:'bottega',ico:'🍷',
+    name:"D'Urso Vini",
+    desc:"Nerello Mascalese e Carricante, Nero d'Avola sfuso e imbottigliato. Vini dell'Etna di qualità.",
+    addr:"Via Galileo Galilei, 16",tel:null,link:null,
+    lat:37.73386,lng:15.19945},
+  {id:'l06',tipo:'bottega',ico:'🥖',
+    name:"Panificio Salvanni",
+    desc:"Pane artigianale e prodotti da forno della tradizione ripostese.",
+    addr:"Via Luigi Capuana, 2",tel:'095 930261',
+    link:'https://www.facebook.com/profile.php?id=100057098213896&locale=it_IT',
+    lat:37.73380,lng:15.20035},
+  {id:'l07',tipo:'ristorante',ico:'🍴',
+    name:"Da Nonna Rosa",
+    desc:"Ristorante e trattoria con cucina tipica siciliana. Ambiente familiare e autentico.",
+    addr:"Via Cristoforo Colombo, 88/92",tel:'095 8033362',
+    link:'https://www.tripadvisor.it/Restaurant_Review-g1483693-d25098252-Reviews-Da_Nonna_Rosa_Il_Pranzo_E_Servito-Riposto_Province_of_Catania_Sicily.html',
+    lat:37.73398,lng:15.20496},
+  {id:'l08',tipo:'pizzeria',ico:'🍕',
+    name:"Risto Pizzeria Grano",
+    desc:"Pizzeria con sala interna e servizio a domicilio. Pizze artigianali e cucina siciliana.",
+    addr:"Corso Italia, 215",tel:'095 779 5369',
+    link:'https://www.facebook.com/ristopizzeriaGrano/',
+    lat:37.73052,lng:15.19909},
+  {id:'l09',tipo:'bar',ico:'🍰',
+    name:"Pasticceria Gangemi",
+    desc:"Pasticceria artigianale e gelateria. Dolci della tradizione siciliana.",
+    addr:"Via Antonio Gramsci, 199",tel:'095 439117',
+    link:'https://www.facebook.com/PasticceriaGangemi',
+    lat:37.72998,lng:15.20508},
+  {id:'l10',tipo:'ristorante',ico:'🍴',
+    name:"Ai Confini del Mare — Da Giacomo e Tiziana",
+    desc:"Ristorante, pizzeria e serata karaoke a Torre Archirafi. Vista sul mare.",
+    addr:"Via Marco Polo, 49 — Torre Archirafi",tel:'327 639 9112',
+    link:'https://www.tripadvisor.it/Restaurant_Review-g2266825-d23783767-Reviews-Ai_Confini_del_Mare_Da_Giacomo-Torre_Archirafi_Riposto_Province_of_Catania_Sici.html',
+    lat:37.70963,lng:15.21660},
+];
+
+const tipoLabel={ristorante:'Ristorante',pizzeria:'Pizzeria',bar:'Bar & Pasticceria',bottega:'Bottega'};
+const lcMrks={};
+let activeLcTipo='all';
+
+// Locali markers
+LOCALI.forEach(l=>{
+  const ico=L.divIcon({className:'',html:`<div class="mk locale">${l.ico}</div>`,iconSize:[32,32],iconAnchor:[16,16],popupAnchor:[0,-18]});
+  const m=L.marker([l.lat,l.lng],{icon:ico}).addTo(map);
+  const tel=l.tel?`<a class="lc-btn tel" href="tel:+39${l.tel.replace(/\s/g,'')}">📞 ${l.tel}</a>`:'';
+  const web=l.link?`<a class="lc-btn web" href="${l.link}" target="_blank">🔗 Vedi online</a>`:'';
+  const gm=`<a class="lc-btn maps" href="https://www.google.com/maps?q=${encodeURIComponent(l.name)}&ll=${l.lat},${l.lng}" target="_blank">📍 Maps</a>`;
+  m.bindPopup(`<div class="pu-name">${l.name}</div>
+    <span class="pu-tag porto">${tipoLabel[l.tipo]||l.tipo}</span>
+    <div class="pu-desc">${l.desc}</div>
+    <div class="pu-tip">📍 ${l.addr}</div>
+    <div class="pu-actions">${gm}${tel}${web}</div>
+    <div style="font-size:8px;color:var(--text-s);margin-top:5px;font-style:italic">★ Segnalazione personale — nessun rapporto commerciale</div>`,{maxWidth:260});
+  m.on('click',()=>{
+    st('r');
+    document.querySelectorAll('.lc-card').forEach(c=>c.classList.remove('hi'));
+    const c=document.querySelector(`.lc-card[data-id="${l.id}"]`);
+    if(c){c.classList.add('hi');c.scrollIntoView({behavior:'smooth',block:'nearest'});}
+  });
+  lcMrks[l.id]=m;
+});
+
+function flc(tipo){
+  activeLcTipo=tipo;
+  document.querySelectorAll('.lchip').forEach(b=>b.classList.toggle('on',b.textContent.toLowerCase().includes(tipo)||tipo==='all'&&b.classList.contains('all')));
+  const fl=tipo==='all'?LOCALI:LOCALI.filter(l=>l.tipo===tipo);
+  document.getElementById('lc-n').textContent=fl.length+' locali';
+  document.getElementById('lc-list').innerHTML=fl.map(l=>`
+    <div class="lc-card" onclick="flyToLocale('${l.id}')" data-id="${l.id}">
+      <div class="lc-top">
+        <div class="lc-ico">${l.ico}</div>
+        <div class="lc-body">
+          <div class="lc-tag">${tipoLabel[l.tipo]||l.tipo}</div>
+          <div class="lc-name">${l.name}</div>
+          <div class="lc-desc">${l.desc}</div>
+          <div class="lc-addr">📍 ${l.addr}</div>
+          <div class="lc-actions">
+            <a class="lc-btn maps" href="https://www.google.com/maps?q=${encodeURIComponent(l.name)}&ll=${l.lat},${l.lng}" target="_blank">📍 Maps</a>
+            ${l.tel?`<a class="lc-btn tel" href="tel:+39${l.tel.replace(/\s/g,'')}" onclick="event.stopPropagation()">📞 ${l.tel}</a>`:''}
+            ${l.link?`<a class="lc-btn web" href="${l.link}" target="_blank" onclick="event.stopPropagation()">🔗 Online</a>`:''}
+          </div>
+          <div class="lc-disc">★ Segnalazione personale — nessun rapporto commerciale</div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function flyToLocale(id){
+  const l=LOCALI.find(x=>x.id===id);if(!l)return;
+  map.flyTo([l.lat,l.lng],17,{duration:.8});
+  setTimeout(()=>lcMrks[id].openPopup(),850);
+}
+
+// Init locali tab
+flc('all');
 
 renderPois('all');
 fetchWx();
