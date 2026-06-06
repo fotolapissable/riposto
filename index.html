@@ -565,17 +565,35 @@ function flyTo(id){
 
 // ── LOCALI MARKERS ──
 var LOCALI_DATA=[
-  {id:'l01',lat:37.73160,lng:15.20504},{id:'l02',lat:37.73172,lng:15.20503},
-  {id:'l03',lat:37.73173,lng:15.20523},{id:'l04',lat:37.73294,lng:15.20413},
-  {id:'l05',lat:37.73386,lng:15.19945},{id:'l06',lat:37.73380,lng:15.20035},
-  {id:'l07',lat:37.73398,lng:15.20496},{id:'l08',lat:37.73052,lng:15.19909},
-  {id:'l09',lat:37.72998,lng:15.20508},{id:'l10',lat:37.70963,lng:15.21660},
-  {id:'l11',lat:37.73292,lng:15.20506},
+  {id:'l01',lat:37.73160,lng:15.20504,name:"A'Matticana",tipo:'Bar & Pasticceria',addr:'Via La Marmora, 12'},
+  {id:'l02',lat:37.73172,lng:15.20503,name:'Virgitto Store',tipo:'Bottega',addr:'Pescheria di Riposto'},
+  {id:'l03',lat:37.73173,lng:15.20523,name:'Gaetano Ricca',tipo:'Bottega',addr:'Pescheria di Riposto'},
+  {id:'l04',lat:37.73294,lng:15.20413,name:"L'Angolo Di Don Pippo",tipo:'Pizzeria',addr:'Via Antonio Gramsci, 70'},
+  {id:'l05',lat:37.73386,lng:15.19945,name:"D'Urso Vini",tipo:'Bottega',addr:'Via Galileo Galilei, 16'},
+  {id:'l06',lat:37.73380,lng:15.20035,name:'Panificio Salvanni',tipo:'Bottega',addr:'Via Luigi Capuana, 2'},
+  {id:'l07',lat:37.73398,lng:15.20496,name:'Da Nonna Rosa',tipo:'Ristorante',addr:'Via Cristoforo Colombo, 88/92'},
+  {id:'l08',lat:37.73052,lng:15.19909,name:'Risto Pizzeria Grano',tipo:'Pizzeria',addr:'Corso Italia, 215'},
+  {id:'l09',lat:37.72998,lng:15.20508,name:'Pasticceria Gangemi',tipo:'Bar & Pasticceria',addr:'Via Antonio Gramsci, 199'},
+  {id:'l10',lat:37.70963,lng:15.21660,name:'Ai Confini del Mare',tipo:'Ristorante',addr:'Via Marco Polo, 49 - Torre Archirafi'},
+  {id:'l11',lat:37.73292,lng:15.20506,name:"Mamiro'",tipo:'Bar & Chiosco',addr:'Piazza del Commercio'},
 ];
 var lcMrks={};
 LOCALI_DATA.forEach(function(l){
   var m=L.marker([l.lat,l.lng],{icon:L.divIcon({className:'',html:'<div class="mk locale">&#x1F37D;</div>',iconSize:[32,32],iconAnchor:[16,16],popupAnchor:[0,-18]})});
+  // Popup con nome e tipo
+  var gm='https://www.google.com/maps?q='+encodeURIComponent(l.name)+'&ll='+l.lat+','+l.lng;
+  m.bindPopup(
+    '<div class="pu-name">'+l.name+'</div>'
+    +'<span class="pu-tag porto">'+l.tipo+'</span>'
+    +'<div class="pu-tip">&#x1F4CD; '+l.addr+'</div>'
+    +'<div class="pu-actions">'
+      +'<a class="pu-gmaps" href="'+gm+'" target="_blank">&#x1F4CD; Apri in Maps</a>'
+      +'<a class="pu-print" onclick="st('r');var c=document.querySelector('.lc-card[data-id=\"'+l.id+'\"]');if(c){document.querySelectorAll('.lc-card').forEach(function(x){x.classList.remove('hi');});c.classList.add('hi');c.scrollIntoView({behavior:'smooth',block:'nearest'});}return false;" href="#" style="background:var(--amber);color:var(--dark)">&#x1F4CB; Dettagli</a>'
+    +'</div>',
+    {maxWidth:240}
+  );
   m.on('click',function(){
+    // Popup opens automatically; also switch to Locali tab
     st('r');
     var c=document.querySelector('.lc-card[data-id="'+l.id+'"]');
     if(c){document.querySelectorAll('.lc-card').forEach(function(x){x.classList.remove('hi');});c.classList.add('hi');c.scrollIntoView({behavior:'smooth',block:'nearest'});}
