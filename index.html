@@ -588,7 +588,7 @@ LOCALI_DATA.forEach(function(l){
     +'<div class="pu-tip">&#x1F4CD; '+l.addr+'</div>'
     +'<div class="pu-actions">'
       +'<a class="pu-gmaps" href="'+gm+'" target="_blank">&#x1F4CD; Apri in Maps</a>'
-      +'<a class="pu-print" onclick="st('r');var c=document.querySelector('.lc-card[data-id=\"'+l.id+'\"]');if(c){document.querySelectorAll('.lc-card').forEach(function(x){x.classList.remove('hi');});c.classList.add('hi');c.scrollIntoView({behavior:'smooth',block:'nearest'});}return false;" href="#" style="background:var(--amber);color:var(--dark)">&#x1F4CB; Dettagli</a>'
+      +'<a class="pu-print" href="javascript:void(0)" onclick="showLocale('+JSON.stringify(l.id)+')">&#x1F4CB; Dettagli</a>'
     +'</div>',
     {maxWidth:240}
   );
@@ -730,6 +730,14 @@ function toggleLang(){
 }
 
 // ── INIT ──
+
+// ── SHOW LOCALE (called from popup) ──
+function showLocale(id){
+  st('r');
+  document.querySelectorAll('.lc-card').forEach(function(x){x.classList.remove('hi');});
+  var c=document.querySelector('.lc-card[data-id="'+id+'"]');
+  if(c){c.classList.add('hi');c.scrollIntoView({behavior:'smooth',block:'nearest'});}
+}
 renderPois('all');
 fetchWx();
 setInterval(fetchWx,10*60*1000);
