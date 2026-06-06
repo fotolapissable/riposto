@@ -667,10 +667,29 @@ function st(n){
     document.getElementById('p-'+x).classList.toggle('on',x===n);
   });
   document.getElementById('chips').style.display=(n==='l')?'':'none';
-  LOCALI_DATA.forEach(function(l){
-    if(n==='r'){if(!map.hasLayer(lcMrks[l.id]))lcMrks[l.id].addTo(map);}
-    else{if(map.hasLayer(lcMrks[l.id]))map.removeLayer(lcMrks[l.id]);}
-  });
+  // Locali tab: mostra marker locali, nascondi marker luoghi
+  // Altri tab: nascondi marker locali, ripristina marker luoghi
+  if(n==='r'){
+    // Nascondi tutti i marker luoghi
+    POIS.forEach(function(p){
+      if(map.hasLayer(mrks[p.id]))map.removeLayer(mrks[p.id]);
+    });
+    // Mostra marker locali
+    LOCALI_DATA.forEach(function(l){
+      if(!map.hasLayer(lcMrks[l.id]))lcMrks[l.id].addTo(map);
+    });
+  } else {
+    // Nascondi marker locali
+    LOCALI_DATA.forEach(function(l){
+      if(map.hasLayer(lcMrks[l.id]))map.removeLayer(lcMrks[l.id]);
+    });
+    // Ripristina marker luoghi in base al filtro attivo
+    POIS.forEach(function(p){
+      var show=activeCat==='all'||p.cat===activeCat;
+      if(show){if(!map.hasLayer(mrks[p.id]))mrks[p.id].addTo(map);}
+      else{if(map.hasLayer(mrks[p.id]))map.removeLayer(mrks[p.id]);}
+    });
+  }
   var at=document.getElementById('tab-'+n);
   if(at)at.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
 }
