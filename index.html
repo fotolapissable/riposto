@@ -515,19 +515,19 @@ var POIS=[
   {id:9,cat:'natura',ico:'🌴',lat:37.725178640614516,lng:15.204583163143253,
     it:{name:'Parco delle Kentie',desc:"Giardino botanico sorto su un antico vivaio di palme. Collezione rara di kentie e piante tropicali.",tip:'📍 Escluso festivi e sabato · Orario: 09:00–13:00'},
     en:{name:'Parco delle Kentie',desc:"Botanical garden on an ancient palm nursery. Rare kentia palms and tropical plants.",tip:'📍 Closed holidays & Saturdays · Hours: 09:00–13:00'}},
-  {id:10,cat:'porto',ico:'⚓',lat:37.7313,lng:15.2079,
+  {id:10,cat:'porto',ico:'⚓',print:'https://www.saal-digital.net/share/peLN7fq/',lat:37.7313,lng:15.2079,
     it:{name:"Porto dell'Etna — Marina di Riposto",desc:"Moderno porto turistico. Storicamente fulcro dell'esportazione del vino etneo verso l'Europa nell'Ottocento.",tip:'📍 Darsena turistica · Pesca sportiva'},
     en:{name:"Porto dell'Etna — Marina di Riposto",desc:'Modern tourist marina. Historically the hub for exporting Etna wine across 19th-century Europe.',tip:'📍 Tourist marina · Sport fishing'}},
-  {id:11,cat:'porto',ico:'🐟',lat:37.7291,lng:15.2079,
+  {id:11,cat:'porto',ico:'🐟',print:'https://www.saal-digital.net/share/peLN7fq/',lat:37.7291,lng:15.2079,
     it:{name:'Porto Peschereccio',desc:"Pescherecci all'alba. Sul muretto di fronte alla piazza Franco Battiato: spada, suri, gamberoni e polpi.",tip:'🕕 06:00–09:00 · Solo contanti'},
     en:{name:'Fishing Harbour',desc:"Fishing boats at dawn. On the seawall by Piazza Franco Battiato: swordfish, horse mackerel, prawns, octopus.",tip:'🕕 06:00–09:00 · Cash only'}},
-  {id:12,cat:'spiaggia',ico:'🏖',lat:37.7272,lng:15.2108,
+  {id:12,cat:'spiaggia',ico:'🏖',print:'https://www.saal-digital.net/share/peLN7fq/',lat:37.7272,lng:15.2108,
     it:{name:'Lungomare e Spiaggia di Riposto',desc:"Litorale ciottoloso con vista sull'Etna. Spiaggia libera, raggiungibile a piedi dal centro.",tip:'🌊 Stagione: maggio–settembre'},
     en:{name:'Riposto Seafront & Beach',desc:"Pebbly shoreline with Etna views. Free beach, easy walk from the centre.",tip:'🌊 Season: May–September'}},
-  {id:13,cat:'spiaggia',ico:'🏖',lat:37.7485,lng:15.1952,
+  {id:13,cat:'spiaggia',ico:'🏖',print:'https://www.saal-digital.net/share/XSgAVLx/',lat:37.7485,lng:15.1952,
     it:{name:'Fondachello',desc:'Frazione balneare a nord con spiaggia di sabbia fine e locali estivi.',tip:'📍 5 km a nord · Bus stagionale'},
     en:{name:'Fondachello',desc:"Northern seaside hamlet with fine sandy beach and summer clubs.",tip:'📍 5 km north · Seasonal bus'}},
-  {id:14,cat:'spiaggia',ico:'🪨',lat:37.7337,lng:15.2055,
+  {id:14,cat:'spiaggia',ico:'🪨',print:'https://www.saal-digital.net/share/XSgAVLx/',lat:37.7337,lng:15.2055,
     it:{name:'Spiaggetta dei Tre Massi',desc:"Spiaggetta libera tra le barche dei pescatori. Entrata di fronte al Santuario della Lettera.",tip:'🌊 Accesso libero · Stagione: maggio–settembre'},
     en:{name:'Spiaggetta dei Tre Massi',desc:"A small free beach among fishing boats. Entrance opposite the Santuario della Lettera.",tip:'🌊 Free access · Season: May–September'}},
 ];
@@ -540,7 +540,8 @@ function mkIco(p){return L.divIcon({className:'',html:'<div class="mk '+p.cat+'"
 function mkPop(p){
   var d=p[lang],catMap=lang==='it'?CAT_IT:CAT_EN,lbl=catMap[p.cat]||p.cat;
   var gm='https://www.google.com/maps?q='+encodeURIComponent(d.name)+'&ll='+p.lat+','+p.lng;
-  var printBtn=(p.cat==='porto'||p.cat==='spiaggia')?'<a class="pu-print" href="https://www.saal-digital.it" target="_blank">🖼 Acquista stampa</a>':'';
+  var printLbl=lang==='it'?'🖼 Acquista stampa':'🖼 Buy print';
+  var printBtn=p.print?'<a class="pu-print" href="'+p.print+'" target="_blank">'+printLbl+'</a>':'';
   return '<div class="pu-name">'+d.name+'</div><span class="pu-tag '+p.cat+'">'+lbl+'</span><div class="pu-desc">'+d.desc+'</div><div class="pu-tip">'+d.tip+'</div><div class="pu-actions"><a class="pu-gmaps" href="'+gm+'" target="_blank">📍 Apri in Maps</a>'+printBtn+'</div>';
 }
 
@@ -673,10 +674,35 @@ window.addEventListener('DOMContentLoaded',function(){
   if(!seen)openDisc();
 });
 
+
+// ── APPLY LANG ──
+var TAB_LABELS={
+  it:{l:'🗺 Luoghi',m:'🌤 Meteo',t:'🚌 Trsp.',s:'🍋 Sapori',f:'📷 Foto',r:'🍽 Locali'},
+  en:{l:'🗺 Places',m:'🌤 Weather',t:'🚌 Trans.',s:'🍋 Food',f:'📷 Photos',r:'🍽 Locals'}
+};
+var CHIP_LABELS={
+  it:{all:'Tutti',chiesa:'⛪ Chiese',storico:'🏛 Storico',porto:'⚓ Porto',natura:'🌿 Natura',spiaggia:'🏖 Spiagge'},
+  en:{all:'All',chiesa:'⛪ Churches',storico:'🏛 Historic',porto:'⚓ Harbour',natura:'🌿 Nature',spiaggia:'🏖 Beaches'}
+};
+function applyLang(){
+  var tl=TAB_LABELS[lang],cl=CHIP_LABELS[lang];
+  ['l','m','t','s','f','r'].forEach(function(x){
+    var el=document.getElementById('tab-'+x);
+    if(el&&tl[x])el.textContent=tl[x];
+  });
+  Object.keys(cl).forEach(function(k){
+    var el=document.getElementById('ch-'+k);
+    if(el)el.textContent=cl[k];
+  });
+  document.getElementById('poi-n') && (document.getElementById('poi-n').textContent='');
+  document.getElementById('wx-cond') && (document.getElementById('wx-cond').textContent=lang==='it'?'Caricamento…':'Loading…');
+}
+
 // ── LANG ──
 function toggleLang(){
   lang=lang==='it'?'en':'it';
   document.documentElement.lang=lang;
+  applyLang();
   renderPois(activeCat);
   POIS.forEach(function(p){mrks[p.id].setPopupContent(mkPop(p));});
   fetchWx();
