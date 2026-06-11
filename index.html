@@ -817,7 +817,7 @@ setInterval(fetchWx,10*60*1000);
 // ── SERVICE WORKER ──
 if('serviceWorker' in navigator){
   var swCode = `
-const CACHE = 'riposto-v1';
+const CACHE = 'riposto-v2';
 const ASSETS = ['./', './index.html'];
 self.addEventListener('install', function(e){
   e.waitUntil(
