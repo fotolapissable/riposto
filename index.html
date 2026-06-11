@@ -493,6 +493,9 @@ function locateMe(){
       userMarker=L.marker([lat,lng],{icon:L.divIcon({className:'',html:'<div class="user-mk"></div>',iconSize:[14,14],iconAnchor:[7,7]})}).addTo(map);
       userMarker.bindPopup('La tua posizione<br><small>Precisione: ~'+Math.round(acc)+' m</small>').openPopup();
       map.flyTo([lat,lng],16,{duration:1});
+      // Aggiorna distanza nei popup locali e luoghi
+      LOCALI_DATA.forEach(function(l){if(lcMrks[l.id])lcMrks[l.id].setPopupContent(mkLocalePop(l));});
+      POIS.forEach(function(p){if(mrks[p.id])mrks[p.id].setPopupContent(mkPop(p));});
     },
     function(e){alert('Posizione non disponibile: '+e.message);},
     {enableHighAccuracy:true,timeout:10000}
@@ -556,13 +559,15 @@ function mkPop(p){
   var gm='https://www.google.com/maps?q='+encodeURIComponent(d.name)+'&ll='+p.lat+','+p.lng;
   var printLbl=lang==='it'?'🖼 Acquista stampa':'🖼 Buy print';
   var printBtn=p.print?'<a class="pu-print" href="'+p.print+'" target="_blank">'+printLbl+'</a>':'';
-  return '<div class="pu-name">'+d.name+'</div><span class="pu-tag '+p.cat+'">'+lbl+'</span><div class="pu-desc">'+d.desc+'</div><div class="pu-tip">'+d.tip+'</div><div class="pu-actions"><a class="pu-gmaps" href="'+gm+'" target="_blank">📍 Apri in Maps</a>'+printBtn+'</div>';
+  var distHtml='';
+  if(userMarker){var pos=userMarker.getLatLng();distHtml='<div class="pu-tip">🚶 '+fmtDist(haversine(pos.lat,pos.lng,p.lat,p.lng))+' da te</div>';}
+  return '<div class="pu-name">'+d.name+'</div><span class="pu-tag '+p.cat+'">'+lbl+'</span><div class="pu-desc">'+d.desc+'</div><div class="pu-tip">'+d.tip+'</div>'+distHtml+'<div class="pu-actions"><a class="pu-gmaps" href="'+gm+'" target="_blank">📍 Apri in Maps</a>'+printBtn+'</div>';
 }
 
 POIS.forEach(function(p){
   var m=L.marker([p.lat,p.lng],{icon:mkIco(p)}).addTo(map);
   m.bindPopup(mkPop(p),{maxWidth:260});
-  m.on('click',function(){flyTo(p.id);});
+  m.on('click',function(){m.setPopupContent(mkPop(p));flyTo(p.id);});
   mrks[p.id]=m;
 });
 
@@ -592,22 +597,34 @@ var LOCALI_DATA=[
   {id:'l13',lat:37.73213,lng:15.20383,name:'Panificio Guidi',tipo:'Panificio',addr:'Via Archimede, 113'},
 ];
 var lcMrks={};
-LOCALI_DATA.forEach(function(l){
-  var m=L.marker([l.lat,l.lng],{icon:L.divIcon({className:'',html:'<div class="mk locale">&#x1F37D;</div>',iconSize:[32,32],iconAnchor:[16,16],popupAnchor:[0,-18]})});
-  // Popup con nome e tipo
+function haversine(lat1,lng1,lat2,lng2){
+  var R=6371000,r=Math.PI/180;
+  var dLat=(lat2-lat1)*r,dLng=(lng2-lng1)*r;
+  var a=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(lat1*r)*Math.cos(lat2*r)*Math.sin(dLng/2)*Math.sin(dLng/2);
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+function fmtDist(d){return d<1000?Math.round(d)+' m':(d/1000).toFixed(1)+' km';}
+function mkLocalePop(l){
   var gm='https://www.google.com/maps?q='+encodeURIComponent(l.name)+'&ll='+l.lat+','+l.lng;
-  m.bindPopup(
-    '<div class="pu-name">'+l.name+'</div>'
+  var distHtml='';
+  if(userMarker){
+    var pos=userMarker.getLatLng();
+    var d=haversine(pos.lat,pos.lng,l.lat,l.lng);
+    distHtml='<div class="pu-tip">&#x1F6B6; '+fmtDist(d)+' da te</div>';
+  }
+  return '<div class="pu-name">'+l.name+'</div>'
     +'<span class="pu-tag porto">'+l.tipo+'</span>'
     +'<div class="pu-tip">&#x1F4CD; '+l.addr+'</div>'
+    +distHtml
     +'<div class="pu-actions">'
       +'<a class="pu-gmaps" href="'+gm+'" target="_blank">&#x1F4CD; Apri in Maps</a>'
-      +'<a class="pu-print" href="javascript:void(0)" onclick="showLocale('+JSON.stringify(l.id)+')">&#x1F4CB; Dettagli</a>'
-    +'</div>',
-    {maxWidth:240}
-  );
+    +'</div>';
+}
+LOCALI_DATA.forEach(function(l){
+  var m=L.marker([l.lat,l.lng],{icon:L.divIcon({className:'',html:'<div class="mk locale">&#x1F37D;</div>',iconSize:[32,32],iconAnchor:[16,16],popupAnchor:[0,-18]})});
+  m.bindPopup(mkLocalePop(l),{maxWidth:240});
   m.on('click',function(){
-    // Popup opens automatically; also switch to Locali tab
+    m.setPopupContent(mkLocalePop(l));
     st('r');
     var c=document.querySelector('.lc-card[data-id="'+l.id+'"]');
     if(c){document.querySelectorAll('.lc-card').forEach(function(x){x.classList.remove('hi');});c.classList.add('hi');c.scrollIntoView({behavior:'smooth',block:'nearest'});}
@@ -817,7 +834,7 @@ setInterval(fetchWx,10*60*1000);
 // ── SERVICE WORKER ──
 if('serviceWorker' in navigator){
   var swCode = `
-const CACHE = 'riposto-v2';
+const CACHE = 'riposto-v4';
 const ASSETS = ['./', './index.html'];
 self.addEventListener('install', function(e){
   e.waitUntil(
