@@ -156,7 +156,13 @@ table.tt td.du{color:var(--amber-d);font-weight:700;white-space:nowrap}
 .lc-btn.tel{background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7}
 .lc-btn.web{background:var(--blue-l);color:var(--blue);border:1px solid #90caf9}
 .lc-disc{font-size:8px;color:var(--text-s);font-style:italic;border-top:.5px solid var(--border);padding-top:4px}
-/* SIDEBAR FOOTER */
+/* TOOLTIP BENVENUTO */
+#tip-overlay{position:fixed;inset:0;z-index:1900;display:none;align-items:flex-end;justify-content:center;padding:0 0 70px;pointer-events:none}
+#tip-box{background:rgba(24,18,10,.93);backdrop-filter:blur(6px);border:1px solid rgba(200,129,58,.35);border-radius:14px;padding:14px 18px;max-width:320px;width:90%;pointer-events:all;animation:tipIn .3s ease}
+@keyframes tipIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+#tip-box ul{list-style:none;margin:0 0 10px;padding:0;display:flex;flex-direction:column;gap:6px}
+#tip-box li{font-size:11px;color:rgba(255,255,255,.85);line-height:1.4}
+#tip-close{width:100%;background:var(--amber);color:var(--dark);border:none;border-radius:8px;padding:7px;font-family:var(--fb);font-size:11px;font-weight:700;cursor:pointer}
 #sb-foot{padding:7px 12px;border-top:1px solid var(--border);background:var(--panel2);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
 #sb-copy{font-size:7.5px;color:var(--text-s)}
 #disc-reopen{font-size:8px;color:var(--blue);background:none;border:none;cursor:pointer;font-family:var(--fb);font-weight:700;padding:0}
@@ -364,7 +370,7 @@ table.tt td.du{color:var(--amber-d);font-weight:700;white-space:nowrap}
 
   <div id="sb-foot">
     <span id="sb-copy">&copy; Michele Cipriano &middot; fotolapissable.it</span>
-    <button id="disc-reopen" onclick="openDisc()">&#x1F4CB; <span id="lbl-legal">Note legali</span></button>
+    <button id="disc-reopen" onclick="openHelp()">&#x2139;&#xFE0F; <span id="lbl-legal">Aiuto</span></button>
   </div>
 
 </div><!-- /sb -->
@@ -423,6 +429,14 @@ table.tt td.du{color:var(--amber-d);font-weight:700;white-space:nowrap}
       <div id="disc-fn"></div>
       <button id="disc-ok" onclick="closeDisc()"></button>
     </div>
+  </div>
+</div>
+
+<!-- TOOLTIP BENVENUTO -->
+<div id="tip-overlay">
+  <div id="tip-box">
+    <ul id="tip-list"></ul>
+    <button id="tip-close" onclick="closeTip()"></button>
   </div>
 </div>
 
@@ -748,13 +762,32 @@ function openMobMap(){document.getElementById('mapc').classList.add('mob-open');
 function closeMobMap(){document.getElementById('mapc').classList.remove('mob-open');}
 
 // ── DISCLAIMER ──
+var TIP_IT=['🗺 Tocca un marker sulla mappa per vedere info e distanza','📍 Attiva il GPS (in basso a destra) per vedere quanto sei lontano','🍽 Tab <b>Locali</b> per bar, ristoranti e botteghe','🌤 Tab <b>Meteo</b> per le previsioni in tempo reale','🇬🇧 Pulsante <b>IT/EN</b> per cambiare lingua'];
+var TIP_EN=['🗺 Tap a marker on the map to see info and distance','📍 Enable GPS (bottom right) to see how far you are','🍽 <b>Locals</b> tab for bars, restaurants and shops','🌤 <b>Weather</b> tab for real-time forecasts','🇮🇹 <b>IT/EN</b> button to switch language'];
+function openTip(){
+  var tips=lang==='it'?TIP_IT:TIP_EN;
+  document.getElementById('tip-list').innerHTML=tips.map(function(t){return '<li>'+t+'</li>';}).join('');
+  document.getElementById('tip-close').textContent=lang==='it'?'OK, ho capito!':'OK, got it!';
+  document.getElementById('tip-overlay').style.display='flex';
+}
+function closeTip(){document.getElementById('tip-overlay').style.display='none';try{localStorage.setItem('rip_tip_v1','1');}catch(e){}}
+function openHelp(){openDisc();setTimeout(openTip,400);}
 function openDisc(){document.getElementById('disc-overlay').style.display='flex';}
-function closeDisc(){document.getElementById('disc-overlay').style.display='none';try{localStorage.setItem('rip_disc_v1','1');}catch(e){}}
+function closeDisc(){
+  document.getElementById('disc-overlay').style.display='none';
+  try{localStorage.setItem('rip_disc_v1','1');}catch(e){}
+  var tipSeen=false;try{tipSeen=localStorage.getItem('rip_tip_v1')==='1';}catch(e){}
+  if(!tipSeen)setTimeout(openTip,400);
+}
 window.addEventListener('DOMContentLoaded',function(){
   applyLang();
   renderPois(activeCat);
   var seen=false;try{seen=localStorage.getItem('rip_disc_v1')==='1';}catch(e){}
-  if(!seen)openDisc();
+  if(!seen){openDisc();}
+  else{
+    var tipSeen=false;try{tipSeen=localStorage.getItem('rip_tip_v1')==='1';}catch(e){}
+    if(!tipSeen)setTimeout(openTip,800);
+  }
 });
 
 
@@ -782,10 +815,10 @@ function applyLang(){
   // Disclaimer lingua
   document.getElementById('ds-it').style.display=lang==='it'?'':'none';
   document.getElementById('ds-en').style.display=lang==='en'?'':'none';
-  document.getElementById('disc-fn').innerHTML=lang==='it'?'Continuando accetti questa informativa. Richiamabile da <b>Note legali</b> in fondo alla barra.':'By continuing you accept these terms. Accessible from <b>Legal notes</b> at the bottom of the sidebar.';
+  document.getElementById('disc-fn').innerHTML=lang==='it'?'Continuando accetti questa informativa. Richiamabile da <b>Aiuto</b> in fondo alla barra.':'By continuing you accept these terms. Accessible from <b>Help</b> at the bottom of the sidebar.';
   document.getElementById('disc-ok').textContent=lang==='it'?'Ho capito →':'Got it →';
   // Label statici
-  var ll=document.getElementById('lbl-legal');if(ll)ll.textContent=lang==='it'?'Note legali':'Legal notes';
+  var ll=document.getElementById('lbl-legal');if(ll)ll.textContent=lang==='it'?'Aiuto':'Help';
   var lm=document.getElementById('lbl-map');if(lm)lm.textContent=lang==='it'?'Vedi sulla Mappa':'View on Map';
 }
 
@@ -854,7 +887,7 @@ setInterval(fetchWx,10*60*1000);
 // ── SERVICE WORKER ──
 if('serviceWorker' in navigator){
   var swCode = `
-const CACHE = 'riposto-v5';
+const CACHE = 'riposto-v7';
 const ASSETS = ['./', './index.html'];
 self.addEventListener('install', function(e){
   e.waitUntil(
