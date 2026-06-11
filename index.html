@@ -364,12 +364,12 @@ table.tt td.du{color:var(--amber-d);font-weight:700;white-space:nowrap}
 
   <div id="sb-foot">
     <span id="sb-copy">&copy; Michele Cipriano &middot; fotolapissable.it</span>
-    <button id="disc-reopen" onclick="openDisc()">&#x1F4CB; Note legali</button>
+    <button id="disc-reopen" onclick="openDisc()">&#x1F4CB; <span id="lbl-legal">Note legali</span></button>
   </div>
 
 </div><!-- /sb -->
 
-<button id="mob-map-btn" onclick="openMobMap()">&#x1F5FA; Vedi sulla Mappa</button>
+<button id="mob-map-btn" onclick="openMobMap()">&#x1F5FA; <span id="lbl-map">Vedi sulla Mappa</span></button>
 
 <!-- MAP -->
 <div id="mapc">
@@ -403,24 +403,34 @@ table.tt td.du{color:var(--amber-d);font-weight:700;white-space:nowrap}
   <div id="disc-box">
     <div id="disc-head">
       <svg width="28" height="28" viewBox="0 0 40 40" fill="none"><ellipse cx="20" cy="20" rx="17.5" ry="6.5" stroke="#C8813A" stroke-width="2" transform="rotate(-38 20 20)"/><ellipse cx="20" cy="20" rx="17.5" ry="6.5" stroke="#C8813A" stroke-width="2" transform="rotate(38 20 20)"/><circle cx="20" cy="20" r="3.5" fill="#C8813A"/></svg>
-      <div><div id="disc-htxt">fotolapissable &middot; Riposto</div><div id="disc-hsub">Informativa sull&apos;utilizzo</div></div>
+      <div><div id="disc-htxt">fotolapissable &middot; Riposto</div><div id="disc-hsub">Informativa sull&apos;utilizzo / Terms of use</div></div>
     </div>
     <div id="disc-body">
-      <div class="ds"><div class="ds-t">&#x1F310; Servizio gratuito senza fini di lucro</div><div class="ds-p">Questa applicazione &egrave; realizzata da <b>Michele Cipriano &mdash; fotolapissable.it</b> come servizio informativo gratuito per i visitatori di Riposto. Non ha finalit&agrave; commerciali dirette.</div></div>
-      <div class="ds"><div class="ds-t">&#x1F68C; Orari e informazioni pratiche</div><div class="ds-p">Gli orari di trasporti e luoghi sono <b>indicativi e potrebbero non essere aggiornati</b>. Verificare sempre sui siti ufficiali. fotolapissable.it non si assume responsabilit&agrave; per informazioni non aggiornate.</div></div>
-      <div class="ds"><div class="ds-t">&#x1F37D; Suggerimenti di locali</div><div class="ds-p">I suggerimenti di ristoranti e locali sono <b>opinioni personali dell&apos;autore</b>, non sponsorizzazioni a pagamento. Nessun rapporto commerciale con le attivit&agrave; citate.</div></div>
-      <div class="ds"><div class="ds-t">&#x1F4F7; Fotografie e contenuti</div><div class="ds-p">Tutti i contenuti fotografici sono <b>&copy; Michele Cipriano &mdash; fotolapissable.it</b>. Tutti i diritti riservati.</div></div>
+      <div class="ds" id="ds-it" style="display:none">
+        <div class="ds"><div class="ds-t">&#x1F310; Servizio gratuito senza fini di lucro</div><div class="ds-p">Questa applicazione &egrave; realizzata da <b>Michele Cipriano &mdash; fotolapissable.it</b> come servizio informativo gratuito per i visitatori di Riposto. Non ha finalit&agrave; commerciali dirette.</div></div>
+        <div class="ds"><div class="ds-t">&#x1F68C; Orari e informazioni pratiche</div><div class="ds-p">Gli orari di trasporti e luoghi sono <b>indicativi e potrebbero non essere aggiornati</b>. Verificare sempre sui siti ufficiali. fotolapissable.it non si assume responsabilit&agrave; per informazioni non aggiornate.</div></div>
+        <div class="ds"><div class="ds-t">&#x1F37D; Suggerimenti di locali</div><div class="ds-p">I suggerimenti di ristoranti e locali sono <b>opinioni personali dell&apos;autore</b>, non sponsorizzazioni a pagamento. Nessun rapporto commerciale con le attivit&agrave; citate.</div></div>
+        <div class="ds"><div class="ds-t">&#x1F4F7; Fotografie e contenuti</div><div class="ds-p">Tutti i contenuti fotografici sono <b>&copy; Michele Cipriano &mdash; fotolapissable.it</b>. Tutti i diritti riservati.</div></div>
+      </div>
+      <div class="ds" id="ds-en" style="display:none">
+        <div class="ds"><div class="ds-t">&#x1F310; Free non-commercial service</div><div class="ds-p">This app is created by <b>Michele Cipriano &mdash; fotolapissable.it</b> as a free information service for visitors to Riposto. It has no direct commercial purpose.</div></div>
+        <div class="ds"><div class="ds-t">&#x1F68C; Timetables and practical info</div><div class="ds-p">Transport and venue timetables are <b>indicative and may not be up to date</b>. Always verify on official websites. fotolapissable.it assumes no responsibility for outdated information.</div></div>
+        <div class="ds"><div class="ds-t">&#x1F37D; Local recommendations</div><div class="ds-p">Restaurant and venue suggestions are <b>the author&apos;s personal opinions</b>, not paid sponsorships. No commercial relationship with any listed business.</div></div>
+        <div class="ds"><div class="ds-t">&#x1F4F7; Photos and content</div><div class="ds-p">All photographic content is <b>&copy; Michele Cipriano &mdash; fotolapissable.it</b>. All rights reserved.</div></div>
+      </div>
     </div>
     <div id="disc-foot">
-      <div id="disc-fn">Continuando accetti questa informativa. Richiamabile da <b>Note legali</b> in fondo alla barra.</div>
-      <button id="disc-ok" onclick="closeDisc()">Ho capito &rarr;</button>
+      <div id="disc-fn"></div>
+      <button id="disc-ok" onclick="closeDisc()"></button>
     </div>
   </div>
 </div>
 
 <script>
 var POS={lat:37.7298,lng:15.2011};
-var lang='it', activeCat='all', activeLcTipo='all';
+var lang=(navigator.language||navigator.userLanguage||'it').toLowerCase().startsWith('it')?'it':'en';
+document.documentElement.lang=lang;
+var activeCat='all', activeLcTipo='all';
 var userMarker=null, userCircle=null;
 
 // ── WEATHER ──
@@ -741,6 +751,8 @@ function closeMobMap(){document.getElementById('mapc').classList.remove('mob-ope
 function openDisc(){document.getElementById('disc-overlay').style.display='flex';}
 function closeDisc(){document.getElementById('disc-overlay').style.display='none';try{localStorage.setItem('rip_disc_v1','1');}catch(e){}}
 window.addEventListener('DOMContentLoaded',function(){
+  applyLang();
+  renderPois(activeCat);
   var seen=false;try{seen=localStorage.getItem('rip_disc_v1')==='1';}catch(e){}
   if(!seen)openDisc();
 });
@@ -767,6 +779,14 @@ function applyLang(){
   });
   document.getElementById('poi-n') && (document.getElementById('poi-n').textContent='');
   document.getElementById('wx-cond') && (document.getElementById('wx-cond').textContent=lang==='it'?'Caricamento…':'Loading…');
+  // Disclaimer lingua
+  document.getElementById('ds-it').style.display=lang==='it'?'':'none';
+  document.getElementById('ds-en').style.display=lang==='en'?'':'none';
+  document.getElementById('disc-fn').innerHTML=lang==='it'?'Continuando accetti questa informativa. Richiamabile da <b>Note legali</b> in fondo alla barra.':'By continuing you accept these terms. Accessible from <b>Legal notes</b> at the bottom of the sidebar.';
+  document.getElementById('disc-ok').textContent=lang==='it'?'Ho capito →':'Got it →';
+  // Label statici
+  var ll=document.getElementById('lbl-legal');if(ll)ll.textContent=lang==='it'?'Note legali':'Legal notes';
+  var lm=document.getElementById('lbl-map');if(lm)lm.textContent=lang==='it'?'Vedi sulla Mappa':'View on Map';
 }
 
 // ── LANG ──
@@ -834,7 +854,7 @@ setInterval(fetchWx,10*60*1000);
 // ── SERVICE WORKER ──
 if('serviceWorker' in navigator){
   var swCode = `
-const CACHE = 'riposto-v4';
+const CACHE = 'riposto-v5';
 const ASSETS = ['./', './index.html'];
 self.addEventListener('install', function(e){
   e.waitUntil(
