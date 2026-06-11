@@ -138,6 +138,8 @@ table.tt td.du{color:var(--amber-d);font-weight:700;white-space:nowrap}
 .lchip.pizzeria{border-color:#e67e22;color:#e67e22}.lchip.pizzeria.on{background:#e67e22;color:#fff}
 .lchip.bar{border-color:var(--violet);color:var(--violet)}.lchip.bar.on{background:var(--violet);color:#fff}
 .lchip.bottega{border-color:var(--green);color:var(--green)}.lchip.bottega.on{background:var(--green);color:#fff}
+.lchip.macelleria{border-color:#b03060;color:#b03060}.lchip.macelleria.on{background:#b03060;color:#fff}
+.lchip.panificio{border-color:#a0522d;color:#a0522d}.lchip.panificio.on{background:#a0522d;color:#fff}
 #lc-n{font-size:8.5px;color:var(--text-s);padding:6px 12px 5px;background:var(--panel2);border-bottom:1px solid var(--border);letter-spacing:.5px;text-transform:uppercase;flex-shrink:0}
 .lc-card{padding:10px 11px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .12s}
 .lc-card:hover,.lc-card.hi{background:#fff8f2}.lc-card:last-child{border-bottom:none}
@@ -339,8 +341,10 @@ table.tt td.du{color:var(--amber-d);font-weight:700;white-space:nowrap}
       <button class="lchip pizzeria"   onclick="flc('pizzeria')">Pizzerie</button>
       <button class="lchip bar"        onclick="flc('bar')">Bar &amp; Dolci</button>
       <button class="lchip bottega"    onclick="flc('bottega')">Botteghe</button>
+      <button class="lchip macelleria" onclick="flc('macelleria')">Macellerie</button>
+      <button class="lchip panificio"  onclick="flc('panificio')">Panifici</button>
     </div>
-    <div id="lc-n">11 locali</div>
+    <div id="lc-n">14 locali</div>
     <div id="lc-list">
       <div class="lc-card" data-tipo="bar" onclick="flyToLocale('l01')" data-id="l01"><div class="lc-top"><div class="lc-ico">&#x2615;</div><div class="lc-body"><div class="lc-tag">Bar &amp; Pasticceria</div><div class="lc-name">A&apos;Matticana</div><div class="lc-desc">Granite fantastiche, servizio cortese. Arancini esclusivi alla carne e al pesce. Ottimo caff&egrave;.</div><div class="lc-addr">&#x1F4CD; Via La Marmora, 12</div><div class="lc-actions"><a class="lc-btn maps" href="https://www.google.com/maps?q=A+Matticana&ll=37.73160,15.20504" target="_blank">&#x1F4CD; Maps</a><a class="lc-btn tel" href="tel:+393384689397" onclick="event.stopPropagation()">&#x1F4DE; 338 468 9397</a><a class="lc-btn web" href="https://www.tripadvisor.it/Restaurant_Review-g1483693-d11737049-Reviews-A_Matticana-Riposto_Province_of_Catania_Sicily.html" target="_blank" onclick="event.stopPropagation()">&#x1F517; Online</a></div><div class="lc-disc">&#x2605; Segnalazione personale &mdash; nessun rapporto commerciale</div></div></div></div>
       <div class="lc-card" data-tipo="bottega" onclick="flyToLocale('l02')" data-id="l02"><div class="lc-top"><div class="lc-ico">&#x1F9FA;</div><div class="lc-body"><div class="lc-tag">Bottega</div><div class="lc-name">Virgitto Store</div><div class="lc-desc">Frutta, verdura, agrumi e legumi freschi. Prodotti locali 7/7. Aperto 08:00&ndash;13:00 &middot; Consegne a domicilio.</div><div class="lc-addr">&#x1F4CD; Pescheria di Riposto</div><div class="lc-actions"><a class="lc-btn maps" href="https://www.google.com/maps?q=Virgitto+Riposto&ll=37.73172,15.20503" target="_blank">&#x1F4CD; Maps</a><a class="lc-btn tel" href="tel:+39347044500724" onclick="event.stopPropagation()">&#x1F4DE; IT 347 044 5007</a><a class="lc-btn web" href="https://www.facebook.com/profile.php?id=61553956397363" target="_blank" onclick="event.stopPropagation()">&#x1F517; Online</a></div><div class="lc-disc">&#x2605; Segnalazione personale &mdash; nessun rapporto commerciale</div></div></div></div>
@@ -353,6 +357,8 @@ table.tt td.du{color:var(--amber-d);font-weight:700;white-space:nowrap}
       <div class="lc-card" data-tipo="bar" onclick="flyToLocale('l09')" data-id="l09"><div class="lc-top"><div class="lc-ico">&#x1F370;</div><div class="lc-body"><div class="lc-tag">Bar &amp; Pasticceria</div><div class="lc-name">Pasticceria Gangemi</div><div class="lc-desc">Pasticceria artigianale e gelateria. Dolci della tradizione siciliana.</div><div class="lc-addr">&#x1F4CD; Via Antonio Gramsci, 199</div><div class="lc-actions"><a class="lc-btn maps" href="https://www.google.com/maps?q=Pasticceria+Gangemi+Riposto&ll=37.72998,15.20508" target="_blank">&#x1F4CD; Maps</a><a class="lc-btn tel" href="tel:+39095439117" onclick="event.stopPropagation()">&#x1F4DE; 095 439117</a><a class="lc-btn web" href="https://www.facebook.com/PasticceriaGangemi" target="_blank" onclick="event.stopPropagation()">&#x1F517; Online</a></div><div class="lc-disc">&#x2605; Segnalazione personale &mdash; nessun rapporto commerciale</div></div></div></div>
       <div class="lc-card" data-tipo="ristorante" onclick="flyToLocale('l10')" data-id="l10"><div class="lc-top"><div class="lc-ico">&#x1F374;</div><div class="lc-body"><div class="lc-tag">Ristorante</div><div class="lc-name">Ai Confini del Mare &mdash; Da Giacomo e Tiziana</div><div class="lc-desc">Ristorante, pizzeria e serata karaoke a Torre Archirafi.</div><div class="lc-addr">&#x1F4CD; Via Marco Polo, 49 &mdash; Torre Archirafi</div><div class="lc-actions"><a class="lc-btn maps" href="https://www.google.com/maps?q=Ai+Confini+del+Mare+Torre+Archirafi&ll=37.70963,15.21660" target="_blank">&#x1F4CD; Maps</a><a class="lc-btn tel" href="tel:+393276399112" onclick="event.stopPropagation()">&#x1F4DE; 327 639 9112</a><a class="lc-btn web" href="https://www.tripadvisor.it/Restaurant_Review-g2266825-d23783767-Reviews-Ai_Confini_del_Mare_Da_Giacomo-Torre_Archirafi_Riposto_Province_of_Catania_Sici.html" target="_blank" onclick="event.stopPropagation()">&#x1F517; Online</a></div><div class="lc-disc">&#x2605; Segnalazione personale &mdash; nessun rapporto commerciale</div></div></div></div>
       <div class="lc-card" data-tipo="bar" onclick="flyToLocale('l11')" data-id="l11"><div class="lc-top"><div class="lc-ico">🥤</div><div class="lc-body"><div class="lc-tag">Bar &amp; Pasticceria</div><div class="lc-name">Mamiro&apos; S.R.L.S.</div><div class="lc-desc">Chiosco-bar, caffetteria. Specialit&agrave;: Selz limone e sale &mdash; la bevanda tipica ripostese.</div><div class="lc-addr">&#x1F4CD; Piazza del Commercio</div><div class="lc-actions"><a class="lc-btn maps" href="https://www.google.com/maps?q=Mamiro+Riposto&ll=37.73292,15.20506" target="_blank">&#x1F4CD; Maps</a><a class="lc-btn tel" href="tel:+393276399112" onclick="event.stopPropagation()">&#x1F4DE; 327 639 9112</a></div><div class="lc-disc">&#x2605; Segnalazione personale &mdash; nessun rapporto commerciale</div></div></div></div>
+      <div class="lc-card" data-tipo="macelleria" onclick="flyToLocale('l12')" data-id="l12"><div class="lc-top"><div class="lc-ico">🥩</div><div class="lc-body"><div class="lc-tag">Macelleria</div><div class="lc-name">La Bottega della Carne di Raffaele Fresta</div><div class="lc-desc">Macelleria, polleria e salumeria. Carni fresche selezionate.</div><div class="lc-addr">&#x1F4CD; Via A. Gramsci, 96</div><div class="lc-actions"><a class="lc-btn maps" href="https://www.google.com/maps?q=Raffaele+Fresta+Macelleria+Riposto&ll=37.73223,15.20436" target="_blank">&#x1F4CD; Maps</a><a class="lc-btn tel" href="tel:+390957794506" onclick="event.stopPropagation()">&#x1F4DE; 095 779 4506</a></div><div class="lc-disc">&#x2605; Segnalazione personale &mdash; nessun rapporto commerciale</div></div></div></div>
+      <div class="lc-card" data-tipo="panificio" onclick="flyToLocale('l13')" data-id="l13"><div class="lc-top"><div class="lc-ico">🥖</div><div class="lc-body"><div class="lc-tag">Panificio</div><div class="lc-name">Panificio Guidi</div><div class="lc-desc">Pane, pizza, tavola calda, biscotti, gelateria e pasticceria.</div><div class="lc-addr">&#x1F4CD; Via Archimede, 113</div><div class="lc-actions"><a class="lc-btn maps" href="https://www.google.com/maps?q=Panificio+Guidi+Riposto&ll=37.73213,15.20383" target="_blank">&#x1F4CD; Maps</a><a class="lc-btn tel" href="tel:+393478113783" onclick="event.stopPropagation()">&#x1F4DE; 347 811 3783</a></div><div class="lc-disc">&#x2605; Segnalazione personale &mdash; nessun rapporto commerciale</div></div></div></div>
     </div>
   </div>
 
@@ -582,6 +588,8 @@ var LOCALI_DATA=[
   {id:'l09',lat:37.72998,lng:15.20508,name:'Pasticceria Gangemi',tipo:'Bar & Pasticceria',addr:'Via Antonio Gramsci, 199'},
   {id:'l10',lat:37.70963,lng:15.21660,name:'Ai Confini del Mare',tipo:'Ristorante',addr:'Via Marco Polo, 49 - Torre Archirafi'},
   {id:'l11',lat:37.73292,lng:15.20506,name:"Mamiro'",tipo:'Bar & Chiosco',addr:'Piazza del Commercio'},
+  {id:'l12',lat:37.73223,lng:15.20436,name:'Bottega della Carne di Raffaele Fresta',tipo:'Macelleria',addr:'Via A. Gramsci, 96'},
+  {id:'l13',lat:37.73213,lng:15.20383,name:'Panificio Guidi',tipo:'Panificio',addr:'Via Archimede, 113'},
 ];
 var lcMrks={};
 LOCALI_DATA.forEach(function(l){
@@ -758,11 +766,18 @@ function toggleLang(){
 
 // ── SHOW LOCALE (called from popup) ──
 function showLocale(id){
-  st('r');
-  document.querySelectorAll('.lc-card').forEach(function(x){x.classList.remove('hi');});
-  var c=document.querySelector('.lc-card[data-id="'+id+'"]');
-  if(c){c.classList.add('hi');c.scrollIntoView({behavior:'smooth',block:'nearest'});}
+  map.closePopup();
+  setTimeout(function(){
+    st('r');
+    document.querySelectorAll('.lc-card').forEach(function(x){x.classList.remove('hi');});
+    var c=document.querySelector('.lc-card[data-id="'+id+'"]');
+    if(c){c.classList.add('hi');c.scrollIntoView({behavior:'smooth',block:'nearest'});}
+    // mobile: torna alla sidebar
+    var mapc=document.getElementById('mapc');
+    if(mapc&&mapc.classList.contains('mob-open'))closeMobMap();
+  },80);
 }
+window.showLocale=showLocale;
 renderPois('all');
 fetchWx();
 setInterval(fetchWx,10*60*1000);
