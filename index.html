@@ -109,6 +109,12 @@ table.tt td.dr{font-weight:700;color:var(--text);font-size:10px}
 table.tt td.du{color:var(--amber-d);font-weight:700;white-space:nowrap}
 .tr-note{font-size:7.5px;color:var(--text-s);padding:5px 5px 2px;font-style:italic;line-height:1.4}
 .tr-link{display:inline-block;margin-top:4px;font-size:8px;font-weight:700;color:var(--blue);text-decoration:none;background:var(--blue-l);padding:2px 8px;border-radius:6px}
+.tr-loading{padding:14px 10px;font-size:10px;color:var(--text-s);text-align:center}
+.tr-delay{display:inline-block;font-size:8.5px;font-weight:700;padding:1px 5px;border-radius:8px}
+.tr-ok{background:#d4edda;color:#155724}.tr-warn{background:#fff3cd;color:#856404}.tr-late{background:#f8d7da;color:#721c24}
+.tr-upd{font-size:8px;color:var(--text-s);padding:6px 5px 2px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.tr-refresh{font-size:8px;font-weight:700;color:var(--blue);background:var(--blue-l);border:none;padding:2px 7px;border-radius:6px;cursor:pointer}
+.tr-gone{font-size:8px;color:var(--text-s);font-style:italic}
 /* SAPORI */
 .sa-intro{padding:10px 12px 8px;background:#fdf6e3;border-bottom:1px solid rgba(181,134,13,.15);font-size:10px;color:var(--text-m);line-height:1.5;flex-shrink:0}
 .sa-item{display:flex;align-items:flex-start;gap:10px;padding:9px 11px;border-bottom:1px solid var(--border)}
@@ -295,7 +301,7 @@ table.tt td.du{color:var(--amber-d);font-weight:700;white-space:nowrap}
   <div class="tp" id="p-t">
     <div class="tr-s">
       <div class="tr-h" onclick="tgl('1')"><span class="tr-ico">&#x1F682;</span><div class="tr-tx"><div class="tr-ti">Trenitalia &mdash; Giarre-Riposto</div><div class="tr-su">Linea Messina&ndash;Catania &middot; 1.5 km dal centro</div></div><span class="tr-cv" id="cv1">&#9658;</span></div>
-      <div class="tr-bd" id="bd1"><table class="tt"><tr><th>Direzione</th><th>Orari indicativi</th><th>Durata</th></tr><tr><td class="dr">Catania C.le</td><td>05:42&middot;06:55&middot;08:12&middot;09:30&middot;11:15&middot;13:40&middot;15:20&middot;17:05&middot;18:50&middot;20:30</td><td class="du">~50 min</td></tr><tr><td class="dr">Messina C.le</td><td>06:15&middot;07:40&middot;09:05&middot;10:55&middot;12:20&middot;14:10&middot;16:30&middot;18:15&middot;20:00&middot;21:45</td><td class="du">~40 min</td></tr></table><div class="tr-note">&#x26A0; Orari indicativi. Partenze live:</div><a class="tr-link" href="https://iechub.rfi.it/ArriviPartenze/arrivalsdepartures/Monitor?placeId=1432&arrivals=True" target="_blank">&#x1F534; Partenze live RFI</a></div>
+      <div class="tr-bd" id="bd1"><div id="tr-live"><div class="tr-loading">&#x23F3; Caricamento partenze live&#x2026;</div></div></div>
     </div>
     <div class="tr-s">
       <div class="tr-h" onclick="tgl('2')"><span class="tr-ico">&#x1F30B;</span><div class="tr-tx"><div class="tr-ti">Circumetnea (FCE) &mdash; Stazione Riposto</div><div class="tr-su">Giro panoramico intorno all&apos;Etna</div></div><span class="tr-cv" id="cv2">&#9658;</span></div>
@@ -747,6 +753,78 @@ function st(n){
   }
   var at=document.getElementById('tab-'+n);
   if(at)at.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+  if(n==='t')loadTreniLive(false);
+}
+
+// ── TRENITALIA LIVE ──
+var TRENI_STATION='S11008';
+var treniTimer=null;
+var treniLoaded=false;
+
+function _fmtOra(ms){var d=new Date(ms);return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');}
+function _fmtDest(s){return s?(s.charAt(0).toUpperCase()+s.slice(1).toLowerCase()):'–';}
+
+function loadTreniLive(force){
+  var container=document.getElementById('tr-live');
+  if(!container)return;
+  if(treniLoaded&&!force)return;
+  var isIt=lang==='it';
+  container.innerHTML='<div class="tr-loading">&#x23F3; '+(isIt?'Caricamento partenze…':'Loading departures…')+'</div>';
+  var now=new Date();
+  var ts=now.getFullYear()+'-'+(now.getMonth()+1).toString().padStart(2,'0')+'-'+now.getDate().toString().padStart(2,'0')+'T'+now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0')+':00';
+  var apiUrl='http://www.viaggiatreno.it/infomobilita/resteasy/viaggiatreno/partenze/'+TRENI_STATION+'/'+ts;
+  fetch('https://corsproxy.io/?url='+encodeURIComponent(apiUrl))
+    .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
+    .then(function(data){
+      _renderTreni(data);
+      treniLoaded=true;
+      if(treniTimer)clearTimeout(treniTimer);
+      treniTimer=setTimeout(function(){loadTreniLive(true);},90000);
+    })
+    .catch(function(){_renderTreniStatic();});
+}
+
+function _renderTreni(data){
+  var container=document.getElementById('tr-live');
+  if(!container)return;
+  var isIt=lang==='it';
+  var now=Date.now();
+  var treni=(data||[]).filter(function(t){return t.orarioPartenza&&(t.orarioPartenza>=now-180000);}).slice(0,8);
+  if(!treni.length){
+    container.innerHTML='<div class="tr-note">&#x26A0; '+(isIt?'Nessuna partenza nelle prossime ore.':'No departures in the next few hours.')+'</div>';
+    _appendTreniFooter(container);
+    return;
+  }
+  var html='<table class="tt"><tr><th>'+(isIt?'Destinazione':'Destination')+'</th><th>'+(isIt?'Orario':'Time')+'</th><th>'+(isIt?'Ritardo':'Delay')+'</th><th>'+(isIt?'Bin.':'Track')+'</th></tr>';
+  treni.forEach(function(t){
+    var ora=_fmtOra(t.orarioPartenza);
+    var dest=_fmtDest(t.destinazione||'');
+    var cat=(t.categoria||'REG')+' '+(t.numeroTreno||'');
+    var rit=t.ritardo||0;
+    var rc=rit<=0?'tr-ok':rit<=15?'tr-warn':'tr-late';
+    var rt=rit<=0?'&#x2714;':'+'+rit+'min';
+    var bin=(t.binario&&t.binario.reale&&t.binario.reale.descrizione)||(t.binario&&t.binario.programmato&&t.binario.programmato.descrizione)||'–';
+    var gone=t.partito?'<span class="tr-gone">'+(isIt?'Partito':'Left')+'</span> ':'';
+    html+='<tr><td class="dr">'+gone+dest+'<br><span style="font-size:8px;font-weight:400;color:var(--text-s)">'+cat+'</span></td><td style="white-space:nowrap;font-weight:700">'+ora+'</td><td><span class="tr-delay '+rc+'">'+rt+'</span></td><td style="text-align:center">'+bin+'</td></tr>';
+  });
+  html+='</table>';
+  container.innerHTML=html;
+  _appendTreniFooter(container);
+}
+
+function _appendTreniFooter(container){
+  var isIt=lang==='it';
+  var upd=_fmtOra(Date.now());
+  var div=document.createElement('div');
+  div.innerHTML='<div class="tr-upd">&#x23F1; '+(isIt?'Aggiornato alle':'Updated at')+' '+upd+'&nbsp;<button class="tr-refresh" onclick="loadTreniLive(true)">↻ '+(isIt?'Aggiorna':'Refresh')+'</button></div><a class="tr-link" href="https://iechub.rfi.it/ArriviPartenze/arrivalsdepartures/Monitor?placeId=1432&arrivals=False" target="_blank">&#x1F534; '+(isIt?'Tabellone RFI ufficiale':'Official RFI board')+'</a>';
+  container.appendChild(div);
+}
+
+function _renderTreniStatic(){
+  var container=document.getElementById('tr-live');
+  if(!container)return;
+  var isIt=lang==='it';
+  container.innerHTML='<table class="tt"><tr><th>'+(isIt?'Direzione':'Direction')+'</th><th>'+(isIt?'Orari indicativi':'Indicative times')+'</th><th>'+(isIt?'Durata':'Duration')+'</th></tr><tr><td class="dr">Catania C.le</td><td>05:42&middot;06:55&middot;08:12&middot;09:30&middot;11:15&middot;13:40&middot;15:20&middot;17:05&middot;18:50&middot;20:30</td><td class="du">~50 min</td></tr><tr><td class="dr">Messina C.le</td><td>06:15&middot;07:40&middot;09:05&middot;10:55&middot;12:20&middot;14:10&middot;16:30&middot;18:15&middot;20:00&middot;21:45</td><td class="du">~40 min</td></tr></table><div class="tr-note">&#x26A0; '+(isIt?'Dati live non disponibili — orari indicativi.':'Live data unavailable — indicative times.')+'</div><a class="tr-link" href="https://iechub.rfi.it/ArriviPartenze/arrivalsdepartures/Monitor?placeId=1432&arrivals=False" target="_blank">&#x1F534; '+(isIt?'Tabellone RFI ufficiale':'Official RFI board')+'</a>';
 }
 
 // ── ACCORDION ──
@@ -755,6 +833,7 @@ function tgl(id){
   var o=b.classList.contains('op');
   b.classList.toggle('op',!o);
   c.textContent=o?'►':'▼';
+  if(id==='1'&&!o)loadTreniLive(false);
 }
 
 // ── MOBILE MAP ──
