@@ -425,7 +425,7 @@ table.tt td.du{color:var(--amber-d);font-weight:700;white-space:nowrap}
       <a class="em-card" href="tel:095931763"><div class="em-num" style="font-size:13px">&#x1F48A;</div><div class="em-label">Farmacia Tambe<br><span>Corso Italia 65 &middot; 095 931763</span></div><div class="em-call">&#x1F4DE;</div></a>
       <div class="em-note" id="ph-note-it">&#x26A0; Per la farmacia di turno notturna verificare il cartello in farmacia o chiamare il 1500 (NurSind).</div>
       <div class="em-note" id="ph-note-en" style="display:none">&#x26A0; For the on-call pharmacy check the sign at any pharmacy or call 1500.</div>
-      <a class="em-link" href="https://www.asp.ct.it/farmacie-di-turno/" target="_blank">&#x1F4CB; Turni ufficiali ASP Catania</a>
+      <a class="em-link" href="https://www.farmaciediturnoin.it/sicilia/catania/riposto/" target="_blank">&#x1F4CB; Farmacia di turno &mdash; Riposto</a>
     </div>
     <!-- Ospedali -->
     <div class="em-section">
@@ -691,18 +691,36 @@ var lcMrks={};
 
 // ── FARMACIE MARKERS ──
 var FARMACIE_DATA=[
-  {id:'f01',lat:37.72905,lng:15.20698,name:'Farmacia Dr. Lizzio Alfio',addr:'Via Antonio Gramsci 145',tel:'095931363'},
-  {id:'f02',lat:37.73218,lng:15.20572,name:'Farmacia Pulvirenti Francesco',addr:'Corso Italia 96',tel:'0957793376'},
-  {id:'f03',lat:37.73085,lng:15.20645,name:'Farmacia Buscemi SAS',addr:'Via Roma 55/B',tel:'095931621'},
-  {id:'f04',lat:37.73195,lng:15.20580,name:'Farmacia Tambe',addr:'Corso Italia 65',tel:'095931763'}
+  {id:'f01',name:'Farmacia Dr. Lizzio Alfio',addr:'Via Antonio Gramsci 145, Riposto',tel:'095931363'},
+  {id:'f02',name:'Farmacia Pulvirenti Francesco',addr:'Corso Italia 96, Riposto',tel:'0957793376'},
+  {id:'f03',name:'Farmacia Buscemi SAS',addr:'Via Roma 55, Riposto',tel:'095931621'},
+  {id:'f04',name:'Farmacia Tambe',addr:'Corso Italia 65, Riposto',tel:'095931763'}
 ];
 var faMrks={};
-FARMACIE_DATA.forEach(function(f){
-  var m=L.marker([f.lat,f.lng],{icon:L.divIcon({className:'',html:'<div class="mk" style="background:#e8f5e9;border-color:#2e7d32;font-size:16px">&#x1F48A;</div>',iconSize:[32,32],iconAnchor:[16,16],popupAnchor:[0,-18]})});
-  var gm='https://www.google.com/maps?q='+encodeURIComponent(f.name+', Riposto CT');
+var faGeocoded=false;
+function _faMkr(f,lat,lng){
+  var gm='https://www.google.com/maps?q='+encodeURIComponent(f.addr);
+  var m=L.marker([lat,lng],{icon:L.divIcon({className:'',html:'<div class="mk" style="background:#e8f5e9;border-color:#2e7d32;font-size:16px">&#x1F48A;</div>',iconSize:[32,32],iconAnchor:[16,16],popupAnchor:[0,-18]})});
   m.bindPopup('<div class="pu-name">'+f.name+'</div><div class="pu-tip">&#x1F4CD; '+f.addr+'</div><div class="pu-actions"><a class="pu-gmaps" href="'+gm+'" target="_blank">&#x1F4CD; Apri in Maps</a>&nbsp;<a class="pu-gmaps" href="tel:'+f.tel+'" style="background:#e8f5e9;color:#2e7d32">&#x1F4DE; Chiama</a></div>',{maxWidth:220});
   faMrks[f.id]=m;
-});
+}
+function geocodeFarmacie(){
+  if(faGeocoded)return;
+  faGeocoded=true;
+  FARMACIE_DATA.forEach(function(f,i){
+    setTimeout(function(){
+      fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&q='+encodeURIComponent(f.addr+', CT, Italy'),{headers:{'Accept-Language':'it'}})
+        .then(function(r){return r.json();})
+        .then(function(d){
+          if(d&&d[0]){
+            _faMkr(f,parseFloat(d[0].lat),parseFloat(d[0].lon));
+            if(map.getZoom()>=13)faMrks[f.id].addTo(map);
+          }
+        })
+        .catch(function(){});
+    }, i*1100);
+  });
+}
 
 function haversine(lat1,lng1,lat2,lng2){
   var R=6371000,r=Math.PI/180;
@@ -814,11 +832,12 @@ function st(n){
   } else if(n==='e'){
     POIS.forEach(function(p){if(map.hasLayer(mrks[p.id]))map.removeLayer(mrks[p.id]);});
     LOCALI_DATA.forEach(function(l){if(map.hasLayer(lcMrks[l.id]))map.removeLayer(lcMrks[l.id]);});
-    FARMACIE_DATA.forEach(function(f){if(!map.hasLayer(faMrks[f.id]))faMrks[f.id].addTo(map);});
     map.flyTo([37.7310,15.2065],15,{duration:.8});
+    geocodeFarmacie();
+    setTimeout(function(){FARMACIE_DATA.forEach(function(f){if(faMrks[f.id]&&!map.hasLayer(faMrks[f.id]))faMrks[f.id].addTo(map);});},4500);
   } else {
     LOCALI_DATA.forEach(function(l){if(map.hasLayer(lcMrks[l.id]))map.removeLayer(lcMrks[l.id]);});
-    FARMACIE_DATA.forEach(function(f){if(map.hasLayer(faMrks[f.id]))map.removeLayer(faMrks[f.id]);});
+    FARMACIE_DATA.forEach(function(f){if(faMrks[f.id]&&map.hasLayer(faMrks[f.id]))map.removeLayer(faMrks[f.id]);});
     // Ripristina marker luoghi in base al filtro attivo
     POIS.forEach(function(p){
       var show=activeCat==='all'||p.cat===activeCat;
