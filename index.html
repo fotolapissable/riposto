@@ -419,13 +419,13 @@ table.tt td.du{color:var(--amber-d);font-weight:700;white-space:nowrap}
     <div class="em-section">
       <div class="em-subhead" id="ph-head-it">&#x1F48A; Farmacie a Riposto</div>
       <div class="em-subhead" id="ph-head-en" style="display:none">&#x1F48A; Pharmacies in Riposto</div>
-      <div class="em-card"><div class="em-num" style="font-size:13px">&#x1F48A;</div><div class="em-label">Farmacia Dr. Lizzio Alfio<br><span>Via Antonio Gramsci 145 &middot; 095 931363</span></div><div style="display:flex;flex-direction:column;gap:4px"><a href="tel:095931363" style="font-size:16px">&#x1F4DE;</a><a id="fa-map-f01" href="#" target="_blank" style="font-size:13px" title="Apri in Maps">&#x1F4CD;</a></div></div>
-      <div class="em-card"><div class="em-num" style="font-size:13px">&#x1F48A;</div><div class="em-label">Farmacia Pulvirenti Francesco<br><span>Corso Italia 96 &middot; 095 779 3376</span></div><div style="display:flex;flex-direction:column;gap:4px"><a href="tel:0957793376" style="font-size:16px">&#x1F4DE;</a><a id="fa-map-f02" href="#" target="_blank" style="font-size:13px" title="Apri in Maps">&#x1F4CD;</a></div></div>
-      <div class="em-card"><div class="em-num" style="font-size:13px">&#x1F48A;</div><div class="em-label">Farmacia Buscemi SAS<br><span>Via Roma 55/B &middot; 095 931621</span></div><div style="display:flex;flex-direction:column;gap:4px"><a href="tel:095931621" style="font-size:16px">&#x1F4DE;</a><a id="fa-map-f03" href="#" target="_blank" style="font-size:13px" title="Apri in Maps">&#x1F4CD;</a></div></div>
-      <div class="em-card"><div class="em-num" style="font-size:13px">&#x1F48A;</div><div class="em-label">Farmacia Tambe<br><span>Corso Italia 65 &middot; 095 931763</span></div><div style="display:flex;flex-direction:column;gap:4px"><a href="tel:095931763" style="font-size:16px">&#x1F4DE;</a><a id="fa-map-f04" href="#" target="_blank" style="font-size:13px" title="Apri in Maps">&#x1F4CD;</a></div></div>
-      <div class="em-note" id="ph-note-it">&#x26A0; Per la farmacia di turno notturna verificare il cartello in farmacia o chiamare il 1500 (NurSind).</div>
+      <a class="em-card" href="tel:095931363"><div class="em-num" style="font-size:13px">&#x1F48A;</div><div class="em-label">Farmacia Dr. Lizzio Alfio<br><span>Via Antonio Gramsci 145 &middot; 095 931363</span></div><div style="display:flex;flex-direction:column;gap:4px;align-items:center"><span class="em-call">&#x1F4DE;</span><a id="fa-map-f01" href="https://maps.google.com/?q=Via+Antonio+Gramsci+145,+Riposto+CT,+Italy" target="_blank" style="font-size:13px" onclick="event.stopPropagation()">&#x1F4CD;</a></div></a>
+      <a class="em-card" href="tel:0957793376"><div class="em-num" style="font-size:13px">&#x1F48A;</div><div class="em-label">Farmacia Pulvirenti Francesco<br><span>Corso Italia 96 &middot; 095 779 3376</span></div><div style="display:flex;flex-direction:column;gap:4px;align-items:center"><span class="em-call">&#x1F4DE;</span><a id="fa-map-f02" href="https://maps.google.com/?q=Corso+Italia+96,+Riposto+CT,+Italy" target="_blank" style="font-size:13px" onclick="event.stopPropagation()">&#x1F4CD;</a></div></a>
+      <a class="em-card" href="tel:095931621"><div class="em-num" style="font-size:13px">&#x1F48A;</div><div class="em-label">Farmacia Buscemi SAS<br><span>Via Roma 55/B &middot; 095 931621</span></div><div style="display:flex;flex-direction:column;gap:4px;align-items:center"><span class="em-call">&#x1F4DE;</span><a id="fa-map-f03" href="https://maps.google.com/?q=Via+Roma+55,+Riposto+CT,+Italy" target="_blank" style="font-size:13px" onclick="event.stopPropagation()">&#x1F4CD;</a></div></a>
+      <a class="em-card" href="tel:095931763"><div class="em-num" style="font-size:13px">&#x1F48A;</div><div class="em-label">Farmacia Tambe<br><span>Corso Italia 65 &middot; 095 931763</span></div><div style="display:flex;flex-direction:column;gap:4px;align-items:center"><span class="em-call">&#x1F4DE;</span><a id="fa-map-f04" href="https://maps.google.com/?q=Corso+Italia+65,+Riposto+CT,+Italy" target="_blank" style="font-size:13px" onclick="event.stopPropagation()">&#x1F4CD;</a></div></a>
+      <div class="em-note" id="ph-note-it">&#x26A0; Per la farmacia di turno notturna verificare il cartello in farmacia o chiamare il 1500.</div>
       <div class="em-note" id="ph-note-en" style="display:none">&#x26A0; For the on-call pharmacy check the sign at any pharmacy or call 1500.</div>
-      <a class="em-link" href="https://www.farmaciediturnoin.it/sicilia/catania/riposto/" target="_blank">&#x1F4CB; Farmacia di turno &mdash; Riposto</a>
+      <a class="em-link" href="https://www.google.com/maps/search/farmacia+di+turno+Riposto+CT" target="_blank">&#x1F4CB; Farmacia di turno &mdash; cerca su Maps</a>
     </div>
     <!-- Ospedali -->
     <div class="em-section">
@@ -689,40 +689,37 @@ var LOCALI_DATA=[
 ];
 var lcMrks={};
 
-// ── FARMACIE MARKERS ──
+// ── FARMACIE & GUARDIE MEDICHE MARKERS ──
 var FARMACIE_DATA=[
-  {id:'f01',name:'Farmacia Dr. Lizzio Alfio',addr:'Via Antonio Gramsci 145, Riposto',tel:'095931363'},
-  {id:'f02',name:'Farmacia Pulvirenti Francesco',addr:'Corso Italia 96, Riposto',tel:'0957793376'},
-  {id:'f03',name:'Farmacia Buscemi SAS',addr:'Via Roma 55, Riposto',tel:'095931621'},
-  {id:'f04',name:'Farmacia Tambe',addr:'Corso Italia 65, Riposto',tel:'095931763'}
+  {id:'f01',lat:37.72782,lng:15.20862,name:'Farmacia Dr. Lizzio Alfio',addr:'Via Antonio Gramsci 145, Riposto',tel:'095931363'},
+  {id:'f02',lat:37.73231,lng:15.20558,name:'Farmacia Pulvirenti Francesco',addr:'Corso Italia 96, Riposto',tel:'0957793376'},
+  {id:'f03',lat:37.73095,lng:15.20712,name:'Farmacia Buscemi SAS',addr:'Via Roma 55/B, Riposto',tel:'095931621'},
+  {id:'f04',lat:37.73210,lng:15.20568,name:'Farmacia Tambe',addr:'Corso Italia 65, Riposto',tel:'095931763'}
+];
+var GUARDIA_DATA=[
+  {id:'g01',lat:37.74870,lng:15.20030,name:'Guardia Medica Turistica — Fondachello',addr:'Via Immacolata 18, Mascali (CT)',tel:'0957784535'},
+  {id:'g02',lat:37.71250,lng:15.21320,name:'Guardia Medica Turistica — Torre Archirafi',addr:'Via Strada 23, Riposto',tel:'095971708'}
 ];
 var faMrks={};
-var faGeocoded=false;
-function _faMkr(f,lat,lng){
-  var gm='https://www.google.com/maps?q='+lat+','+lng;
-  var m=L.marker([lat,lng],{icon:L.divIcon({className:'',html:'<div class="mk" style="background:#e8f5e9;border-color:#2e7d32;font-size:16px">&#x1F48A;</div>',iconSize:[32,32],iconAnchor:[16,16],popupAnchor:[0,-18]})});
-  m.bindPopup('<div class="pu-name">'+f.name+'</div><div class="pu-tip">&#x1F4CD; '+f.addr+'</div><div class="pu-actions"><a class="pu-gmaps" href="'+gm+'" target="_blank">&#x1F4CD; Apri in Maps</a>&nbsp;<a class="pu-gmaps" href="tel:'+f.tel+'" style="background:#e8f5e9;color:#2e7d32">&#x1F4DE; Chiama</a></div>',{maxWidth:220});
-  faMrks[f.id]=m;
+var guMrks={};
+
+function _mkEmIcon(emoji,bg,border){
+  return L.divIcon({className:'',html:'<div class="mk" style="background:'+bg+';border-color:'+border+';font-size:16px">'+emoji+'</div>',iconSize:[32,32],iconAnchor:[16,16],popupAnchor:[0,-18]});
+}
+FARMACIE_DATA.forEach(function(f){
+  var gm='https://maps.google.com/?q='+encodeURIComponent(f.addr+', Italy');
+  var m=L.marker([f.lat,f.lng],{icon:_mkEmIcon('&#x1F48A;','#e8f5e9','#2e7d32')});
+  m.bindPopup('<div class="pu-name">'+f.name+'</div><div class="pu-tip">&#x1F4CD; '+f.addr+'</div><div class="pu-actions"><a class="pu-gmaps" href="'+gm+'" target="_blank">&#x1F4CD; Maps</a>&nbsp;<a class="pu-gmaps" href="tel:'+f.tel+'" style="background:#e8f5e9;color:#2e7d32">&#x1F4DE; Chiama</a></div>',{maxWidth:220});
   var lnk=document.getElementById('fa-map-'+f.id);
   if(lnk)lnk.href=gm;
-}
-function geocodeFarmacie(){
-  if(faGeocoded)return;
-  faGeocoded=true;
-  FARMACIE_DATA.forEach(function(f,i){
-    setTimeout(function(){
-      fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&q='+encodeURIComponent(f.addr+', CT, Italy'),{headers:{'Accept-Language':'it'}})
-        .then(function(r){return r.json();})
-        .then(function(d){
-          if(d&&d[0]){
-            _faMkr(f,parseFloat(d[0].lat),parseFloat(d[0].lon));
-            if(map.getZoom()>=13)faMrks[f.id].addTo(map);
-          }
-        })
-        .catch(function(){});
-    }, i*1100);
-  });
-}
+  faMrks[f.id]=m;
+});
+GUARDIA_DATA.forEach(function(g){
+  var gm='https://maps.google.com/?q='+encodeURIComponent(g.addr+', Italy');
+  var m=L.marker([g.lat,g.lng],{icon:_mkEmIcon('&#x1FA7A;','#fff3e0','#e65100')});
+  m.bindPopup('<div class="pu-name">'+g.name+'</div><div class="pu-tip">&#x1F4CD; '+g.addr+'</div><div class="pu-actions"><a class="pu-gmaps" href="'+gm+'" target="_blank">&#x1F4CD; Maps</a>&nbsp;<a class="pu-gmaps" href="tel:'+g.tel+'" style="background:#fff3e0;color:#e65100">&#x1F4DE; Chiama</a></div>',{maxWidth:220});
+  guMrks[g.id]=m;
+});
 
 function haversine(lat1,lng1,lat2,lng2){
   var R=6371000,r=Math.PI/180;
@@ -834,12 +831,13 @@ function st(n){
   } else if(n==='e'){
     POIS.forEach(function(p){if(map.hasLayer(mrks[p.id]))map.removeLayer(mrks[p.id]);});
     LOCALI_DATA.forEach(function(l){if(map.hasLayer(lcMrks[l.id]))map.removeLayer(lcMrks[l.id]);});
-    map.flyTo([37.7310,15.2065],15,{duration:.8});
-    geocodeFarmacie();
-    setTimeout(function(){FARMACIE_DATA.forEach(function(f){if(faMrks[f.id]&&!map.hasLayer(faMrks[f.id]))faMrks[f.id].addTo(map);});},4500);
+    FARMACIE_DATA.forEach(function(f){if(!map.hasLayer(faMrks[f.id]))faMrks[f.id].addTo(map);});
+    GUARDIA_DATA.forEach(function(g){if(!map.hasLayer(guMrks[g.id]))guMrks[g.id].addTo(map);});
+    map.fitBounds([[37.7100,15.1980],[37.7510,15.2140]],{padding:[30,30]});
   } else {
     LOCALI_DATA.forEach(function(l){if(map.hasLayer(lcMrks[l.id]))map.removeLayer(lcMrks[l.id]);});
-    FARMACIE_DATA.forEach(function(f){if(faMrks[f.id]&&map.hasLayer(faMrks[f.id]))map.removeLayer(faMrks[f.id]);});
+    FARMACIE_DATA.forEach(function(f){if(map.hasLayer(faMrks[f.id]))map.removeLayer(faMrks[f.id]);});
+    GUARDIA_DATA.forEach(function(g){if(map.hasLayer(guMrks[g.id]))map.removeLayer(guMrks[g.id]);});
     // Ripristina marker luoghi in base al filtro attivo
     POIS.forEach(function(p){
       var show=activeCat==='all'||p.cat===activeCat;
