@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Riposto">
-<link id="pwa-manifest" rel="manifest">
+<link rel="manifest" href="./manifest.json">
 <title>Riposto · fotolapissable.it</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
@@ -115,6 +115,22 @@ table.tt td.du{color:var(--amber-d);font-weight:700;white-space:nowrap}
 .tr-upd{font-size:8px;color:var(--text-s);padding:6px 5px 2px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .tr-refresh{font-size:8px;font-weight:700;color:var(--blue);background:var(--blue-l);border:none;padding:2px 7px;border-radius:6px;cursor:pointer}
 .tr-gone{font-size:8px;color:var(--text-s);font-style:italic}
+/* EMERGENZE */
+.em-section{padding:10px 10px 6px;border-bottom:1px solid var(--border)}
+.em-section:last-child{border-bottom:none}
+.em-head{font-size:12px;font-weight:700;color:var(--text);padding:2px 2px 8px;letter-spacing:.3px}
+.em-subhead{font-size:10.5px;font-weight:700;color:var(--text-m);padding:2px 2px 7px}
+.em-card{display:flex;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:9px 11px;margin-bottom:6px;text-decoration:none;color:var(--text);cursor:pointer}
+.em-card:last-of-type{margin-bottom:0}
+.em-red{border-color:rgba(200,0,0,.2);background:#fff5f5}
+.em-num{font-size:18px;font-weight:800;color:var(--amber-d);min-width:44px;text-align:center;flex-shrink:0}
+.em-label{flex:1;font-size:10px;font-weight:600;color:var(--text);line-height:1.4}
+.em-label span{font-size:8.5px;font-weight:400;color:var(--text-s)}
+.em-call{font-size:16px;flex-shrink:0}
+.em-info{margin-bottom:4px}
+.em-info-row{font-size:9.5px;color:var(--text-m);padding:2px 0;display:flex;gap:6px;align-items:flex-start}
+.em-note{font-size:8px;color:var(--text-s);font-style:italic;padding:5px 3px 6px;line-height:1.5}
+.em-link{display:inline-block;margin-top:4px;font-size:8.5px;font-weight:700;color:var(--blue);text-decoration:none;background:var(--blue-l);padding:3px 10px;border-radius:6px}
 /* SAPORI */
 .sa-intro{padding:10px 12px 8px;background:#fdf6e3;border-bottom:1px solid rgba(181,134,13,.15);font-size:10px;color:var(--text-m);line-height:1.5;flex-shrink:0}
 .sa-item{display:flex;align-items:flex-start;gap:10px;padding:9px 11px;border-bottom:1px solid var(--border)}
@@ -273,6 +289,7 @@ table.tt td.du{color:var(--amber-d);font-weight:700;white-space:nowrap}
     <div class="tab"    id="tab-s" onclick="st('s')">&#x1F34B; Sapori</div>
     <div class="tab"    id="tab-f" onclick="st('f')">&#x1F4F7; Foto</div>
     <div class="tab"    id="tab-r" onclick="st('r')">&#x1F37D; Locali</div>
+    <div class="tab"    id="tab-e" onclick="st('e')">&#x1F6A8; SOS</div>
   </div>
 
   <!-- LUOGHI -->
@@ -371,6 +388,48 @@ table.tt td.du{color:var(--amber-d);font-weight:700;white-space:nowrap}
       <div class="lc-card" data-tipo="bar" onclick="flyToLocale('l11')" data-id="l11"><div class="lc-top"><div class="lc-ico">🥤</div><div class="lc-body"><div class="lc-tag">Bar &amp; Pasticceria</div><div class="lc-name">Mamiro&apos; S.R.L.S.</div><div class="lc-desc">Chiosco-bar, caffetteria. Specialit&agrave;: Selz limone e sale &mdash; la bevanda tipica ripostese.</div><div class="lc-addr">&#x1F4CD; Piazza del Commercio</div><div class="lc-actions"><a class="lc-btn maps" href="https://www.google.com/maps?q=Mamiro+Riposto&ll=37.73292,15.20506" target="_blank">&#x1F4CD; Maps</a><a class="lc-btn tel" href="tel:+393276399112" onclick="event.stopPropagation()">&#x1F4DE; 327 639 9112</a></div><div class="lc-disc">&#x2605; Segnalazione personale &mdash; nessun rapporto commerciale</div></div></div></div>
       <div class="lc-card" data-tipo="macelleria" onclick="flyToLocale('l12')" data-id="l12"><div class="lc-top"><div class="lc-ico">🥩</div><div class="lc-body"><div class="lc-tag">Macelleria</div><div class="lc-name">La Bottega della Carne di Raffaele Fresta</div><div class="lc-desc">Macelleria, polleria e salumeria. Carni fresche selezionate.</div><div class="lc-addr">&#x1F4CD; Via A. Gramsci, 96</div><div class="lc-actions"><a class="lc-btn maps" href="https://www.google.com/maps?q=Raffaele+Fresta+Macelleria+Riposto&ll=37.73223,15.20436" target="_blank">&#x1F4CD; Maps</a><a class="lc-btn tel" href="tel:+390957794506" onclick="event.stopPropagation()">&#x1F4DE; 095 779 4506</a></div><div class="lc-disc">&#x2605; Segnalazione personale &mdash; nessun rapporto commerciale</div></div></div></div>
       <div class="lc-card" data-tipo="panificio" onclick="flyToLocale('l13')" data-id="l13"><div class="lc-top"><div class="lc-ico">🥖</div><div class="lc-body"><div class="lc-tag">Panificio</div><div class="lc-name">Panificio Guidi</div><div class="lc-desc">Pane, pizza, tavola calda, biscotti, gelateria e pasticceria.</div><div class="lc-addr">&#x1F4CD; Via Archimede, 113</div><div class="lc-actions"><a class="lc-btn maps" href="https://www.google.com/maps?q=Panificio+Guidi+Riposto&ll=37.73213,15.20383" target="_blank">&#x1F4CD; Maps</a><a class="lc-btn tel" href="tel:+393478113783" onclick="event.stopPropagation()">&#x1F4DE; 347 811 3783</a></div><div class="lc-disc">&#x2605; Segnalazione personale &mdash; nessun rapporto commerciale</div></div></div></div>
+    </div>
+  </div>
+
+  <!-- EMERGENZE -->
+  <div class="tp" id="p-e">
+    <!-- Numeri emergenza -->
+    <div class="em-section">
+      <div class="em-head" id="em-head-it">&#x1F6A8; Numeri di emergenza</div>
+      <div class="em-head" id="em-head-en" style="display:none">&#x1F6A8; Emergency numbers</div>
+      <a class="em-card em-red" href="tel:112"><div class="em-num">112</div><div class="em-label">Emergenza Europea<br><span>Polizia · Ambulanza · Pompieri</span></div><div class="em-call">&#x1F4DE;</div></a>
+      <a class="em-card em-red" href="tel:118"><div class="em-num">118</div><div class="em-label">Emergenza Sanitaria<br><span>Ambulanza / SUEM</span></div><div class="em-call">&#x1F4DE;</div></a>
+      <a class="em-card" href="tel:115"><div class="em-num">115</div><div class="em-label">Vigili del Fuoco<br><span>Incendi · Soccorso</span></div><div class="em-call">&#x1F4DE;</div></a>
+      <a class="em-card" href="tel:113"><div class="em-num">113</div><div class="em-label">Polizia di Stato<br><span>Segnalazioni / ordine pubblico</span></div><div class="em-call">&#x1F4DE;</div></a>
+      <a class="em-card" href="tel:112"><div class="em-num">1515</div><div class="em-label">Carabinieri Forestali<br><span>Incendi boschivi · Etna</span></div><div class="em-call">&#x1F4DE;</div></a>
+      <a class="em-card" href="tel:1530"><div class="em-num">1530</div><div class="em-label">Guardia Costiera<br><span>Emergenze in mare</span></div><div class="em-call">&#x1F4DE;</div></a>
+    </div>
+    <!-- Guardia Medica --><!-- TODO: verifica dati reali -->
+    <div class="em-section">
+      <div class="em-subhead" id="gm-head-it">&#x1FA7A; Guardia Medica &mdash; Riposto</div>
+      <div class="em-subhead" id="gm-head-en" style="display:none">&#x1FA7A; Out-of-hours GP &mdash; Riposto</div>
+      <div class="em-info">
+        <div class="em-info-row"><span>&#x1F4CD;</span><span>Via Spiaggia 2, Riposto (CT)</span></div>
+        <div class="em-info-row"><span>&#x23F0;</span><span id="gm-hours-it">Notturna: 20:00–08:00 &middot; Festivi: tutto il giorno</span><span id="gm-hours-en" style="display:none">Nights: 20:00–08:00 &middot; Holidays: all day</span></div>
+        <a class="em-card" href="tel:0957793327"><div class="em-num" style="font-size:15px">095 779 3327</div><div class="em-label">Guardia Medica Riposto<br><span>Numero distrettuale ASP CT</span></div><div class="em-call">&#x1F4DE;</div></a>
+      </div>
+    </div>
+    <!-- Farmacie --><!-- TODO: verifica dati reali -->
+    <div class="em-section">
+      <div class="em-subhead" id="ph-head-it">&#x1F48A; Farmacie a Riposto</div>
+      <div class="em-subhead" id="ph-head-en" style="display:none">&#x1F48A; Pharmacies in Riposto</div>
+      <a class="em-card" href="tel:095931363"><div class="em-num" style="font-size:13px">&#x1F48A;</div><div class="em-label">Farmacia Dr. Lizzio Alfio<br><span>Via Antonio Gramsci 145 &middot; 095 931363</span></div><div class="em-call">&#x1F4DE;</div></a>
+      <a class="em-card" href="tel:0957793376"><div class="em-num" style="font-size:13px">&#x1F48A;</div><div class="em-label">Farmacia Pulvirenti Francesco<br><span>Corso Italia 96 &middot; 095 779 3376</span></div><div class="em-call">&#x1F4DE;</div></a>
+      <a class="em-card" href="tel:095931621"><div class="em-num" style="font-size:13px">&#x1F48A;</div><div class="em-label">Farmacia Buscemi SAS<br><span>Via Roma 55/B &middot; 095 931621</span></div><div class="em-call">&#x1F4DE;</div></a>
+      <a class="em-card" href="tel:095931763"><div class="em-num" style="font-size:13px">&#x1F48A;</div><div class="em-label">Farmacia Tambe<br><span>Corso Italia 65 &middot; 095 931763</span></div><div class="em-call">&#x1F4DE;</div></a>
+      <div class="em-note" id="ph-note-it">&#x26A0; Per la farmacia di turno notturna verificare il cartello in farmacia o chiamare il 1500 (NurSind).</div>
+      <div class="em-note" id="ph-note-en" style="display:none">&#x26A0; For the on-call pharmacy check the sign at any pharmacy or call 1500.</div>
+      <a class="em-link" href="https://www.asp.ct.it/farmacie-di-turno/" target="_blank">&#x1F4CB; Turni ufficiali ASP Catania</a>
+    </div>
+    <!-- Ospedale -->
+    <div class="em-section">
+      <div class="em-subhead">&#x1F3E5; Ospedale pi&ugrave; vicino</div>
+      <a class="em-card" href="tel:0957960111"><div class="em-num" style="font-size:13px">&#x1F3E5;</div><div class="em-label">Osp. Giovanni Paolo II &mdash; Acireale<br><span>Via Cantarero &middot; 095 796 0111 &middot; ~15 km</span></div><div class="em-call">&#x1F4DE;</div></a>
     </div>
   </div>
 
@@ -723,7 +782,7 @@ function flc(tipo){
 
 // ── TABS ──
 function st(n){
-  ['l','m','t','s','f','r'].forEach(function(x){
+  ['l','m','t','s','f','r','e'].forEach(function(x){
     document.getElementById('tab-'+x).classList.toggle('on',x===n);
     document.getElementById('p-'+x).classList.toggle('on',x===n);
   });
@@ -872,8 +931,8 @@ window.addEventListener('DOMContentLoaded',function(){
 
 // ── APPLY LANG ──
 var TAB_LABELS={
-  it:{l:'🗺 Luoghi',m:'🌤 Meteo',t:'🚌 Trsp.',s:'🍋 Sapori',f:'📷 Foto',r:'🍽 Locali'},
-  en:{l:'🗺 Places',m:'🌤 Weather',t:'🚌 Trans.',s:'🍋 Food',f:'📷 Photos',r:'🍽 Locals'}
+  it:{l:'🗺 Luoghi',m:'🌤 Meteo',t:'🚌 Trsp.',s:'🍋 Sapori',f:'📷 Foto',r:'🍽 Locali',e:'🚨 SOS'},
+  en:{l:'🗺 Places',m:'🌤 Weather',t:'🚌 Trans.',s:'🍋 Food',f:'📷 Photos',r:'🍽 Locals',e:'🚨 SOS'}
 };
 var CHIP_LABELS={
   it:{all:'Tutti',chiesa:'⛪ Chiese',storico:'🏛 Storico',porto:'⚓ Porto',natura:'🌿 Natura',spiaggia:'🏖 Spiagge'},
@@ -891,6 +950,14 @@ function applyLang(){
   });
   document.getElementById('poi-n') && (document.getElementById('poi-n').textContent='');
   document.getElementById('wx-cond') && (document.getElementById('wx-cond').textContent=lang==='it'?'Caricamento…':'Loading…');
+  // Emergenze lingua
+  var emEls=['em-head-it','em-head-en','gm-head-it','gm-head-en','gm-hours-it','gm-hours-en','ph-head-it','ph-head-en','ph-note-it','ph-note-en'];
+  emEls.forEach(function(id){
+    var el=document.getElementById(id);
+    if(!el)return;
+    var isItEl=id.endsWith('-it');
+    el.style.display=(lang==='it'&&isItEl)||(lang==='en'&&!isItEl)?'':'none';
+  });
   // Disclaimer lingua
   document.getElementById('ds-it').style.display=lang==='it'?'':'none';
   document.getElementById('ds-en').style.display=lang==='en'?'':'none';
@@ -930,38 +997,6 @@ window.showLocale=showLocale;
 renderPois('all');
 fetchWx();
 setInterval(fetchWx,10*60*1000);
-
-// ── PWA MANIFEST (inline blob) ──
-(function(){
-  var manifest = {
-    name: "Riposto · fotolapissable.it",
-    short_name: "Riposto",
-    description: "Scopri Riposto con fotolapissable.it",
-    start_url: "./",
-    display: "standalone",
-    orientation: "portrait-primary",
-    background_color: "#18120a",
-    theme_color: "#18120a",
-    lang: "it",
-    icons: [
-      {
-        src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' fill='%2318120a'/%3E%3Ccircle cx='96' cy='96' r='70' fill='none' stroke='%23C8813A' stroke-width='10'/%3E%3Ccircle cx='96' cy='96' r='50' fill='none' stroke='%23C8813A' stroke-width='6' opacity='.5'/%3E%3Ccircle cx='96' cy='96' r='14' fill='%23C8813A'/%3E%3Cline x1='96' y1='26' x2='96' y2='166' stroke='%23C8813A' stroke-width='6'/%3E%3Cline x1='26' y1='96' x2='166' y2='96' stroke='%23C8813A' stroke-width='6'/%3E%3C/svg%3E",
-        sizes: "192x192",
-        type: "image/svg+xml",
-        purpose: "any maskable"
-      },
-      {
-        src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%2318120a'/%3E%3Ccircle cx='256' cy='256' r='190' fill='none' stroke='%23C8813A' stroke-width='26'/%3E%3Ccircle cx='256' cy='256' r='136' fill='none' stroke='%23C8813A' stroke-width='16' opacity='.5'/%3E%3Ccircle cx='256' cy='256' r='38' fill='%23C8813A'/%3E%3Cline x1='256' y1='66' x2='256' y2='446' stroke='%23C8813A' stroke-width='16'/%3E%3Cline x1='66' y1='256' x2='446' y2='256' stroke='%23C8813A' stroke-width='16'/%3E%3C/svg%3E",
-        sizes: "512x512",
-        type: "image/svg+xml",
-        purpose: "any maskable"
-      }
-    ]
-  };
-  var blob = new Blob([JSON.stringify(manifest)], {type:'application/json'});
-  var url = URL.createObjectURL(blob);
-  document.getElementById('pwa-manifest').href = url;
-})();
 
 // ── SERVICE WORKER ──
 if('serviceWorker' in navigator){
