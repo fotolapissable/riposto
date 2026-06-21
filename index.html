@@ -419,10 +419,10 @@ table.tt td.du{color:var(--amber-d);font-weight:700;white-space:nowrap}
     <div class="em-section">
       <div class="em-subhead" id="ph-head-it">&#x1F48A; Farmacie a Riposto</div>
       <div class="em-subhead" id="ph-head-en" style="display:none">&#x1F48A; Pharmacies in Riposto</div>
-      <a class="em-card" href="tel:095931363"><div class="em-num" style="font-size:13px">&#x1F48A;</div><div class="em-label">Farmacia Dr. Lizzio Alfio<br><span>Via Antonio Gramsci 145 &middot; 095 931363</span></div><div class="em-call">&#x1F4DE;</div></a>
-      <a class="em-card" href="tel:0957793376"><div class="em-num" style="font-size:13px">&#x1F48A;</div><div class="em-label">Farmacia Pulvirenti Francesco<br><span>Corso Italia 96 &middot; 095 779 3376</span></div><div class="em-call">&#x1F4DE;</div></a>
-      <a class="em-card" href="tel:095931621"><div class="em-num" style="font-size:13px">&#x1F48A;</div><div class="em-label">Farmacia Buscemi SAS<br><span>Via Roma 55/B &middot; 095 931621</span></div><div class="em-call">&#x1F4DE;</div></a>
-      <a class="em-card" href="tel:095931763"><div class="em-num" style="font-size:13px">&#x1F48A;</div><div class="em-label">Farmacia Tambe<br><span>Corso Italia 65 &middot; 095 931763</span></div><div class="em-call">&#x1F4DE;</div></a>
+      <div class="em-card"><div class="em-num" style="font-size:13px">&#x1F48A;</div><div class="em-label">Farmacia Dr. Lizzio Alfio<br><span>Via Antonio Gramsci 145 &middot; 095 931363</span></div><div style="display:flex;flex-direction:column;gap:4px"><a href="tel:095931363" style="font-size:16px">&#x1F4DE;</a><a id="fa-map-f01" href="#" target="_blank" style="font-size:13px" title="Apri in Maps">&#x1F4CD;</a></div></div>
+      <div class="em-card"><div class="em-num" style="font-size:13px">&#x1F48A;</div><div class="em-label">Farmacia Pulvirenti Francesco<br><span>Corso Italia 96 &middot; 095 779 3376</span></div><div style="display:flex;flex-direction:column;gap:4px"><a href="tel:0957793376" style="font-size:16px">&#x1F4DE;</a><a id="fa-map-f02" href="#" target="_blank" style="font-size:13px" title="Apri in Maps">&#x1F4CD;</a></div></div>
+      <div class="em-card"><div class="em-num" style="font-size:13px">&#x1F48A;</div><div class="em-label">Farmacia Buscemi SAS<br><span>Via Roma 55/B &middot; 095 931621</span></div><div style="display:flex;flex-direction:column;gap:4px"><a href="tel:095931621" style="font-size:16px">&#x1F4DE;</a><a id="fa-map-f03" href="#" target="_blank" style="font-size:13px" title="Apri in Maps">&#x1F4CD;</a></div></div>
+      <div class="em-card"><div class="em-num" style="font-size:13px">&#x1F48A;</div><div class="em-label">Farmacia Tambe<br><span>Corso Italia 65 &middot; 095 931763</span></div><div style="display:flex;flex-direction:column;gap:4px"><a href="tel:095931763" style="font-size:16px">&#x1F4DE;</a><a id="fa-map-f04" href="#" target="_blank" style="font-size:13px" title="Apri in Maps">&#x1F4CD;</a></div></div>
       <div class="em-note" id="ph-note-it">&#x26A0; Per la farmacia di turno notturna verificare il cartello in farmacia o chiamare il 1500 (NurSind).</div>
       <div class="em-note" id="ph-note-en" style="display:none">&#x26A0; For the on-call pharmacy check the sign at any pharmacy or call 1500.</div>
       <a class="em-link" href="https://www.farmaciediturnoin.it/sicilia/catania/riposto/" target="_blank">&#x1F4CB; Farmacia di turno &mdash; Riposto</a>
@@ -699,10 +699,12 @@ var FARMACIE_DATA=[
 var faMrks={};
 var faGeocoded=false;
 function _faMkr(f,lat,lng){
-  var gm='https://www.google.com/maps?q='+encodeURIComponent(f.addr);
+  var gm='https://www.google.com/maps?q='+lat+','+lng;
   var m=L.marker([lat,lng],{icon:L.divIcon({className:'',html:'<div class="mk" style="background:#e8f5e9;border-color:#2e7d32;font-size:16px">&#x1F48A;</div>',iconSize:[32,32],iconAnchor:[16,16],popupAnchor:[0,-18]})});
   m.bindPopup('<div class="pu-name">'+f.name+'</div><div class="pu-tip">&#x1F4CD; '+f.addr+'</div><div class="pu-actions"><a class="pu-gmaps" href="'+gm+'" target="_blank">&#x1F4CD; Apri in Maps</a>&nbsp;<a class="pu-gmaps" href="tel:'+f.tel+'" style="background:#e8f5e9;color:#2e7d32">&#x1F4DE; Chiama</a></div>',{maxWidth:220});
   faMrks[f.id]=m;
+  var lnk=document.getElementById('fa-map-'+f.id);
+  if(lnk)lnk.href=gm;
 }
 function geocodeFarmacie(){
   if(faGeocoded)return;
