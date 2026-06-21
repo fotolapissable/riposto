@@ -404,15 +404,16 @@ table.tt td.du{color:var(--amber-d);font-weight:700;white-space:nowrap}
       <a class="em-card" href="tel:112"><div class="em-num">1515</div><div class="em-label">Carabinieri Forestali<br><span>Incendi boschivi · Etna</span></div><div class="em-call">&#x1F4DE;</div></a>
       <a class="em-card" href="tel:1530"><div class="em-num">1530</div><div class="em-label">Guardia Costiera<br><span>Emergenze in mare</span></div><div class="em-call">&#x1F4DE;</div></a>
     </div>
-    <!-- Guardia Medica --><!-- TODO: verifica dati reali -->
+    <!-- Guardia Medica -->
     <div class="em-section">
-      <div class="em-subhead" id="gm-head-it">&#x1FA7A; Guardia Medica &mdash; Riposto</div>
-      <div class="em-subhead" id="gm-head-en" style="display:none">&#x1FA7A; Out-of-hours GP &mdash; Riposto</div>
+      <div class="em-subhead" id="gm-head-it">&#x1FA7A; Guardia Medica Turistica</div>
+      <div class="em-subhead" id="gm-head-en" style="display:none">&#x1FA7A; Tourist Medical Service</div>
       <div class="em-info">
-        <div class="em-info-row"><span>&#x1F4CD;</span><span>Via Spiaggia 2, Riposto (CT)</span></div>
         <div class="em-info-row"><span>&#x23F0;</span><span id="gm-hours-it">Notturna: 20:00–08:00 &middot; Festivi: tutto il giorno</span><span id="gm-hours-en" style="display:none">Nights: 20:00–08:00 &middot; Holidays: all day</span></div>
-        <a class="em-card" href="tel:0957793327"><div class="em-num" style="font-size:15px">095 779 3327</div><div class="em-label">Guardia Medica Riposto<br><span>Numero distrettuale ASP CT</span></div><div class="em-call">&#x1F4DE;</div></a>
       </div>
+      <a class="em-card" href="tel:0957784535"><div class="em-num" style="font-size:12px">&#x1FA7A;</div><div class="em-label">Fondachello &mdash; Mascali<br><span>Via Immacolata 18, Mascali (CT) &middot; ~3 km nord &middot; 095 778 4535</span></div><div class="em-call">&#x1F4DE;</div></a>
+      <a class="em-card" href="tel:095971708"><div class="em-num" style="font-size:12px">&#x1FA7A;</div><div class="em-label">Torre Archirafi &mdash; Riposto<br><span>Via Strada 23, Riposto &middot; ~2 km &middot; 095 971708</span></div><div class="em-call">&#x1F4DE;</div></a>
+      <a class="em-card" href="tel:0950931153"><div class="em-num" style="font-size:12px">&#x260E;</div><div class="em-label">Continuit&agrave; Assistenziale<br><span>Ore notturne / medico non disponibile &middot; 095 0931153</span></div><div class="em-call">&#x1F4DE;</div></a>
     </div>
     <!-- Farmacie --><!-- TODO: verifica dati reali -->
     <div class="em-section">
@@ -426,9 +427,10 @@ table.tt td.du{color:var(--amber-d);font-weight:700;white-space:nowrap}
       <div class="em-note" id="ph-note-en" style="display:none">&#x26A0; For the on-call pharmacy check the sign at any pharmacy or call 1500.</div>
       <a class="em-link" href="https://www.asp.ct.it/farmacie-di-turno/" target="_blank">&#x1F4CB; Turni ufficiali ASP Catania</a>
     </div>
-    <!-- Ospedale -->
+    <!-- Ospedali -->
     <div class="em-section">
-      <div class="em-subhead">&#x1F3E5; Ospedale pi&ugrave; vicino</div>
+      <div class="em-subhead">&#x1F3E5; Ospedali</div>
+      <a class="em-card" href="tel:095931816"><div class="em-num" style="font-size:13px">&#x1F3E5;</div><div class="em-label">P.O. San Giovanni di Dio &mdash; Giarre<br><span>Via Forlanini 1, Giarre &middot; 095 931816 &middot; ~5 km</span></div><div class="em-call">&#x1F4DE;</div></a>
       <a class="em-card" href="tel:0957960111"><div class="em-num" style="font-size:13px">&#x1F3E5;</div><div class="em-label">Osp. Giovanni Paolo II &mdash; Acireale<br><span>Via Cantarero &middot; 095 796 0111 &middot; ~15 km</span></div><div class="em-call">&#x1F4DE;</div></a>
     </div>
   </div>
@@ -686,6 +688,22 @@ var LOCALI_DATA=[
   {id:'l13',lat:37.73213,lng:15.20383,name:'Panificio Guidi',tipo:'Panificio',addr:'Via Archimede, 113'},
 ];
 var lcMrks={};
+
+// ── FARMACIE MARKERS ──
+var FARMACIE_DATA=[
+  {id:'f01',lat:37.72905,lng:15.20698,name:'Farmacia Dr. Lizzio Alfio',addr:'Via Antonio Gramsci 145',tel:'095931363'},
+  {id:'f02',lat:37.73218,lng:15.20572,name:'Farmacia Pulvirenti Francesco',addr:'Corso Italia 96',tel:'0957793376'},
+  {id:'f03',lat:37.73085,lng:15.20645,name:'Farmacia Buscemi SAS',addr:'Via Roma 55/B',tel:'095931621'},
+  {id:'f04',lat:37.73195,lng:15.20580,name:'Farmacia Tambe',addr:'Corso Italia 65',tel:'095931763'}
+];
+var faMrks={};
+FARMACIE_DATA.forEach(function(f){
+  var m=L.marker([f.lat,f.lng],{icon:L.divIcon({className:'',html:'<div class="mk" style="background:#e8f5e9;border-color:#2e7d32;font-size:16px">&#x1F48A;</div>',iconSize:[32,32],iconAnchor:[16,16],popupAnchor:[0,-18]})});
+  var gm='https://www.google.com/maps?q='+encodeURIComponent(f.name+', Riposto CT');
+  m.bindPopup('<div class="pu-name">'+f.name+'</div><div class="pu-tip">&#x1F4CD; '+f.addr+'</div><div class="pu-actions"><a class="pu-gmaps" href="'+gm+'" target="_blank">&#x1F4CD; Apri in Maps</a>&nbsp;<a class="pu-gmaps" href="tel:'+f.tel+'" style="background:#e8f5e9;color:#2e7d32">&#x1F4DE; Chiama</a></div>',{maxWidth:220});
+  faMrks[f.id]=m;
+});
+
 function haversine(lat1,lng1,lat2,lng2){
   var R=6371000,r=Math.PI/180;
   var dLat=(lat2-lat1)*r,dLng=(lng2-lng1)*r;
@@ -790,19 +808,17 @@ function st(n){
   // Locali tab: mostra marker locali, nascondi marker luoghi
   // Altri tab: nascondi marker locali, ripristina marker luoghi
   if(n==='r'){
-    // Nascondi tutti i marker luoghi
-    POIS.forEach(function(p){
-      if(map.hasLayer(mrks[p.id]))map.removeLayer(mrks[p.id]);
-    });
-    // Mostra marker locali
-    LOCALI_DATA.forEach(function(l){
-      if(!map.hasLayer(lcMrks[l.id]))lcMrks[l.id].addTo(map);
-    });
+    POIS.forEach(function(p){if(map.hasLayer(mrks[p.id]))map.removeLayer(mrks[p.id]);});
+    LOCALI_DATA.forEach(function(l){if(!map.hasLayer(lcMrks[l.id]))lcMrks[l.id].addTo(map);});
+    FARMACIE_DATA.forEach(function(f){if(map.hasLayer(faMrks[f.id]))map.removeLayer(faMrks[f.id]);});
+  } else if(n==='e'){
+    POIS.forEach(function(p){if(map.hasLayer(mrks[p.id]))map.removeLayer(mrks[p.id]);});
+    LOCALI_DATA.forEach(function(l){if(map.hasLayer(lcMrks[l.id]))map.removeLayer(lcMrks[l.id]);});
+    FARMACIE_DATA.forEach(function(f){if(!map.hasLayer(faMrks[f.id]))faMrks[f.id].addTo(map);});
+    map.flyTo([37.7310,15.2065],15,{duration:.8});
   } else {
-    // Nascondi marker locali
-    LOCALI_DATA.forEach(function(l){
-      if(map.hasLayer(lcMrks[l.id]))map.removeLayer(lcMrks[l.id]);
-    });
+    LOCALI_DATA.forEach(function(l){if(map.hasLayer(lcMrks[l.id]))map.removeLayer(lcMrks[l.id]);});
+    FARMACIE_DATA.forEach(function(f){if(map.hasLayer(faMrks[f.id]))map.removeLayer(faMrks[f.id]);});
     // Ripristina marker luoghi in base al filtro attivo
     POIS.forEach(function(p){
       var show=activeCat==='all'||p.cat===activeCat;
