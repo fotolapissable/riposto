@@ -217,6 +217,10 @@ table.tt td.du{color:var(--amber-d);font-weight:700;white-space:nowrap}
 #geo-btn{position:absolute;bottom:76px;right:10px;z-index:1000;width:36px;height:36px;background:rgba(255,255,255,.93);border:1.5px solid rgba(0,0,0,.15);border-radius:8px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 4px rgba(0,0,0,.12)}
 #geo-btn.active{border-color:#4285F4;background:#eaf2ff}
 #tile-label{position:absolute;bottom:30px;right:10px;z-index:1000;background:rgba(255,255,255,.82);border-radius:6px;padding:2px 8px;font-size:8.5px;font-weight:700;color:var(--text-m);letter-spacing:.5px;pointer-events:none}
+#offline-btn{position:absolute;bottom:44px;left:10px;z-index:1000;height:30px;padding:0 10px;background:rgba(255,255,255,.93);border:1.5px solid rgba(0,0,0,.15);border-radius:15px;font-family:var(--fb);font-size:9.5px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px;box-shadow:0 1px 4px rgba(0,0,0,.12);color:var(--text-m)}
+#offline-btn.busy{border-color:var(--amber);background:var(--amber-l);color:var(--amber-d)}
+#offline-btn.done{border-color:#2e7d32;background:#e8f5e9;color:#2e7d32}
+#offline-btn.warn{border-color:#e65100;background:#fff3e0;color:#e65100}
 /* MARKERS */
 .leaflet-control-attribution{background:rgba(255,255,255,.7)!important;font-size:7.5px!important}
 .leaflet-control-zoom{display:none!important}
@@ -476,6 +480,9 @@ table.tt td.du{color:var(--amber-d);font-weight:700;white-space:nowrap}
     <button class="zbtn" onclick="map.zoomOut()">&minus;</button>
   </div>
   <button id="geo-btn" onclick="locateMe()" title="Dove sono">&#x1F4CD;</button>
+  <button id="offline-btn" onclick="downloadOfflineMap()" title="Scarica la mappa di Riposto per uso senza connessione">
+    <span id="offline-btn-ico">&#x2B07;</span><span id="offline-btn-txt">Mappa offline</span>
+  </button>
   <div id="tile-label">Mappa</div>
   <div id="map-sig">
     <svg width="22" height="22" viewBox="0 0 40 40" fill="none">
@@ -583,6 +590,97 @@ function setTile(n){
   document.getElementById('tsw-'+n).classList.add('on');
   currentTile=n;
 }
+
+// ── MAPPA OFFLINE (pre-cache tile Voyager per l'area Riposto–Carruba–Torre Archirafi) ──
+var TILE_CACHE_NAME='riposto-tiles-v1';
+var OFFLINE_BBOX={north:37.755,south:37.685,west:15.188,east:15.222};
+var OFFLINE_ZOOMS=[13,14,15,16];
+var offlineDownloadRunning=false;
+
+function _tileXY(lat,lng,z){
+  var latRad=lat*Math.PI/180;
+  var n=Math.pow(2,z);
+  return {
+    x:Math.floor((lng+180)/360*n),
+    y:Math.floor((1-Math.log(Math.tan(latRad)+1/Math.cos(latRad))/Math.PI)/2*n)
+  };
+}
+function _offlineTileList(){
+  var list=[];
+  OFFLINE_ZOOMS.forEach(function(z){
+    var tl=_tileXY(OFFLINE_BBOX.north,OFFLINE_BBOX.west,z);
+    var br=_tileXY(OFFLINE_BBOX.south,OFFLINE_BBOX.east,z);
+    for(var x=tl.x;x<=br.x;x++){
+      for(var y=tl.y;y<=br.y;y++){
+        list.push({z:z,x:x,y:y});
+      }
+    }
+  });
+  return list;
+}
+// URL reale (usa sempre lo stesso sottodominio 'a' per semplicità)
+function _tileFetchUrl(t){return 'https://a.basemaps.cartocdn.com/rastertiles/voyager/'+t.z+'/'+t.x+'/'+t.y+'.png';}
+// Chiave canonica di cache: ignora il sottodominio, cosi il Service Worker la trova
+// indipendentemente da quale sottodominio (a/b/c/d) Leaflet usa nella richiesta live.
+function _tileCacheKey(t){return 'https://tile-cache.riposto/voyager/'+t.z+'/'+t.x+'/'+t.y+'.png';}
+
+function _setOfflineBtn(state,text){
+  var btn=document.getElementById('offline-btn');
+  if(!btn)return;
+  btn.classList.remove('busy','done','warn');
+  if(state)btn.classList.add(state);
+  document.getElementById('offline-btn-txt').textContent=text;
+}
+
+function _offlineMapStatusInit(){
+  var raw=null;
+  try{raw=localStorage.getItem('rip_offline_map_v1');}catch(e){}
+  if(raw){
+    try{
+      var info=JSON.parse(raw);
+      var d=new Date(info.date);
+      _setOfflineBtn('done','Offline OK ('+d.toLocaleDateString('it-IT')+')');
+      return;
+    }catch(e){}
+  }
+  _setOfflineBtn(null,'Mappa offline');
+}
+
+function downloadOfflineMap(){
+  if(offlineDownloadRunning)return;
+  if(!('caches' in window)){alert('Il tuo browser non supporta la cache offline.');return;}
+  offlineDownloadRunning=true;
+  var tiles=_offlineTileList();
+  var total=tiles.length,done=0,errors=0;
+  _setOfflineBtn('busy','0/'+total);
+  caches.open(TILE_CACHE_NAME).then(function(cache){
+    function next(i){
+      if(i>=total){
+        offlineDownloadRunning=false;
+        if(errors===0){
+          try{localStorage.setItem('rip_offline_map_v1',JSON.stringify({date:new Date().toISOString(),tiles:done}));}catch(e){}
+          _setOfflineBtn('done','Offline OK ('+done+' tile)');
+        }else{
+          _setOfflineBtn('warn',done+' ok, '+errors+' errori');
+        }
+        return;
+      }
+      var t=tiles[i];
+      fetch(_tileFetchUrl(t)).then(function(resp){
+        if(resp&&resp.status===200){cache.put(_tileCacheKey(t),resp.clone());done++;}
+        else{errors++;}
+      }).catch(function(){errors++;}).then(function(){
+        _setOfflineBtn('busy',(i+1)+'/'+total);
+        next(i+1);
+      });
+    }
+    next(0);
+  }).catch(function(){
+    offlineDownloadRunning=false;
+    _setOfflineBtn('warn','Errore cache');
+  });
+}
+_offlineMapStatusInit();
 
 L.marker([POS.lat,POS.lng],{icon:L.divIcon({className:'',html:'<div class="home-mk"></div>',iconSize:[12,12],iconAnchor:[6,6]})}).addTo(map)
   .bindPopup('<b style="color:var(--amber)">Riposto, CT</b><br><small>fotolapissable.it</small>');
@@ -1205,7 +1303,7 @@ setInterval(fetchWx,10*60*1000);
 // ── SERVICE WORKER ──
 if('serviceWorker' in navigator){
   var swCode = `
-const CACHE = 'riposto-v7';
+const CACHE = 'riposto-v8';
 const ASSETS = ['./', './index.html'];
 self.addEventListener('install', function(e){
   e.waitUntil(
@@ -1224,11 +1322,45 @@ self.addEventListener('activate', function(e){
 self.addEventListener('fetch', function(e){
   if(e.request.method!=='GET') return;
   var url = new URL(e.request.url);
-  // Network-first per API meteo e risorse esterne
+  // Tile della mappa Voyager (CartoDB): Leaflet li richiede da sottodomini diversi
+  // (a/b/c/d), quindi normalizziamo la chiave di cache ignorando il sottodominio
+  // per far funzionare sia la cache offline pre-scaricata sia quella opportunistica.
+  var tileM = url.pathname.match(/\\/rastertiles\\/voyager\\/(\\d+)\\/(\\d+)\\/(\\d+)(@2x)?\\.png/);
+  if(tileM && url.hostname.indexOf('basemaps.cartocdn.com')!==-1){
+    var tileKey = 'https://tile-cache.riposto/voyager/'+tileM[1]+'/'+tileM[2]+'/'+tileM[3]+(tileM[4]||'')+'.png';
+    e.respondWith(
+      fetch(e.request).then(function(resp){
+        if(resp && resp.status===200){
+          var clone = resp.clone();
+          caches.open('riposto-tiles-v1').then(function(c){ c.put(tileKey, clone); });
+        }
+        return resp;
+      }).catch(function(){
+        return caches.match(tileKey);
+      })
+    );
+    return;
+  }
+  // Network-first per API meteo e altre risorse esterne
   if(url.hostname !== location.hostname && url.hostname !== self.location.hostname){
     e.respondWith(
       fetch(e.request).catch(function(){
         return caches.match(e.request);
+      })
+    );
+    return;
+  }
+  // Richieste di navigazione (apertura app/pagina): se offline e non in cache,
+  // servi comunque la shell index.html invece di far vedere l'errore del browser.
+  if(e.request.mode==='navigate'){
+    e.respondWith(
+      caches.match(e.request).then(function(cached){
+        if(cached) return cached;
+        return fetch(e.request).catch(function(){
+          return caches.match('./index.html').then(function(shell){
+            return shell || caches.match('./');
+          });
+        });
       })
     );
     return;
@@ -1251,7 +1383,21 @@ self.addEventListener('fetch', function(e){
   var swBlob = new Blob([swCode], {type:'text/javascript'});
   var swUrl = URL.createObjectURL(swBlob);
   navigator.serviceWorker.register(swUrl, {scope:'./'})
-    .then(function(reg){ console.log('[PWA] SW registrato, scope:', reg.scope); })
+    .then(function(reg){
+      console.log('[PWA] SW registrato, scope:', reg.scope);
+      // Chiedi storage persistente: protegge cache e SW dall'eviction automatica
+      // di Chrome/Android quando il dispositivo è sotto pressione di spazio o
+      // l'app non viene aperta per molti giorni.
+      if(navigator.storage && navigator.storage.persist){
+        navigator.storage.persisted().then(function(already){
+          if(!already){
+            navigator.storage.persist().then(function(granted){
+              console.log('[PWA] Storage persistente:', granted?'concesso':'negato');
+            });
+          }
+        });
+      }
+    })
     .catch(function(err){ console.warn('[PWA] SW non registrato:', err); });
 }
 </script>
