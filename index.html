@@ -863,12 +863,9 @@ function st(n){
     });
   }
   if(n==='t'){
-    nvLines.forEach(function(pl){if(!map.hasLayer(pl))pl.addTo(map);});
-    nvMrks.forEach(function(m){if(!map.hasLayer(m))m.addTo(map);});
-    if(nvBoundsPts.length)map.fitBounds(nvBoundsPts,{padding:[30,30]});
+    _navettaMostraSuMappa(navettaLineaAttiva);
   } else {
-    nvLines.forEach(function(pl){if(map.hasLayer(pl))map.removeLayer(pl);});
-    nvMrks.forEach(function(m){if(map.hasLayer(m))map.removeLayer(m);});
+    _navettaRimuoviDaMappa();
   }
   var at=document.getElementById('tab-'+n);
   if(at)at.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
@@ -987,16 +984,13 @@ var NAVETTA_DATA={
   ]
 };
 
-// Marker e polyline sulla mappa Leaflet (creati una sola volta, mostrati/nascosti in st())
-var nvMrks=[];
-var nvLines=[];
-var nvBoundsPts=[];
+// Marker e polyline sulla mappa Leaflet, organizzati per linea (creati una sola volta, mostrati/nascosti in base alla linea selezionata)
+var nvLayers={};
 NAVETTA_DATA.linee.forEach(function(l){
   var coords=l.fermate.map(function(f){return [f.lat,f.lng];});
   var pl=L.polyline(coords,{color:l.colore,weight:4,opacity:.85});
-  nvLines.push(pl);
+  var markers=[];
   l.fermate.forEach(function(f,idx){
-    nvBoundsPts.push([f.lat,f.lng]);
     var icon=L.divIcon({
       className:'',
       html:'<div class="mk" style="background:'+l.colore+';color:#fff;font-size:9px;font-weight:700;width:22px;height:22px;line-height:20px;border-radius:50%;text-align:center">'+idx+'</div>',
@@ -1004,9 +998,35 @@ NAVETTA_DATA.linee.forEach(function(l){
     });
     var m=L.marker([f.lat,f.lng],{icon:icon});
     m.bindPopup('<div class="pu-name">'+f.nome+'</div><span class="pu-tag" style="background:'+l.colore+'22;color:'+l.colore+'">'+l.nome+'</span>',{maxWidth:220});
-    nvMrks.push(m);
+    markers.push(m);
   });
+  nvLayers[l.id]={line:pl,markers:markers,bounds:coords};
 });
+
+function _navettaLayerAttivo(){return nvLayers[navettaLineaAttiva];}
+
+// Mostra solo la linea richiesta sulla mappa (rimuove le altre), con zoom sull'area coperta
+function _navettaMostraSuMappa(lineaId){
+  Object.keys(nvLayers).forEach(function(id){
+    var lyr=nvLayers[id];
+    if(map.hasLayer(lyr.line))map.removeLayer(lyr.line);
+    lyr.markers.forEach(function(m){if(map.hasLayer(m))map.removeLayer(m);});
+  });
+  var attivo=nvLayers[lineaId];
+  if(!attivo)return;
+  attivo.line.addTo(map);
+  attivo.markers.forEach(function(m){m.addTo(map);});
+  map.fitBounds(attivo.bounds,{padding:[30,30]});
+}
+
+// Rimuove tutti i layer navetta dalla mappa (usato quando si esce dalla tab Trasporti)
+function _navettaRimuoviDaMappa(){
+  Object.keys(nvLayers).forEach(function(id){
+    var lyr=nvLayers[id];
+    if(map.hasLayer(lyr.line))map.removeLayer(lyr.line);
+    lyr.markers.forEach(function(m){if(map.hasLayer(m))map.removeLayer(m);});
+  });
+}
 
 function _navettaGratuita(){
   var oggi=new Date().toISOString().slice(0,10);
@@ -1060,6 +1080,10 @@ function _navettaMostra(lineaId){
     '</ul>'+
     '<div class="tr-note">&#x23F1; '+(isIt?'Partenze dal capolinea':'Departures from terminus')+': '+linea.orari.join(' \u00b7 ')+'</div>'+
     '<div class="tr-note">&#x26A0; '+(isIt?'Tutti i giorni, 07:30\u201321:00':'Every day, 07:30\u201321:00')+'</div>';
+  // Aggiorna anche la mappa: mostra solo la linea selezionata
+  if(document.getElementById('p-t')&&document.getElementById('p-t').classList.contains('on')){
+    _navettaMostraSuMappa(lineaId);
+  }
 }
 
 // ── ACCORDION ──
