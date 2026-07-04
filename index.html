@@ -862,6 +862,14 @@ function st(n){
       else{if(map.hasLayer(mrks[p.id]))map.removeLayer(mrks[p.id]);}
     });
   }
+  if(n==='t'){
+    nvLines.forEach(function(pl){if(!map.hasLayer(pl))pl.addTo(map);});
+    nvMrks.forEach(function(m){if(!map.hasLayer(m))m.addTo(map);});
+    if(nvBoundsPts.length)map.fitBounds(nvBoundsPts,{padding:[30,30]});
+  } else {
+    nvLines.forEach(function(pl){if(map.hasLayer(pl))map.removeLayer(pl);});
+    nvMrks.forEach(function(m){if(map.hasLayer(m))map.removeLayer(m);});
+  }
   var at=document.getElementById('tab-'+n);
   if(at)at.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
   if(n==='t')loadTreniLive(false);
@@ -945,12 +953,60 @@ var NAVETTA_DATA={
   "linee":[
     {"id":"blu","nome":"Linea Blu","colore":"#1e5fbf",
      "orari":["08:30","09:00","10:30","11:00","12:30","13:00","19:30","20:00"],
-     "fermate":["Piazza del Commercio / Falcone","Cristoforo Colombo / Piazza Mons. Grassi","Piazza Padre Pio / Immacolata","Liberta / Granata","Roma Nord / Anfiteatro Musicale","Corso Italia","Villa Pantano","Piazza San Pietro","Piazza Matteotti","Anagrafe / Quartirello","Carbonaro / Ingresso Cimitero Ovest","Galliano","Piazza del Commercio / Falcone"]},
+     "fermate":[
+       {"nome":"Piazza del Commercio / Falcone","lat":37.7320342478625,"lng":15.205657951249973},
+       {"nome":"Cristoforo Colombo / Piazza Mons. Grassi","lat":37.73328524086456,"lng":15.204991261826995},
+       {"nome":"Piazza Padre Pio / Immacolata","lat":37.7364364,"lng":15.2004932},
+       {"nome":"Liberta / Granata","lat":37.734231505113414,"lng":15.198949748660509},
+       {"nome":"Roma Nord / Anfiteatro Musicale","lat":37.7338698,"lng":15.1964014},
+       {"nome":"Corso Italia","lat":37.729628351065074,"lng":15.19558411457406},
+       {"nome":"Villa Pantano","lat":37.73027182171696,"lng":15.198520872736408},
+       {"nome":"Piazza San Pietro","lat":37.731626040807875,"lng":15.204289759785128},
+       {"nome":"Piazza Matteotti","lat":37.726144,"lng":15.206277},
+       {"nome":"Anagrafe / Quartirello","lat":37.72185698540483,"lng":15.20093068136464},
+       {"nome":"Carbonaro / Ingresso Cimitero Ovest","lat":37.721506366111996,"lng":15.203469797047545},
+       {"nome":"Galliano","lat":37.72671903137339,"lng":15.206487337099086},
+       {"nome":"Piazza del Commercio / Falcone","lat":37.73201364610965,"lng":15.205669397038392}
+     ]},
     {"id":"rossa","nome":"Linea Rossa","colore":"#c0392b",
      "orari":["07:30","09:30","11:30","13:30","18:30","20:30"],
-     "fermate":["Piazza del Commercio / Falcone","Largo Bagni","Piazza Matteotti","Ingresso Cimitero Est","Archi Chiesa","Quartiere San Francesco","Carruba Stazione FS","Parcheggio Torre Archirafi / S. Russo","L. Pantano / S. Grasso","Ex Ostello","L. Pantano / Piazza della Vittoria","Piazza del Commercio / Falcone"]}
+     "fermate":[
+       {"nome":"Piazza del Commercio / Falcone","lat":37.7319878170355,"lng":15.2053495058177},
+       {"nome":"Largo Bagni","lat":37.72975071756077,"lng":15.207127234850793},
+       {"nome":"Piazza Matteotti","lat":37.72662225279092,"lng":15.206696671734708},
+       {"nome":"Ingresso Cimitero Est","lat":37.72257765642474,"lng":15.207021732713109},
+       {"nome":"Archi Chiesa","lat":37.7009018013237,"lng":15.20149402161978},
+       {"nome":"Quartiere San Francesco","lat":37.6891930487928,"lng":15.19425033421872},
+       {"nome":"Carruba Stazione FS","lat":37.6888503,"lng":15.1912916},
+       {"nome":"Parcheggio Torre Archirafi / S. Russo","lat":37.7075763,"lng":15.2159537},
+       {"nome":"L. Pantano / S. Grasso","lat":37.711957794309,"lng":15.2185242444816},
+       {"nome":"Ex Ostello","lat":37.720283088590705,"lng":15.214693648480052},
+       {"nome":"L. Pantano / Piazza della Vittoria","lat":37.726901520104356,"lng":15.2091489286607},
+       {"nome":"Piazza del Commercio / Falcone","lat":37.73201226423105,"lng":15.205643544958113}
+     ]}
   ]
 };
+
+// Marker e polyline sulla mappa Leaflet (creati una sola volta, mostrati/nascosti in st())
+var nvMrks=[];
+var nvLines=[];
+var nvBoundsPts=[];
+NAVETTA_DATA.linee.forEach(function(l){
+  var coords=l.fermate.map(function(f){return [f.lat,f.lng];});
+  var pl=L.polyline(coords,{color:l.colore,weight:4,opacity:.85});
+  nvLines.push(pl);
+  l.fermate.forEach(function(f,idx){
+    nvBoundsPts.push([f.lat,f.lng]);
+    var icon=L.divIcon({
+      className:'',
+      html:'<div class="mk" style="background:'+l.colore+';color:#fff;font-size:9px;font-weight:700;width:22px;height:22px;line-height:20px;border-radius:50%;text-align:center">'+idx+'</div>',
+      iconSize:[22,22],iconAnchor:[11,11],popupAnchor:[0,-14]
+    });
+    var m=L.marker([f.lat,f.lng],{icon:icon});
+    m.bindPopup('<div class="pu-name">'+f.nome+'</div><span class="pu-tag" style="background:'+l.colore+'22;color:'+l.colore+'">'+l.nome+'</span>',{maxWidth:220});
+    nvMrks.push(m);
+  });
+});
 
 function _navettaGratuita(){
   var oggi=new Date().toISOString().slice(0,10);
@@ -999,7 +1055,7 @@ function _navettaMostra(lineaId){
     '<ul class="nv-fermate" style="color:'+linea.colore+'">'+
       linea.fermate.map(function(f,i){
         var cap=(i===0||i===linea.fermate.length-1);
-        return '<li class="'+(cap?'cap':'')+'">'+f+'</li>';
+        return '<li class="'+(cap?'cap':'')+'">'+f.nome+'</li>';
       }).join('')+
     '</ul>'+
     '<div class="tr-note">&#x23F1; '+(isIt?'Partenze dal capolinea':'Departures from terminus')+': '+linea.orari.join(' \u00b7 ')+'</div>'+
