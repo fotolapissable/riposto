@@ -117,6 +117,17 @@ table.tt td.du{color:var(--amber-d);font-weight:700;white-space:nowrap}
 .tr-upd{font-size:8px;color:var(--text-s);padding:6px 5px 2px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .tr-refresh{font-size:8px;font-weight:700;color:var(--blue);background:var(--blue-l);border:none;padding:2px 7px;border-radius:6px;cursor:pointer}
 .tr-gone{font-size:8px;color:var(--text-s);font-style:italic}
+.nv-badge{display:inline-block;font-size:9px;font-weight:700;padding:3px 9px;border-radius:10px;margin-bottom:6px}
+.nv-badge.free{background:#fff3cd;color:#7a5b00}
+.nv-badge.paid{background:var(--blue-l);color:var(--blue)}
+.nv-tabs{display:flex;gap:5px;padding:0 5px 7px}
+.nv-tab{flex:1;text-align:center;font-size:9px;font-weight:700;padding:5px 4px;border-radius:7px;cursor:pointer;border:1.5px solid;background:transparent}
+.nv-tab.blu{border-color:#1e5fbf;color:#1e5fbf}.nv-tab.blu.on{background:#1e5fbf;color:#fff}
+.nv-tab.rossa{border-color:#c0392b;color:#c0392b}.nv-tab.rossa.on{background:#c0392b;color:#fff}
+.nv-fermate{list-style:none;padding:0 5px;margin:0 0 6px;font-size:9px;color:var(--text-m)}
+.nv-fermate li{padding:2px 0 2px 12px;position:relative;line-height:1.4}
+.nv-fermate li::before{content:'';position:absolute;left:2px;top:7px;width:5px;height:5px;border-radius:50%;background:currentColor}
+.nv-fermate li.cap{font-weight:700;color:var(--text)}
 /* EMERGENZE */
 .em-section{padding:10px 10px 6px;border-bottom:1px solid var(--border)}
 .em-section:last-child{border-bottom:none}
@@ -337,6 +348,10 @@ table.tt td.du{color:var(--amber-d);font-weight:700;white-space:nowrap}
     <div class="tr-s">
       <div class="tr-h" onclick="tgl('5')"><span class="tr-ico">&#x1F690;</span><div class="tr-tx"><div class="tr-ti">AST &mdash; Linee locali</div><div class="tr-su">Fermata: Piazza del Popolo</div></div><span class="tr-cv" id="cv5">&#9658;</span></div>
       <div class="tr-bd" id="bd5"><table class="tt"><tr><th>Linea</th><th>Frequenza</th><th>Durata</th></tr><tr><td class="dr">Giarre centro</td><td>Frequente</td><td class="du">~5 min</td></tr><tr><td class="dr">Torre Archirafi</td><td>Linea locale</td><td class="du">~8 min</td></tr><tr><td class="dr">Fondachello</td><td>Stagionale estivo</td><td class="du">~10 min</td></tr></table><div class="tr-note">&#x26A0; aziendasicilianatrasporti.it</div></div>
+    </div>
+    <div class="tr-s">
+      <div class="tr-h" onclick="tgl('6')"><span class="tr-ico">&#x1F68D;</span><div class="tr-tx"><div class="tr-ti">Navetta Cittadina &mdash; City Shuttle</div><div class="tr-su" id="nv-sub">Comune di Riposto &middot; capolinea Piazza del Commercio</div></div><span class="tr-cv" id="cv6">&#9658;</span></div>
+      <div class="tr-bd" id="bd6"><div id="nv-live"></div></div>
     </div>
   </div>
 
@@ -923,6 +938,74 @@ function _renderTreniStatic(){
   container.innerHTML='<table class="tt"><tr><th>'+(isIt?'Direzione':'Direction')+'</th><th>'+(isIt?'Orari indicativi':'Indicative times')+'</th><th>'+(isIt?'Durata':'Duration')+'</th></tr><tr><td class="dr">Catania C.le</td><td>05:42&middot;06:55&middot;08:12&middot;09:30&middot;11:15&middot;13:40&middot;15:20&middot;17:05&middot;18:50&middot;20:30</td><td class="du">~50 min</td></tr><tr><td class="dr">Messina C.le</td><td>06:15&middot;07:40&middot;09:05&middot;10:55&middot;12:20&middot;14:10&middot;16:30&middot;18:15&middot;20:00&middot;21:45</td><td class="du">~40 min</td></tr></table><div class="tr-note">&#x26A0; '+(isIt?'Dati live non disponibili — orari indicativi.':'Live data unavailable — indicative times.')+'</div><a class="tr-link" href="https://iechub.rfi.it/ArriviPartenze/arrivalsdepartures/Monitor?placeId=1432&arrivals=False" target="_blank">&#x1F534; '+(isIt?'Tabellone RFI ufficiale':'Official RFI board')+'</a>';
 }
 
+// ── NAVETTA CITTADINA ──
+var NAVETTA_DATA={
+  "gratuita_dal":"2026-07-07","gratuita_fino_al":"2026-07-31",
+  "tariffa":{"prezzo_eur":1.40,"durata_minuti":90},
+  "linee":[
+    {"id":"blu","nome":"Linea Blu","colore":"#1e5fbf",
+     "orari":["08:30","09:00","10:30","11:00","12:30","13:00","19:30","20:00"],
+     "fermate":["Piazza del Commercio / Falcone","Cristoforo Colombo / Piazza Mons. Grassi","Piazza Padre Pio / Immacolata","Liberta / Granata","Roma Nord / Anfiteatro Musicale","Corso Italia","Villa Pantano","Piazza San Pietro","Piazza Matteotti","Anagrafe / Quartirello","Carbonaro / Ingresso Cimitero Ovest","Galliano","Piazza del Commercio / Falcone"]},
+    {"id":"rossa","nome":"Linea Rossa","colore":"#c0392b",
+     "orari":["07:30","09:30","11:30","13:30","18:30","20:30"],
+     "fermate":["Piazza del Commercio / Falcone","Largo Bagni","Piazza Matteotti","Ingresso Cimitero Est","Archi Chiesa","Quartiere San Francesco","Carruba Stazione FS","Parcheggio Torre Archirafi / S. Russo","L. Pantano / S. Grasso","Ex Ostello","L. Pantano / Piazza della Vittoria","Piazza del Commercio / Falcone"]}
+  ]
+};
+
+function _navettaGratuita(){
+  var oggi=new Date().toISOString().slice(0,10);
+  return oggi>=NAVETTA_DATA.gratuita_dal&&oggi<=NAVETTA_DATA.gratuita_fino_al;
+}
+
+function updateNavettaSub(){
+  var el=document.getElementById('nv-sub');
+  if(!el)return;
+  var isIt=lang==='it';
+  if(_navettaGratuita()){
+    var fine=new Date(NAVETTA_DATA.gratuita_fino_al);
+    el.textContent=(isIt?'GRATIS fino al ':'FREE until ')+fine.toLocaleDateString(isIt?'it-IT':'en-GB');
+  }else{
+    el.textContent=NAVETTA_DATA.tariffa.prezzo_eur.toFixed(2)+' EUR \u00b7 '+NAVETTA_DATA.tariffa.durata_minuti+(isIt?' min di validita':' min validity');
+  }
+}
+
+var navettaLineaAttiva='blu';
+function renderNavetta(){
+  var c=document.getElementById('nv-live');
+  if(!c)return;
+  var isIt=lang==='it';
+  var gratis=_navettaGratuita();
+  var badgeHtml='<span class="nv-badge '+(gratis?'free':'paid')+'">'+
+    (gratis?(isIt?'GRATIS fino al 31/7':'FREE until 31/7'):(NAVETTA_DATA.tariffa.prezzo_eur.toFixed(2)+' EUR \u00b7 90 min'))+'</span>';
+
+  var tabsHtml='<div class="nv-tabs">'+NAVETTA_DATA.linee.map(function(l){
+    return '<div class="nv-tab '+l.id+(l.id===navettaLineaAttiva?' on':'')+'" onclick="_navettaMostra(\''+l.id+'\')">'+l.nome+'</div>';
+  }).join('')+'</div>';
+
+  c.innerHTML=badgeHtml+tabsHtml+'<div id="nv-linea-body"></div>';
+  _navettaMostra(navettaLineaAttiva);
+}
+
+function _navettaMostra(lineaId){
+  navettaLineaAttiva=lineaId;
+  document.querySelectorAll('.nv-tab').forEach(function(t){
+    t.classList.toggle('on',t.classList.contains(lineaId));
+  });
+  var linea=NAVETTA_DATA.linee.find(function(l){return l.id===lineaId;});
+  var body=document.getElementById('nv-linea-body');
+  if(!body||!linea)return;
+  var isIt=lang==='it';
+  body.innerHTML=
+    '<ul class="nv-fermate" style="color:'+linea.colore+'">'+
+      linea.fermate.map(function(f,i){
+        var cap=(i===0||i===linea.fermate.length-1);
+        return '<li class="'+(cap?'cap':'')+'">'+f+'</li>';
+      }).join('')+
+    '</ul>'+
+    '<div class="tr-note">&#x23F1; '+(isIt?'Partenze dal capolinea':'Departures from terminus')+': '+linea.orari.join(' \u00b7 ')+'</div>'+
+    '<div class="tr-note">&#x26A0; '+(isIt?'Tutti i giorni, 07:30\u201321:00':'Every day, 07:30\u201321:00')+'</div>';
+}
+
 // ── ACCORDION ──
 function tgl(id){
   var b=document.getElementById('bd'+id),c=document.getElementById('cv'+id);
@@ -930,6 +1013,7 @@ function tgl(id){
   b.classList.toggle('op',!o);
   c.textContent=o?'►':'▼';
   if(id==='1'&&!o)loadTreniLive(false);
+  if(id==='6'&&!o)renderNavetta();
 }
 
 // ── MOBILE MAP ──
@@ -1013,6 +1097,8 @@ function toggleLang(){
   renderPois(activeCat);
   POIS.forEach(function(p){mrks[p.id].setPopupContent(mkPop(p));});
   fetchWx();
+  updateNavettaSub();
+  if(document.getElementById('bd6')&&document.getElementById('bd6').classList.contains('op'))renderNavetta();
 }
 
 // ── INIT ──
@@ -1033,6 +1119,7 @@ function showLocale(id){
 window.showLocale=showLocale;
 renderPois('all');
 fetchWx();
+updateNavettaSub();
 setInterval(fetchWx,10*60*1000);
 
 // ── SERVICE WORKER ──
