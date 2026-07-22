@@ -24,6 +24,7 @@
   --teal:#0d9e87;--teal-l:#e5f6f3;
   --green:#3a8a4a;--green-l:#ecf5ee;
   --violet:#6c5ce7;--violet-l:#f0eeff;
+  --cipudda:#c8813a;--scrofina:#a8331f;--mare-l:#eaf5f3;
   --dark:#18120a;
   --bg:#f5f1ea;--panel:#fff;--panel2:#faf7f2;
   --text:#1e1a12;--text-m:#5a5040;--text-s:#9a9080;
@@ -144,6 +145,10 @@ table.tt td.du{color:var(--amber-d);font-weight:700;white-space:nowrap}
 .em-info-row{font-size:9.5px;color:var(--text-m);padding:2px 0;display:flex;gap:6px;align-items:flex-start}
 .em-note{font-size:8px;color:var(--text-s);font-style:italic;padding:5px 3px 6px;line-height:1.5}
 .em-link{display:inline-block;margin-top:4px;font-size:8.5px;font-weight:700;color:var(--blue);text-decoration:none;background:var(--blue-l);padding:3px 10px;border-radius:6px}
+/* CULTURA - sub-section headers */
+.cu-head{font-family:var(--fs);font-size:13px;font-weight:600;color:var(--amber-d);padding:11px 12px 7px;background:var(--panel2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px;position:sticky;top:0;z-index:5}
+.cu-nav{display:flex;gap:5px;padding:7px 10px;background:var(--panel2);border-bottom:1px solid var(--border);flex-shrink:0}
+.cu-nav a{flex:1;text-align:center;font-size:9px;font-weight:700;padding:5px 3px;border-radius:8px;text-decoration:none;color:var(--text-m);background:var(--panel);border:1px solid var(--border-m)}
 /* SAPORI */
 .sa-intro{padding:10px 12px 8px;background:#fdf6e3;border-bottom:1px solid rgba(181,134,13,.15);font-size:10px;color:var(--text-m);line-height:1.5;flex-shrink:0}
 .sa-item{display:flex;align-items:flex-start;gap:10px;padding:9px 11px;border-bottom:1px solid var(--border)}
@@ -152,6 +157,27 @@ table.tt td.du{color:var(--amber-d);font-weight:700;white-space:nowrap}
 .sa-name{font-size:12px;font-weight:700;color:var(--text);margin-bottom:2px}
 .sa-desc{font-size:10px;color:var(--text-m);line-height:1.4}
 .sa-where{font-size:9px;color:var(--text-s);margin-top:2px}
+/* MUSEO DEL MARE */
+.mm-intro{padding:10px 12px 8px;background:var(--mare-l);border-bottom:1px solid rgba(13,158,135,.18);font-size:10px;color:var(--text-m);line-height:1.5;flex-shrink:0}
+.mm-item{padding:10px 11px;border-bottom:1px solid var(--border)}
+.mm-item:last-child{border-bottom:none}
+.mm-top{display:flex;align-items:flex-start;gap:9px;margin-bottom:6px}
+.mm-ico{font-size:20px;flex-shrink:0;margin-top:1px}
+.mm-name{font-size:12px;font-weight:700;color:var(--text);line-height:1.2}
+.mm-sci{font-size:9.5px;font-style:italic;color:var(--text-s);margin-top:1px}
+.mm-tags{display:flex;flex-wrap:wrap;gap:4px;margin:6px 0}
+.mm-tag{font-size:8.5px;font-weight:700;padding:2.5px 8px;border-radius:8px;display:inline-flex;align-items:center;gap:4px}
+.mm-tag.cipudda{background:rgba(200,129,58,.13);color:var(--cipudda);border:1px solid rgba(200,129,58,.35)}
+.mm-tag.scrofina{background:rgba(168,51,31,.12);color:var(--scrofina);border:1px solid rgba(168,51,31,.35)}
+.mm-dot{width:6px;height:6px;border-radius:50%}
+.mm-dot.c{background:var(--cipudda)}.mm-dot.s{background:var(--scrofina)}
+.mm-desc{font-size:10px;color:var(--text-m);line-height:1.45}
+.mm-desc b{color:var(--text);font-weight:700}
+.mm-where{font-size:9px;color:var(--text-s);margin-top:5px}
+.mm-tag.default{background:rgba(13,158,135,.13);color:var(--teal);border:1px solid rgba(13,158,135,.35)}
+.mm-more{font-size:9.5px;font-weight:700;color:var(--teal);text-decoration:none;display:inline-block;margin-top:5px}
+.mm-project{font-size:9.5px;font-weight:700;color:var(--amber-d);text-decoration:none;background:var(--amber-l);padding:3px 9px;border-radius:7px;display:inline-block;margin-top:4px}
+.mm-copy{font-size:8.5px;color:var(--text-s);padding:10px 12px;text-align:center;border-top:1px solid var(--border)}
 /* FOTO */
 .fo-intro{padding:10px 12px 8px;background:var(--amber-l);border-bottom:1px solid rgba(200,129,58,.18);font-size:10px;color:var(--text-m);line-height:1.5;flex-shrink:0}
 .fo-intro a{color:var(--amber-d);font-weight:700;text-decoration:none}
@@ -303,8 +329,7 @@ table.tt td.du{color:var(--amber-d);font-weight:700;white-space:nowrap}
     <div class="tab on" id="tab-l" onclick="st('l')">&#x1F5FA; Luoghi</div>
     <div class="tab"    id="tab-m" onclick="st('m')">&#x1F324; Meteo</div>
     <div class="tab"    id="tab-t" onclick="st('t')">&#x1F68C; Trsp.</div>
-    <div class="tab"    id="tab-s" onclick="st('s')">&#x1F34B; Sapori</div>
-    <div class="tab"    id="tab-f" onclick="st('f')">&#x1F4F7; Foto</div>
+    <div class="tab"    id="tab-c" onclick="st('c')">&#x1F4D6; Cultura</div>
     <div class="tab"    id="tab-r" onclick="st('r')">&#x1F37D; Locali</div>
     <div class="tab"    id="tab-e" onclick="st('e')">&#x1F6A8; SOS</div>
   </div>
@@ -359,8 +384,15 @@ table.tt td.du{color:var(--amber-d);font-weight:700;white-space:nowrap}
     </div>
   </div>
 
-  <!-- SAPORI -->
-  <div class="tp" id="p-s">
+  <!-- CULTURA (Sapori + Mare + Foto) -->
+  <div class="tp" id="p-c">
+    <div class="cu-nav">
+      <a href="#cu-sapori">&#x1F34B; Sapori</a>
+      <a href="#cu-mare">&#x1F421; Mare</a>
+      <a href="#cu-foto">&#x1F4F7; Foto</a>
+    </div>
+
+    <div class="cu-head" id="cu-sapori">&#x1F34B; Sapori</div>
     <div class="sa-intro">I sapori autentici di Riposto: mare, vulcano e tradizione siciliana.</div>
     <div class="sa-item"><span class="sa-ico">&#x1F34B;</span><div><div class="sa-name">Granita con brioche col tuppo</div><div class="sa-desc">La colazione ripostese per eccellenza. Granita di limone, mandorla o fragola con brioche siciliana.</div><div class="sa-where">&#x1F4CD; Bar del centro &middot; Dalle 07:30</div></div></div>
     <div class="sa-item"><span class="sa-ico">&#x1F41F;</span><div><div class="sa-name">Pesce fresco al porto</div><div class="sa-desc">Spada, gamberoni, suri, polpi. Sul muretto di fronte alla piazza Franco Battiato, ogni mattina.</div><div class="sa-where">&#x1F4CD; Muretto Piazza Franco Battiato &middot; 06:00&ndash;09:00 &middot; Solo contanti</div></div></div>
@@ -370,10 +402,100 @@ table.tt td.du{color:var(--amber-d);font-weight:700;white-space:nowrap}
     <div class="sa-item"><span class="sa-ico">&#x1F34A;</span><div><div class="sa-name">Agrumi dell&apos;Etna</div><div class="sa-desc">Arance, limoni e mandarini su terreno lavico. Aromi e sapori unici.</div><div class="sa-where">&#x1F4CD; Mercato al centro &middot; Negozi di frutta e verdura</div></div></div>
     <div class="sa-item"><span class="sa-ico">&#x1F370;</span><div><div class="sa-name">Dolci tradizionali</div><div class="sa-desc">Cannoli, cassata, paste di mandorla, iris fritto. Pasticceria tra le pi&ugrave; ricche della provincia.</div><div class="sa-where">&#x1F4CD; Pasticcerie del centro</div></div></div>
     <div class="sa-item"><span class="sa-ico">&#x1F9C5;</span><div><div class="sa-name">Arancine, Sfingi e street food</div><div class="sa-desc">Arancine al rag&ugrave; o al burro, sfincioni, panelle. Le Sfingi nel pomeriggio a Viale Immacolata.</div><div class="sa-where">&#x1F4CD; Rosticcerie &middot; Bar &middot; Sfingi: Viale Immacolata (pomeriggio)</div></div></div>
-  </div>
 
-  <!-- FOTO -->
-  <div class="tp" id="p-f">
+    <div class="cu-head" id="cu-mare">&#x1F421; Mare</div>
+    <div class="mm-intro">Sei specie del litorale jonico etneo, raccontate con la scienza e con la voce dei pescatori di Riposto. Un percorso naturalistico-educativo permanente lungo il lungomare, dal porto al belvedere di Torre Archirafi.<br><a class="mm-project" href="https://app.notion.com/p/38984f34c21981259b1bd7ee6a415e42" target="_blank">&#x1F30A; Scopri il progetto completo</a></div>
+
+    <div class="mm-item">
+      <div class="mm-top">
+        <div class="mm-ico">&#x1F41F;</div>
+        <div>
+          <div class="mm-name">Suro</div>
+          <div class="mm-sci">Trachurus trachurus</div>
+        </div>
+      </div>
+      <div class="mm-tags"><span class="mm-tag default">Suruddu &middot; Sauro</span></div>
+      <div class="mm-desc">Pesce azzurro che attraversa il Ionio in grandi banchi argentati, riconoscibile dagli <b>scudetti</b> lungo il fianco. I pescatori lo catturavano di notte con la lampara, battendo i piedi sullo scafo (<i>u scrùsciu</i>) per radunare i banchi sotto la luce.</div>
+      <div class="mm-where">&#x1F4CD; Acque pelagiche al largo del porto</div>
+      <a class="mm-more" href="https://app.notion.com/p/38984f34c2198100b9bfc7b34b1f3a04" target="_blank">Scopri la scheda &rarr;</a>
+    </div>
+
+    <div class="mm-item">
+      <div class="mm-top">
+        <div class="mm-ico">&#x1F41F;</div>
+        <div>
+          <div class="mm-name">Palamito</div>
+          <div class="mm-sci">Sarda sarda</div>
+        </div>
+      </div>
+      <div class="mm-tags"><span class="mm-tag default">Palamitu</span></div>
+      <div class="mm-desc">Predatore veloce dal dorso striato che arriva a Riposto a fine estate, seguendo i banchi di pesce azzurro. Pescato con traina e palamiti notturni; per la carne rossa e saporita veniva scambiato al mercato per tonno.</div>
+      <div class="mm-where">&#x1F4CD; Migratore stagionale &middot; settembre&ndash;ottobre</div>
+      <a class="mm-more" href="https://app.notion.com/p/38984f34c219810d8f27d671ef5e713e" target="_blank">Scopri la scheda &rarr;</a>
+    </div>
+
+    <div class="mm-item">
+      <div class="mm-top">
+        <div class="mm-ico">&#x1F421;</div>
+        <div>
+          <div class="mm-name">Scorfano</div>
+          <div class="mm-sci">Scorpaena scrofa</div>
+        </div>
+      </div>
+      <div class="mm-tags">
+        <span class="mm-tag cipudda"><span class="mm-dot c"></span>Cipudda</span>
+        <span class="mm-tag scrofina"><span class="mm-dot s"></span>Scrofina</span>
+      </div>
+      <div class="mm-desc">Tra i pescatori di Riposto il nome cambia col colore dell'esemplare: quelli <b>meno rossi</b> sono la <b>cipudda</b> &mdash; richiamo alla cipolla, per la pelle a strati &mdash; mentre i più <b>intensamente rossi</b> diventano <b>scrofina</b>. Due nomi dialettali per un'unica specie, distinti in base alla colorazione.</div>
+      <div class="mm-where">&#x1F4CD; Scogliere del porto peschereccio</div>
+      <a class="mm-more" href="https://app.notion.com/p/38984f34c21981d8971bf216a64ba8b4" target="_blank">Scopri la scheda &rarr;</a>
+    </div>
+
+    <div class="mm-item">
+      <div class="mm-top">
+        <div class="mm-ico">&#x1F41F;</div>
+        <div>
+          <div class="mm-name">Sarago</div>
+          <div class="mm-sci">Diplodus sargus</div>
+        </div>
+      </div>
+      <div class="mm-tags"><span class="mm-tag default">Saragu</span></div>
+      <div class="mm-desc">Pesce di scogliera dalle fasce scure verticali, vive tra le rocce laviche e le praterie di posidonia. I pescatori lo chiamano <b>"maliziato"</b> — è tra i più difficili da ingannare con lenza o conzo.</div>
+      <div class="mm-where">&#x1F4CD; Scogliere e praterie di posidonia del litorale</div>
+      <a class="mm-more" href="https://app.notion.com/p/38984f34c21981098c53f2743eb35c08" target="_blank">Scopri la scheda &rarr;</a>
+    </div>
+
+    <div class="mm-item">
+      <div class="mm-top">
+        <div class="mm-ico">&#x1F419;</div>
+        <div>
+          <div class="mm-name">Polpo</div>
+          <div class="mm-sci">Octopus vulgaris</div>
+        </div>
+      </div>
+      <div class="mm-tags"><span class="mm-tag default">Puppu</span></div>
+      <div class="mm-desc">Cefalopode intelligente e mimetico, vive solitario in una tana tra gli scogli che scava e adatta al proprio corpo — i pescatori dicono che è <b>"ammarrato"</b> alla tana come una barca alla sua cima. Pescato con nasse, fiocina e lampara.</div>
+      <div class="mm-where">&#x1F4CD; Fondali rocciosi del litorale</div>
+      <a class="mm-more" href="https://app.notion.com/p/38984f34c21981f99112f983630daa22" target="_blank">Scopri la scheda &rarr;</a>
+    </div>
+
+    <div class="mm-item">
+      <div class="mm-top">
+        <div class="mm-ico">&#x1F991;</div>
+        <div>
+          <div class="mm-name">Seppia</div>
+          <div class="mm-sci">Sepia officinalis</div>
+        </div>
+      </div>
+      <div class="mm-tags"><span class="mm-tag default">Siccia</span></div>
+      <div class="mm-desc">In primavera si avvicina a riva per deporre le uova tra le praterie di posidonia. Nota per l'inchiostro nero (<i>u nivuru</i>) e per l'osso interno — <b>u pisu d'a siccia</b> — che il mare deposita sulla spiaggia dopo le mareggiate.</div>
+      <div class="mm-where">&#x1F4CD; Fondali sabbiosi e praterie di posidonia</div>
+      <a class="mm-more" href="https://app.notion.com/p/38984f34c219818db22bff27383aa108" target="_blank">Scopri la scheda &rarr;</a>
+    </div>
+
+    <div class="mm-copy">Museo Diffuso del Mare &middot; percorso naturalistico-educativo sul litorale jonico etneo &middot; a cura di Riposto è Mare</div>
+
+    <div class="cu-head" id="cu-foto">&#x1F4F7; Foto</div>
     <div class="fo-intro">Fotografia di paesaggio, macro e natura. Stampe d&apos;arte e licenze su <a href="https://fotolapissable.it" target="_blank">fotolapissable.it</a></div>
     <div class="fo-card"><div class="fo-thumb" style="background:linear-gradient(135deg,#1a0e06,#6b2d0a)">&#x1F30B;</div><div><div class="fo-name">Etna &amp; Paesaggi</div><div class="fo-desc">Crateri, colate laviche, alba sull&apos;Ionio. Canon R5 &middot; RF 14-35mm f/4L IS USM.</div><div class="fo-links"><a class="fl p" href="https://www.saal-digital.net/share/xdCCuGu/" target="_blank">&#x1F5BC; Stampa</a><a class="fl s" href="https://www.alamy.com/stock-photo/?cid=T8MHNTJ2XSQBAW6PQAXDXRL3YN6A978GMN6Q5N6R4LD69CFYMW3SK374QD7MCXPQ&sortBy=relevant" target="_blank">Alamy</a><a class="fl s" href="https://www.behance.net/michelecipriano" target="_blank">Behance</a></div></div></div>
     <div class="fo-card"><div class="fo-thumb" style="background:linear-gradient(135deg,#0a1f0a,#1a5a1a)">&#x1F98B;</div><div><div class="fo-name">Macro &amp; Insetti</div><div class="fo-desc">Fauna endemica alle falde dell&apos;Etna. RF 35mm Macro + tubo 13mm. Specie rare.</div><div class="fo-links"><a class="fl p" href="https://www.saal-digital.net/share/NpMVf5v/" target="_blank">&#x1F5BC; Stampa</a><a class="fl s" href="https://stock.adobe.com/it/contributor/208486609/fotolapissable" target="_blank">Adobe</a><a class="fl s" href="https://www.behance.net/michelecipriano" target="_blank">Behance</a></div></div></div>
@@ -932,7 +1054,7 @@ function flc(tipo){
 
 // ── TABS ──
 function st(n){
-  ['l','m','t','s','f','r','e'].forEach(function(x){
+  ['l','m','t','c','r','e'].forEach(function(x){
     document.getElementById('tab-'+x).classList.toggle('on',x===n);
     document.getElementById('p-'+x).classList.toggle('on',x===n);
   });
