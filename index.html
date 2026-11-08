@@ -688,10 +688,10 @@ function fetchWx(){
 // ── MAP ──
 var map=L.map('map',{center:[POS.lat,POS.lng],zoom:15,zoomControl:false});
 var TILES={
-  voyager:L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© <a href="https://openstreetmap.org/copyright">OpenStreetMap</a>',subdomains:'abc',maxZoom:19}),
+  voyager:L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{attribution:'© <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/attributions">CARTO</a>',subdomains:'abcd',maxZoom:19}),
   satellite:L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{attribution:'©Esri',maxZoom:19}),
   topo:L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',{attribution:'©OpenTopoMap',subdomains:'abc',maxZoom:17}),
-  dark:L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© <a href="https://openstreetmap.org/copyright">OpenStreetMap</a>',subdomains:'abc',maxZoom:19,className:'tiles-dark'})
+  dark:L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{attribution:'© <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/attributions">CARTO</a>',subdomains:'abcd',maxZoom:19,className:'tiles-dark'})
 };
 document.head.insertAdjacentHTML('beforeend','<style>.tiles-dark{filter:invert(1) hue-rotate(180deg) brightness(.92) contrast(.9)}</style>');
 var currentTile='voyager';
@@ -1037,7 +1037,7 @@ function _renderTreni(data){
   treni.forEach(function(t){
     var ora=_fmtOra(t.orarioPartenza);
     var dest=_fmtDest(t.destinazione||'');
-    var cat=(t.categoria||'REG')+' '+(t.numeroTreno||'');
+    var cat=(t.categoria||'REG')+' '+(t.numeroTreno||'');
     var rit=t.ritardo||0;
     var rc=rit<=0?'tr-ok':rit<=15?'tr-warn':'tr-late';
     var rt=rit<=0?'&#x2714;':'+'+rit+'min';
@@ -1349,9 +1349,9 @@ self.addEventListener('fetch', function(e){
   // Tile della mappa Voyager (CartoDB): Leaflet li richiede da sottodomini diversi
   // (a/b/c/d), quindi normalizziamo la chiave di cache ignorando il sottodominio
   // per far funzionare sia la cache offline pre-scaricata sia quella opportunistica.
-  var tileM = url.pathname.match(/^\\/(\\d+)\\/(\\d+)\\/(\\d+)\\.png$/);
-  if(tileM && url.hostname.indexOf('tile.openstreetmap.org')!==-1){
-    var tileKey = 'https://tile-cache.riposto/osm/'+tileM[1]+'/'+tileM[2]+'/'+tileM[3]+'.png';
+  var tileM = url.pathname.match(/^\\/rastertiles\\/voyager\\/(\\d+)\\/(\\d+)\\/(\\d+)(?:@2x)?\\.png$/);
+  if(tileM && url.hostname.indexOf('basemaps.cartocdn.com')!==-1){
+    var tileKey = 'https://tile-cache.riposto/carto/'+tileM[1]+'/'+tileM[2]+'/'+tileM[3]+'.png';
     e.respondWith(
       fetch(e.request).then(function(resp){
         if(resp && resp.status===200){
